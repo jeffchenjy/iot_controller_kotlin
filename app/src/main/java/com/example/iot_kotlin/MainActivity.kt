@@ -69,12 +69,23 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
         exit_btn!!.setOnClickListener {
-            val activityManager =
-                getSystemService(ACTIVITY_SERVICE) as ActivityManager
-            val tasks = activityManager.appTasks
-            for (task in tasks) {
-                task.finishAndRemoveTask()
-            }
+            MaterialAlertDialogBuilder(this)
+                .setIcon(R.drawable.ic_leave)
+                .setTitle(resources.getString(R.string.leave_title))
+                .setMessage(resources.getString(R.string.leave))
+                .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                    // Respond to positive button press
+                    val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                    val tasks = activityManager.appTasks
+                    for (task in tasks) {
+                        task.finishAndRemoveTask()
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                    dialog.dismiss()
+                }
+                .show()
         }
     }
     private fun setToolbar() {
@@ -208,6 +219,7 @@ class MainActivity : AppCompatActivity() {
         for (task in tasks) {
             task.finishAndRemoveTask()
         }
+
     }
 
     override fun onDestroy() {

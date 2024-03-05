@@ -11,8 +11,9 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:contentDescription="@null"
-        android:layout_marginLeft="5dp"
-        android:src="@drawable/iot_controller_icon" />
+        android:layout_marginLeft="10dp"
+        android:background="@drawable/iot_controller_icon_nav_use"
+        android:src="@drawable/iot_original" />
 
     <TextView
         android:id="@+id/txtHeader"
@@ -21,7 +22,8 @@
         android:ellipsize="end"
         android:paddingTop="4dp"
         android:text="IoT Controller"
-        android:fontFamily="sans-serif-condensed-medium"
+        android:fontFamily="cursive"
+        android:textSize="18sp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
         android:layout_marginBottom="5dp"

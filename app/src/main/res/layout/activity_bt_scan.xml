@@ -59,19 +59,15 @@
                         android:layout_marginTop="35dp"
                         android:src="@drawable/ic_iot_bt"/>
                 </FrameLayout>
-
-
                 <Button
                     android:id="@+id/search_btn"
                     android:layout_width="170dp"
                     android:layout_height="60dp"
                     style="@style/Button_style"
-                    android:fontFamily="monospace"
                     android:text="Search"
                     android:drawableLeft="@drawable/ic_bluetooth_discoverable"
                     android:textColor="@color/white"
-                    android:textSize="16sp"
-                    android:textStyle="bold" />
+                    android:textSize="16sp"/>
             </LinearLayout>
 
             <ListView
