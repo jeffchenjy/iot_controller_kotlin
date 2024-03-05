@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item android:id="@+id/music_select"
+        android:icon="@drawable/ic_car_music"
+        app:showAsAction="ifRoom"
+        android:title="Music selection" />
+    <item android:id="@+id/music_control"
+        android:icon="@drawable/ic_music_menu"
+        app:showAsAction="ifRoom"
+        android:title="Music control"/>
+    <item android:id="@+id/item_more"
+        android:title="more"
+        android:icon="@drawable/ic_more"
+        app:showAsAction="always"
+        >
+        <menu>
+            <item android:id="@+id/Direction_setup"
+                android:icon="@drawable/ic_car_setting"
+                android:title="Direction setup" />
+            <item android:id="@+id/Car_CMD_List"
+                android:icon="@drawable/ic_car_list"
+                android:title="Car CMD List" />
+            <item android:id="@+id/Instruction"
+                android:icon="@drawable/ic_car_help"
+                android:title="@string/operation_title" />
+        </menu>
+    </item>
+
+</menu>
