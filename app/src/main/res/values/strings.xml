@@ -1,0 +1,52 @@
+<resources>
+    <string name="app_name">IoT Controller</string>
+
+    <!-- 內容 -->
+    <string name="main_operation">
+        IoT とは、従来インターネットに接続されていなかった様々なモノ（センサー機器、駆動装置（アクチュエーター）、住宅・建物、車、家電製品、電子機器など）が、ネットワークを通じてサーバーやクラウドサービスに接続され、
+        相互に情報交換をする仕組みです。読み方は「アイオーティー」で、「Internet of Things」の略からもわかるように「モノのインターネット」という意味で使われています。</string>
+    <string name="bt_operation">
+        ユーザーはこの機能を通じて Bluetooth SPP プロトコルを制御できます。</string>
+    <string name="about">
+        ユーザーはこのアプリを通じてどのIoT機能を使用するかできます。</string>
+    <string name="copyright">Copyright © 2024 Jhih-Yong, Chen</string>
+    <string name="car_control_instruction">
+        ユーザーは方向ボタンを使用して車の方向を制御でき、ABXY ボタンを使用して車のモードを変更するコマンドを送信することもできます。</string>
+    <string name="wf_operation">
+        ユーザーは Wi-Fi を通じて制御できます。</string>
+
+    <!-- drawer 相關 -->
+    <string name="drawer_open">
+        Drawer_opened
+    </string>
+    <string name="drawer_close">
+        Drawer_closed
+    </string>
+
+    <!-- 文字與標題 -->
+    <string name="iot_menu">IoT メニュー</string>
+    <string name="bluetooth">Bluetooth メニュー</string>
+    <string name="bluetooth_button">Bluetooth</string>
+    <string name="bluetooth_scan">Bluetooth Search</string>
+    <string name="bluetooth_search">Bluetooth 探す</string>
+    <string name="car_control_page">Car Control</string>
+    <string name="music_title">Music Selection</string>
+    <string name="music_control">Music Control</string>
+    <string name="cmd_title">CMD List</string>
+    <string name="direction_cmd">Setup Direction CMD</string>
+    <string name="wifi">Wi-Fi メニュー</string>
+    <string name="wifi_button">Wi-Fi</string>
+    <string name="exit">Exit</string>
+    <string name="homepage">ホームページ</string>
+    <string name="operation_title">操作紹介</string>
+    <string name="main_operation_title">IoT とは?</string>
+    <string name="current_url">當前のURL</string>
+    <string name="url_setting">URL設定</string>
+    <string name="current_video_url">ビデオのURL</string>
+    <string name="video_url_setting">ビデオURL設定</string>
+    <string name="about_app">アプリ紹介</string>
+    <string name="copyright_title">著作権</string>
+    <string name="ok">はい</string>
+    <string name="no">いいえ</string>
+    <string name="cancel">キャンセル</string>
+</resources>

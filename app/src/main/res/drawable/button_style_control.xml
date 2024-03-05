@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<selector xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- 按下狀態 -->
+    <item android:state_pressed="true">
+        <ripple android:color="#252525">
+            <item>
+                <shape android:shape="rectangle">
+                    <gradient
+                        android:angle="270"
+                        android:startColor="#252525"
+                        android:centerColor="#1E1E1E"
+                        android:endColor="#0E0E0E"  />
+                    <corners android:radius="300dp" />
+                </shape>
+            </item>
+        </ripple>
+    </item>
+    <!-- 預設狀態 -->
+    <item>
+        <shape android:shape="rectangle">
+            <gradient
+                android:angle="270"
+                android:startColor="#0E0E0E"
+                android:centerColor="#1E1E1E"
+                android:endColor="#252525"  />
+            <corners android:radius="300dp" />
+        </shape>
+    </item>
+</selector>

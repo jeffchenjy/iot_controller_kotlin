@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!--    Default   -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!--    gradation.xml   -->
+    <color name="start_color">#3F51B5</color>
+    <color name="end_color">@color/white</color>
+    <!--    Transparent   -->
+    <color name="transition_color">@android:color/transparent</color>
+    <!--    Toolbar   -->
+    <color name="toolbar_color">#212121</color>
+    <color name="toolbar_color_inverse">#9A85BD</color>
+    <!-- Button -->
+    <color name="button_color">#7E43E6</color>
+    <!-- Icon -->
+    <color name="icon_color">#9A85BD</color>
+    <color name="small_icon_color">#9B9B9B</color>
+    <!-- Car Button -->
+    <color name="state_pressed_color">#535252</color>
+    <color name="default_color">#000000</color>
+    <!-- SeekBar Button -->
+    <color name="seekbar_start_color">#917EB3</color>
+    <color name="seekbar_end_color">#6831CA</color>
+</resources>

@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawerLayout"
+    tools:context=".BTMainActivity"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@android:color/transparent"
+            android:theme="@style/Theme.Material3.Dark"
+            app:titleTextColor="@color/toolbar_color_inverse"
+            android:elevation="4dp"/>
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center_horizontal"
+            android:orientation="vertical"
+            android:background="@color/toolbar_color">
+            <LinearLayout
+                android:id="@+id/TopLinearLayout"
+                android:layout_width="400dp"
+                android:layout_height="80dp"
+                android:layout_marginTop="65dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+                <FrameLayout
+                    android:id="@+id/frameLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent">
+
+                    <ImageView
+                        android:id="@+id/imgAnim2"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/circle" />
+
+                    <ImageView
+                        android:id="@+id/imgAnim1"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:scaleType="centerCrop"
+                        android:src="@drawable/circle" />
+                    <ImageView
+                        android:id="@+id/bluetooth_Iv"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="15dp" />
+                    <ImageView
+                        android:id="@+id/bluetooth_off_Iv"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
+                        android:layout_marginTop="5dp"
+                        android:layout_marginLeft="15dp"
+                        android:src="@drawable/ic_bluetooth_off_main" />
+                    <TextView
+                        android:id="@+id/statusBluetoothTv"
+                        android:layout_width="200dp"
+                        android:layout_height="20dp"
+                        android:layout_marginLeft="140dp"
+                        android:layout_marginTop="30dp"
+                        android:fontFamily="sans-serif-black"
+                        android:text=" "
+                        android:textAlignment="center"
+                        android:textColor="@color/toolbar_color_inverse"
+                        android:textSize="14sp"
+                        tools:ignore="SpeakableTextPresentCheck" />
+                </FrameLayout>
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/on_and_off_btn_LinearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@+id/TopLinearLayout">
+                <Button
+                    android:id="@+id/on_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    style="@style/Button_style"
+                    android:drawableLeft="@drawable/ic_bluetooth"
+                    android:minWidth="190dp"
+                    android:text="Turn on"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/off_btn"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dp"
+                    style="@style/Button_style"
+                    android:drawableLeft="@drawable/ic_bluetooth_off"
+                    android:minWidth="190dp"
+                    android:text="Turn off"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/linearLayout2"
+                android:layout_width="match_parent"
+                android:layout_height="70dp"
+                android:orientation="horizontal"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintStart_toStartOf="parent"
+                android:gravity="center"
+                app:layout_constraintTop_toBottomOf="@+id/on_and_off_btn_LinearLayout">
+                <Button
+                    android:id="@+id/discoverable_btn"
+                    style="@style/Button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="5dp"
+                    android:layout_marginRight="5dp"
+                    android:drawableLeft="@drawable/ic_bluetooth_discoverable"
+                    android:minWidth="190dp"
+                    android:text="Discoverable"
+                    android:textColor="@color/white" />
+
+                <Button
+                    android:id="@+id/paired_btn"
+                    style="@style/Button_style"
+                    android:layout_width="wrap_content"
+                    android:layout_height="60dp"
+                    android:layout_gravity="center"
+                    android:layout_marginRight="5dp"
+                    android:drawableLeft="@drawable/ic_bluetooth_paired"
+                    android:minWidth="190dp"
+                    android:text="Paired Devices"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/pair_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="cursive"
+                android:text="Paired Devices List"
+                android:textAlignment="center"
+                android:textColor="@color/toolbar_color_inverse"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_bias="1.0"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/linearLayout2"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <LinearLayout
+                android:id="@+id/ListLinearLayout"
+                android:layout_width="fill_parent"
+                android:layout_height="350dp"
+                android:orientation="vertical"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/pair_title">
+
+                <ListView
+                    android:id="@+id/device_list"
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    tools:layout_editor_absoluteX="16dp"
+                    tools:layout_editor_absoluteY="345dp" />
+            </LinearLayout>
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </RelativeLayout>
+    <!-- 選單 -->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/navigation_view"
+        android:layout_width="240dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:fitsSystemWindows="true"
+        app:menu="@menu/navigation_drawer_bt_main"
+        app:headerLayout="@layout/navigation_header" />
+
+</androidx.drawerlayout.widget.DrawerLayout>
