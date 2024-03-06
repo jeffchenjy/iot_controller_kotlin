@@ -77,7 +77,7 @@
                         android:layout_height="50dp"
                         android:layout_marginLeft="115dp"
                         android:layout_marginTop="15dp"
-                        android:fontFamily="sans-serif-black"
+                        android:fontFamily="@font/rounded_mplus"
                         android:textColor="@color/toolbar_color_inverse"
                         android:paddingTop="14dp"
                         android:textAlignment="center"

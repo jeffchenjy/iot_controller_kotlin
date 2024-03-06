@@ -231,22 +231,26 @@ class BTMainActivity : AppCompatActivity() {
                     }
                 }
                 R.id.paired_btn -> {    // Get Paired devices button click
-                    /*Clear DeviceList*/
-                    this.btPairedDeviceList.clear()
-                    this.PairedAdapter!!.clearData()
-                    this.mDevice_list!!.adapter = this.PairedAdapter
-                    if (mBluetoothAdapter!!.isEnabled) {
-                        /*Set mPair_title and mDevice_list VISIBLE*/
-                        mPair_title!!.visibility = View.VISIBLE
-                        mDevice_list!!.visibility = View.VISIBLE
-                        var devices: Set<BluetoothDevice> = mBluetoothAdapter!!.bondedDevices
-                        var arrayAdapter = this.PairedAdapter
-                        for (device: BluetoothDevice in devices) {
-                            arrayAdapter!!.addData(device.name+"\n"+device.address)
+                    try {
+                        /*Clear DeviceList*/
+                        this.btPairedDeviceList.clear()
+                        this.PairedAdapter!!.clearData()
+                        this.mDevice_list!!.adapter = this.PairedAdapter
+                        if (mBluetoothAdapter!!.isEnabled) {
+                            /*Set mPair_title and mDevice_list VISIBLE*/
+                            mPair_title!!.visibility = View.VISIBLE
+                            mDevice_list!!.visibility = View.VISIBLE
+                            var devices: Set<BluetoothDevice> = mBluetoothAdapter!!.bondedDevices
+                            var arrayAdapter = this.PairedAdapter
+                            for (device: BluetoothDevice in devices) {
+                                arrayAdapter!!.addData(device.name+"\n"+device.address)
+                            }
+                        } else {
+                            //bluetooth is off so can't get paired devices
+                            showToast("Please turn on Bluetooth to get paired devices")
                         }
-                    } else {
-                        //bluetooth is off so can't get paired devices
-                        showToast("Please turn on Bluetooth to get paired devices")
+                    } catch (e: Exception) {
+                        showToast("Can't get Bluetooth paired device!")
                     }
                 }
             }

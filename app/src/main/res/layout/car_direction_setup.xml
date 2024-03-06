@@ -35,8 +35,8 @@
                 android:text="Forward"
                 android:textAlignment="center"
                 android:textColor="@color/toolbar_color_inverse"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/rounded_mplus"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/editText_forward"
@@ -99,8 +99,8 @@
                 android:text="Back"
                 android:textAlignment="center"
                 android:textColor="@color/toolbar_color_inverse"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/rounded_mplus"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/editText_back"
@@ -163,8 +163,8 @@
                 android:text="Left"
                 android:textAlignment="center"
                 android:textColor="@color/toolbar_color_inverse"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/rounded_mplus"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/editText_left"
@@ -227,8 +227,8 @@
                 android:text="Right"
                 android:textAlignment="center"
                 android:textColor="@color/toolbar_color_inverse"
-                android:textSize="18dp"
-                android:textStyle="bold" />
+                android:fontFamily="@font/rounded_mplus"
+                android:textSize="16dp" />
 
             <EditText
                 android:id="@+id/editText_right"

@@ -62,7 +62,7 @@
                     android:layout_height="48dp"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/button_style_stop"
-                    android:fontFamily="sans-serif-condensed-medium"
+                    android:fontFamily="@font/rounded_mplus"
                     android:text="Stop"
                     android:textColor="#FFFFFF"
                     app:backgroundTint="@null" />
