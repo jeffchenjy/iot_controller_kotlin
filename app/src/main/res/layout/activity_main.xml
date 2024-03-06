@@ -48,7 +48,7 @@
                     android:textSize="35sp"
                     android:textColor="@color/white"
                     android:textAlignment="center"
-                    android:fontFamily="sans-serif-black"/>
+                    android:fontFamily="@font/rounded_mplus"/>
                 <ImageView
                     android:id="@+id/imagePhone"
                     android:layout_width="50dp"

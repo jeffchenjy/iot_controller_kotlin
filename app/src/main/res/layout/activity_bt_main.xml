@@ -74,7 +74,7 @@
                         android:layout_height="20dp"
                         android:layout_marginLeft="140dp"
                         android:layout_marginTop="30dp"
-                        android:fontFamily="sans-serif-black"
+                        android:fontFamily="@font/rounded_mplus"
                         android:text=" "
                         android:textAlignment="center"
                         android:textColor="@color/toolbar_color_inverse"
@@ -158,12 +158,11 @@
                 android:id="@+id/pair_title"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="cursive"
+                android:fontFamily="@font/rounded_mplus"
                 android:text="Paired Devices List"
                 android:textAlignment="center"
                 android:textColor="@color/toolbar_color_inverse"
                 android:textSize="16sp"
-                android:textStyle="bold"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
                 app:layout_constraintStart_toStartOf="parent"
@@ -174,16 +173,18 @@
                 android:id="@+id/ListLinearLayout"
                 android:layout_width="fill_parent"
                 android:layout_height="350dp"
+                android:layout_marginTop="15dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pair_title">
+
                 <androidx.recyclerview.widget.RecyclerView
                     android:id="@+id/device_RecyclerView"
                     android:layout_width="fill_parent"
                     android:layout_height="match_parent"
                     tools:layout_editor_absoluteX="16dp"
-                    tools:layout_editor_absoluteY="345dp"/>
+                    tools:layout_editor_absoluteY="345dp" />
             </LinearLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>

@@ -11,7 +11,7 @@
         android:layout_width="64dp"
         android:layout_height="64dp"
         android:contentDescription="@null"
-        android:layout_marginLeft="10dp"
+        android:layout_marginLeft="15dp"
         android:background="@drawable/iot_controller_icon_nav_use"
         android:src="@drawable/iot_original" />
 
@@ -22,7 +22,7 @@
         android:ellipsize="end"
         android:paddingTop="4dp"
         android:text="IoT Controller"
-        android:fontFamily="cursive"
+        android:fontFamily="@font/rounded_mplus"
         android:textSize="18sp"
         android:layout_marginTop="5dp"
         android:layout_marginLeft="5dp"
