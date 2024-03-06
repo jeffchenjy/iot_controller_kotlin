@@ -69,12 +69,15 @@
                     android:textColor="@color/white"
                     android:textSize="16sp"/>
             </LinearLayout>
-
+            <!--
             <ListView
                 android:id="@+id/Scan_ListView"
                 android:layout_width="match_parent"
-                android:layout_height="520dp" />
-
+                android:layout_height="match_parent"/>-->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/Scan_RecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"/>
         </LinearLayout>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

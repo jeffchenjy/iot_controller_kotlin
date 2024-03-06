@@ -28,6 +28,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import pl.droidsonroids.gif.GifDrawable
@@ -36,7 +38,6 @@ class BTMainActivity : AppCompatActivity() {
     /*  About Activity  */
     private val context: Context? = this
     var btMainActivity: BTMainActivity? = this
-
     /*  Button  */
     private var mOn_btn: Button? = null
     private var mOff_btn:Button? = null
@@ -58,10 +59,12 @@ class BTMainActivity : AppCompatActivity() {
     /* BlueTooth */
     private val Request_enable_BT = 0
     private val Permission_REQUEST_Code = 100
+    /*  RecyclerView */
+    private lateinit var mDevice_list: RecyclerView
+    private lateinit var PairedAdapter: RecyclerViewAdapter // 自定義的 Adapter
+    private var  btPairedDeviceList = ArrayList<String>() // 藍牙設備列表
     private var itemData: String? = null
-    private var PairedAdapter: ArrayAdapter<String>? = null
-    private var btPairedDeviceList: List<String>? = null
-    private var mDevice_list: ListView? = null
+    /* Bluetooth */
     private var mBluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     /* Use ActivityResultLauncher (starActivityForResult has been Deprecated)*/
     private var activityResultLauncher = registerForActivityResult<Intent, ActivityResult>(
@@ -83,10 +86,21 @@ class BTMainActivity : AppCompatActivity() {
         /** Init **/
         this.mDevice_list!!.visibility = View.INVISIBLE
         this.mPair_title!!.visibility = View.INVISIBLE
-        /* List */
-        this.btPairedDeviceList = ArrayList<String>()
-        this.PairedAdapter = ArrayAdapter<String>(this.context!!, R.layout.list_view_style, btPairedDeviceList!!)
-        this.mDevice_list!!.adapter = PairedAdapter as ListAdapter?
+
+        /** Initial the RecyclerView **/
+        mDevice_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        PairedAdapter = RecyclerViewAdapter(btPairedDeviceList) // 創建自定義的 Adapter
+        mDevice_list!!.adapter = PairedAdapter
+        /** Utilize ItemClickSupport to enable the RecyclerView to utilize click listener methods **/
+        ItemClickSupport.addTo(mDevice_list)
+        mDevice_list.onItemClick { recyclerView, position, v ->
+            itemData = (recyclerView.adapter as RecyclerViewAdapter).getItem(position)
+            val mainActivity1 = Intent()
+            mainActivity1.putExtra("btData", itemData)
+            mainActivity1.setClass(this@BTMainActivity, CarControlActivity::class.java)
+            startActivity(mainActivity1)
+        }
+        /** Animation initial**/
         try {
             val gifDrawable = GifDrawable(assets, "bluetooth_on.gif")
             mBluetoothIv!!.setImageDrawable(gifDrawable)
@@ -99,14 +113,6 @@ class BTMainActivity : AppCompatActivity() {
         /** BluetoothAdapter **/
         if (mBluetoothAdapter == null) mStatusBluetoothTv!!.text = "Bluetoothは利用できません"
         else mStatusBluetoothTv!!.text = "Bluetoothが利用可能です"
-        mDevice_list!!.onItemClickListener =
-            OnItemClickListener { adapterView, _, position, _ -> /* Get Bluetooth ID and MAC, and put it into itemData as name is btData*/
-                itemData = adapterView.getItemAtPosition(position).toString()
-                val mainActivity1 = Intent()
-                mainActivity1.putExtra("btData", itemData)
-                mainActivity1.setClass(this@BTMainActivity, CarControlActivity::class.java)
-                startActivity(mainActivity1)
-            }
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -138,7 +144,7 @@ class BTMainActivity : AppCompatActivity() {
         mOff_btn = findViewById(R.id.off_btn)
         mDiscoverable_btn = findViewById(R.id.discoverable_btn)
         mPaired_btn = findViewById(R.id.paired_btn)
-        mDevice_list = findViewById(R.id.device_list)
+        mDevice_list = findViewById(R.id.device_RecyclerView)
     }
     private fun setClickListener() {
         mOn_btn!!.setOnClickListener(ButtonClick())
@@ -226,9 +232,9 @@ class BTMainActivity : AppCompatActivity() {
                 }
                 R.id.paired_btn -> {    // Get Paired devices button click
                     /*Clear DeviceList*/
-                    this.btPairedDeviceList = emptyList()
-                    this.PairedAdapter!!.clear()
-                    this.mDevice_list!!.adapter = this.PairedAdapter as ListAdapter
+                    this.btPairedDeviceList.clear()
+                    this.PairedAdapter!!.clearData()
+                    this.mDevice_list!!.adapter = this.PairedAdapter
                     if (mBluetoothAdapter!!.isEnabled) {
                         /*Set mPair_title and mDevice_list VISIBLE*/
                         mPair_title!!.visibility = View.VISIBLE
@@ -236,7 +242,7 @@ class BTMainActivity : AppCompatActivity() {
                         var devices: Set<BluetoothDevice> = mBluetoothAdapter!!.bondedDevices
                         var arrayAdapter = this.PairedAdapter
                         for (device: BluetoothDevice in devices) {
-                            arrayAdapter!!.add(device.name+"\n"+device.address)
+                            arrayAdapter!!.addData(device.name+"\n"+device.address)
                         }
                     } else {
                         //bluetooth is off so can't get paired devices

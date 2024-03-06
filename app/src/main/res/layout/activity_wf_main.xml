@@ -26,7 +26,7 @@
             <LinearLayout
                 android:id="@+id/wifiLinearLayout"
                 android:layout_width="410dp"
-                android:layout_height="120dp"
+                android:layout_height="80dp"
                 android:layout_marginTop="65dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
@@ -36,47 +36,47 @@
                 <FrameLayout
                     android:id="@+id/frameLayout"
                     android:layout_width="match_parent"
-                    android:layout_height="120dp">
+                    android:layout_height="80dp">
 
                     <ImageView
                         android:id="@+id/imgAnim2"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="5dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/circle" />
 
                     <ImageView
                         android:id="@+id/imgAnim1"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="5dp"
                         android:scaleType="centerCrop"
                         android:src="@drawable/circle" />
 
                     <ImageView
                         android:id="@+id/wifi_Iv"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="5dp"
                         android:src="@drawable/ic_iot_wifi" />
                     <ImageView
                         android:id="@+id/wifi_off_Iv"
-                        android:layout_width="80dp"
-                        android:layout_height="80dp"
+                        android:layout_width="70dp"
+                        android:layout_height="70dp"
                         android:layout_marginLeft="20dp"
-                        android:layout_marginTop="20dp"
+                        android:layout_marginTop="5dp"
                         android:src="@drawable/ic_iot_wifi_off" />
 
                     <TextView
                         android:id="@+id/wifi_ssid_Tv"
                         android:layout_width="250dp"
-                        android:layout_height="60dp"
+                        android:layout_height="50dp"
                         android:layout_marginLeft="115dp"
-                        android:layout_marginTop="30dp"
+                        android:layout_marginTop="15dp"
                         android:fontFamily="sans-serif-black"
                         android:textColor="@color/toolbar_color_inverse"
                         android:paddingTop="14dp"
@@ -85,8 +85,8 @@
                 </FrameLayout>
             </LinearLayout>
             <LinearLayout
-                android:layout_width="300dp"
-                android:layout_height="80dp"
+                android:layout_width="250dp"
+                android:layout_height="70dp"
                 android:layout_marginBottom="50dp"
                 android:orientation="vertical"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -96,7 +96,7 @@
                 <Button
                     android:id="@+id/CCI_button"
                     android:layout_width="match_parent"
-                    android:layout_height="80dp"
+                    android:layout_height="70dp"
                     style="@style/Button_style"
                     android:text="Car Control Interface"
                     android:textColor="@color/white" />
@@ -106,7 +106,7 @@
     <!-- 選單 -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/navigation_view"
-        android:layout_width="240dp"
+        android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="end"
         android:fitsSystemWindows="true"

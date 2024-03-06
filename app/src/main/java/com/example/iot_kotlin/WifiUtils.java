@@ -42,7 +42,10 @@ public class WifiUtils {
         String wifi_SSID = "None";
         WifiManager wifiManager = (WifiManager) context.getApplicationContext().getSystemService(Context.WIFI_SERVICE);
         WifiInfo currentWifi = wifiManager.getConnectionInfo();
-        wifi_SSID = currentWifi.getSSID().substring(1, currentWifi.getSSID().length()-1);
+        if(currentWifi.getSSID().equals(wifiManager.UNKNOWN_SSID)) {
+            wifi_SSID = "No Wi-Fi to connect";
+        }
+        else wifi_SSID = currentWifi.getSSID().substring(1, currentWifi.getSSID().length()-1);
         return  wifi_SSID;
     }
 }
