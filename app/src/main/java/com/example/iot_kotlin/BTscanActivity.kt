@@ -21,6 +21,9 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.view.get
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 
 class BTscanActivity : AppCompatActivity() {
     /*  About Activity  */
@@ -36,11 +39,14 @@ class BTscanActivity : AppCompatActivity() {
     private val Permission_REQUEST_Code = 100
     private var receiverFlag = false
     private var broadcastReceiver: BroadcastReceiver? = null
-    private var scanAdapter: ArrayAdapter<String>? = null
-    private var btScanDeviceList: List<String>? = null
-    private var mScan_ListView: ListView? = null
     private var mBluetoothAdapter: BluetoothAdapter? = BluetoothAdapter.getDefaultAdapter()
     private var mSearch_btn: Button? = null
+
+    /*  RecyclerView */
+    private lateinit var mScanRecyclerView: RecyclerView
+    private lateinit var scanAdapter: RecyclerViewAdapter // 自定義的 Adapter
+    private var btScanDeviceList = ArrayList<String>() // 藍牙設備列表
+
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
@@ -56,11 +62,32 @@ class BTscanActivity : AppCompatActivity() {
             ActivityCompat.requestPermissions(this, arrayOf("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"), Permission_REQUEST_Code)
         }
 
-        /** ListView **/
-        mScan_ListView = findViewById<View>(R.id.Scan_ListView) as ListView
-        btScanDeviceList = ArrayList<String>()
-        scanAdapter = ArrayAdapter<String>(this.context, R.layout.list_view_style, btScanDeviceList!!)
-        mScan_ListView!!.adapter = scanAdapter as ListAdapter?
+
+        /** Initial the RecyclerView **/
+        mScanRecyclerView = findViewById(R.id.Scan_RecyclerView)
+        mScanRecyclerView.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        scanAdapter = RecyclerViewAdapter(btScanDeviceList) // 創建自定義的 Adapter
+        mScanRecyclerView!!.adapter = scanAdapter
+        /** Utilize ItemClickSupport to enable the RecyclerView to utilize click listener methods **/
+        ItemClickSupport.addTo(mScanRecyclerView)
+        mScanRecyclerView.onItemClick { recyclerView, position, v ->
+            val itemValue = (recyclerView.adapter as RecyclerViewAdapter).getItem(position)
+            try {
+                if (itemValue.length >= 17) {
+                    val substring = itemValue.substring(itemValue.length - 17)
+                    val remoteDevice = mBluetoothAdapter?.getRemoteDevice(substring)
+                    remoteDevice?.let {
+                        val method = it.javaClass.getMethod("createBond")
+                        method.invoke(it)
+                    }
+                } else {
+                    showToast("Bluetooth MAC's length is not 17!")
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                showToast("Error Catch!")
+            }
+        }
 
         /** Bluetooth **/
         mBluetoothAdapter!!.startDiscovery()
@@ -73,40 +100,28 @@ class BTscanActivity : AppCompatActivity() {
                 if (action == "android.bluetooth.device.action.FOUND") {
                     val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice?
                     val arrayAdapter = scanAdapter
-                    if (device != null) {
-                        arrayAdapter!!.add(device.name + "\n" + device.address)
+                    if (device != null && !arrayAdapter.containsData(device.address)) {
+                        arrayAdapter!!.addData(device.name + "\n" + device.address)
                     }
                 }
             }
         }
         registerReceiver(broadcastReceiver, intentFilter)
         showToast("Search BT device first.")
+
         /** Search Button**/
         mSearch_btn = findViewById<View>(R.id.search_btn) as Button
         this.mSearch_btn!!.setOnClickListener(View.OnClickListener {
             if (receiverFlag) {
                 mBluetoothAdapter!!.cancelDiscovery()
-                btScanDeviceList = emptyList()
-                scanAdapter!!.clear()
-                mScan_ListView!!.adapter = scanAdapter
+                btScanDeviceList.clear()
+                scanAdapter!!.clearData()
+                mScanRecyclerView!!.adapter = scanAdapter
                 mBluetoothAdapter!!.startDiscovery()
                 showToast("Search BT device again.")
             }
         })
-        /** ListView ClickListener **/
-        mScan_ListView!!.onItemClickListener =
-            OnItemClickListener { adapterView, _, position, _ ->
-                mBluetoothAdapter!!.cancelDiscovery()
-                val obj = adapterView.getItemAtPosition(position).toString()
-                try {
-                    val substring = obj.substring(obj.length - 17)
-                    val remoteDevice = mBluetoothAdapter!!.getRemoteDevice(substring)
-                    val method = remoteDevice.javaClass.getMethod("createBond", null)
-                    method.invoke(remoteDevice, null)
-                } catch (e: Exception) {
-                    e.printStackTrace()
-                }
-            }
+
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar

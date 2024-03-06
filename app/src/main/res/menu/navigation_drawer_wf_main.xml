@@ -1,29 +1,43 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_home"
             android:icon="@drawable/ic_home"
             android:title="@string/homepage" />
-        <item
-            android:id="@+id/current_url"
-            android:icon="@drawable/ic_http"
-            android:title="@string/current_url" />
-        <item
-            android:id="@+id/action_url"
-            android:icon="@drawable/ic_setting"
-            android:title="@string/url_setting" />
-        <item
-            android:id="@+id/current_video_url"
-            android:icon="@drawable/ic_video"
-            android:title="@string/current_video_url" />
-        <item
-            android:id="@+id/action_video_url"
-            android:icon="@drawable/ic_video_setting"
-            android:title="@string/video_url_setting" />
-        <item
-            android:id="@+id/wf_Operation"
-            android:icon="@drawable/ic_help"
-            android:title="@string/operation_title" />
     </group>
+    <item android:title="URL">
+        <menu>
+            <item
+                android:id="@+id/current_url"
+                android:icon="@drawable/ic_http"
+                android:title="@string/current_url" />
+            <item
+                android:id="@+id/current_video_url"
+                android:icon="@drawable/ic_video"
+                android:title="@string/current_video_url" />
+        </menu>
+    </item>
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/action_url"
+                android:icon="@drawable/ic_setting"
+                android:title="@string/url_setting" />
+            <item
+                android:id="@+id/action_video_url"
+                android:icon="@drawable/ic_video_setting"
+                android:title="@string/video_url_setting" />
+        </menu>
+    </item>
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/wf_Operation"
+                android:icon="@drawable/ic_help"
+                android:title="@string/operation_title" />
+        </menu>
+    </item>
 </menu>

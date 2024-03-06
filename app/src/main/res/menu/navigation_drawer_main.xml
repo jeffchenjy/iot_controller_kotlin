@@ -1,26 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:showIn = "navigation_view">
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/action_home"
             android:icon="@drawable/ic_home"
             android:checked="true"
             android:title="@string/homepage" />
-        <item
-            android:id="@+id/action_operation"
-            android:icon="@drawable/ic_help"
-            android:title="@string/main_operation_title" />
-
-        <item
-            android:id="@+id/action_about"
-            android:icon="@drawable/ic_about"
-            android:title="@string/about_app" />
-        <item
-            android:id="@+id/action_copyright"
-            android:icon="@drawable/ic_copyright"
-            android:title="@string/copyright_title"
-            />
     </group>
+    <item android:title="Link">
+        <menu>
+            <item
+                android:id="@+id/action_twitter"
+                android:icon="@drawable/ic_twitter_x"
+                android:title="@string/twitter"/>
+            <item
+                android:id="@+id/action_github"
+                android:icon="@drawable/ic_github_logo"
+                android:title="@string/github"/>
+        </menu>
+    </item>
+    <item android:title="About">
+        <menu>
+            <item
+                android:id="@+id/action_operation"
+                android:icon="@drawable/ic_help"
+                android:title="@string/main_operation_title" />
+            <item
+                android:id="@+id/action_about"
+                android:icon="@drawable/ic_about"
+                android:title="@string/about_app" />
+            <item
+                android:id="@+id/action_copyright"
+                android:icon="@drawable/ic_copyright"
+                android:title="@string/copyright_title" />
+        </menu>
+    </item>
 
 </menu>

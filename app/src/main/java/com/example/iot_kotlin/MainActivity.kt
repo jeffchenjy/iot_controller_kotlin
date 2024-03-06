@@ -4,6 +4,7 @@ import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.graphics.Path
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -49,6 +50,9 @@ class MainActivity : AppCompatActivity() {
     private var drawerLayout: DrawerLayout? = null
     private var navigation_view: NavigationView? = null
 
+    /* URL */
+    val twiter_url = "https://twitter.com/"
+    val github_url = "https://github.com/jeffchenjy/iot_controller_kotlin.git"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -163,6 +167,16 @@ class MainActivity : AppCompatActivity() {
                     Main_intent.setClass(this@MainActivity, MainActivity::class.java)
                     startActivity(Main_intent)
                     overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                }
+                R.id.action_twitter -> {
+                    val uri = Uri.parse(twiter_url)
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(intent)
+                }
+                R.id.action_github -> {
+                    val uri = Uri.parse(github_url)
+                    val intent = Intent(Intent.ACTION_VIEW, uri)
+                    startActivity(intent)
                 }
                 R.id.action_operation -> {
                     operation_Dialog()
