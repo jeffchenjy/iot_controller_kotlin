@@ -12,16 +12,16 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:theme="@style/Theme.Material3.Dark"
-            app:titleTextColor="@color/toolbar_color_inverse"
             android:elevation="4dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@color/toolbar_color">
+            style="@style/ScreenBackgroundColor">
 
             <LinearLayout
                 android:id="@+id/wifiLinearLayout"
@@ -73,12 +73,12 @@
 
                     <TextView
                         android:id="@+id/wifi_ssid_Tv"
+                        style="@style/textColor"
                         android:layout_width="250dp"
                         android:layout_height="50dp"
                         android:layout_marginLeft="115dp"
                         android:layout_marginTop="15dp"
                         android:fontFamily="@font/rounded_mplus"
-                        android:textColor="@color/toolbar_color_inverse"
                         android:paddingTop="14dp"
                         android:textAlignment="center"
                         android:textSize="26dp" />

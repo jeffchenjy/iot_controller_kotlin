@@ -12,24 +12,24 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/main_toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:theme="@style/Theme.Material3.Dark"
-            app:titleTextColor="@color/toolbar_color_inverse"
             android:elevation="4dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/ScreenBackgroundColor"
             android:gravity="center_horizontal"
-            android:orientation="vertical"
-            android:background="@color/toolbar_color">
+            android:orientation="vertical">
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/constraintLayout"
                 android:layout_width="match_parent"
                 android:layout_height="350dp"
+                android:minHeight="200dp"
                 android:layout_marginTop="60dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -139,6 +139,8 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="8dp"
+                android:minWidth="140dp"
+                android:minHeight="160dp"
                 android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
@@ -180,7 +182,7 @@
     </RelativeLayout>
     <!-- 選單 -->
     <com.google.android.material.navigation.NavigationView
-        android:id="@+id/navigation_view"
+        android:id="@+id/navigation_drawer"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"

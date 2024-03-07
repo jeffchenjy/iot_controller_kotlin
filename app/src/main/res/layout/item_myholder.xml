@@ -21,13 +21,13 @@
                 android:src="@drawable/ic_bluetooth_0" />
             <TextView
                 android:id="@+id/item_text"
+                style="@style/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="10dp"
                 android:paddingLeft="20dp"
                 android:gravity="center_vertical"
-                android:fontFamily="@font/rounded_mplus"
-                android:textColor="@color/icon_color"/>
+                android:fontFamily="@font/rounded_mplus" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 </LinearLayout>

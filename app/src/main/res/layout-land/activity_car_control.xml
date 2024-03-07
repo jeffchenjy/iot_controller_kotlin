@@ -12,20 +12,20 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:theme="@style/Theme.AppCompat"
+            android:theme="@style/Theme.Material3.Dark"
             app:popupTheme="@style/OverflowMenuStyle"
-            app:titleTextColor="@color/toolbar_color_inverse"
             android:fitsSystemWindows="true"
             android:elevation="4dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            style="@style/ScreenBackgroundColor"
             android:baselineAligned="false"
             android:gravity="center_horizontal"
-            android:background="#212121"
             android:orientation="vertical">
 
             <LinearLayout

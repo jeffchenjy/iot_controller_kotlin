@@ -2,21 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="160dp"
-    android:background="@color/toolbar_color"
+    android:background="@drawable/navbg"
     android:gravity="bottom"
+    android:padding="16dp"
+    android:theme="@style/ThemeOverlay.Material3.Dark"
     android:orientation="vertical">
 
     <ImageView
         android:id="@+id/logo_icon"
-        android:layout_width="64dp"
-        android:layout_height="64dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="20dp"
         android:contentDescription="@null"
-        android:layout_marginLeft="15dp"
         android:background="@drawable/iot_controller_icon_nav_use"
         android:src="@drawable/iot_original" />
 
     <TextView
         android:id="@+id/txtHeader"
+        style="@style/textColor"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:ellipsize="end"
@@ -24,9 +27,6 @@
         android:text="IoT Controller"
         android:fontFamily="@font/rounded_mplus"
         android:textSize="18sp"
-        android:layout_marginTop="5dp"
-        android:layout_marginLeft="5dp"
-        android:layout_marginBottom="5dp"
-        android:textColor="@color/toolbar_color_inverse" />
+        android:layout_marginBottom="5dp"/>
 
 </LinearLayout>

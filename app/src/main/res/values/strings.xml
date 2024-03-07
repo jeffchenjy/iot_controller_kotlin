@@ -7,6 +7,12 @@
         相互に情報交換をする仕組みです。読み方は「アイオーティー」で、「Internet of Things」の略からもわかるように「モノのインターネット」という意味で使われています。</string>
     <string name="bt_operation">
         ユーザーはこの機能を通じて Bluetooth SPP プロトコルを制御できます。</string>
+
+    <string name="bt_search_dialog_start">
+        このBluetoothデバイス</string>
+    <string name="bt_search_dialog_end">
+        に接続しますか?</string>
+
     <string name="about">
         ユーザーはこのアプリを通じてどのIoT機能を使用するかできます。</string>
     <string name="copyright">Copyright © 2024 Jhih-Yong, Chen</string>
@@ -30,6 +36,7 @@
     <string name="bluetooth_button">Bluetooth</string>
     <string name="bluetooth_scan">Bluetooth Search</string>
     <string name="bluetooth_search">Bluetooth 探す</string>
+    <string name="bluetooth_connect">Bluetooth 接続</string>
     <string name="car_control_page">Car Control</string>
     <string name="music_title">Music Selection</string>
     <string name="music_control">Music Control</string>
@@ -42,6 +49,8 @@
     <string name="homepage">ホームページ</string>
     <string name="operation_title">操作紹介</string>
     <string name="main_operation_title">IoT とは?</string>
+    <string name="light_mode">ライトモードに変更する</string>
+    <string name="dark_mode">ダークモードに変更する</string>
     <string name="current_url">當前のURL</string>
     <string name="url_setting">URL設定</string>
     <string name="current_video_url">ビデオのURL</string>

@@ -3,20 +3,28 @@ package com.example.iot_kotlin
 import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
+import android.content.res.Resources
 import android.graphics.Path
+import android.graphics.drawable.Drawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
@@ -49,17 +57,41 @@ class MainActivity : AppCompatActivity() {
     private var main_Toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
     private var navigation_view: NavigationView? = null
-
+    private var itemIdToFind: Int? = null
+    private var menu: Menu? = null
+    private var menuItem: MenuItem? =null
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var edit: SharedPreferences.Editor
+    private var nightMode: Boolean? = false
     /* URL */
     val twiter_url = "https://twitter.com/"
     val github_url = "https://github.com/jeffchenjy/iot_controller_kotlin.git"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setToolbar()
         findView()
+        setToolbar()
         Image_Animation()
         setNavigationItemSelectedListener()
+        /** Mode Change **/
+        menu = navigation_view!!.menu
+        // 指定要查找的菜單項目的 ID
+        itemIdToFind = R.id.action_change_mode
+        // 使用 findItem() 方法來查找指定 ID 的菜單項目
+        menuItem = menu!!.findItem(itemIdToFind!!)
+        /* use sharedPreferences change themes*/
+        sharedPreferences = getSharedPreferences("MODE", MODE_PRIVATE)
+        nightMode = sharedPreferences!!.getBoolean("nightMode", false)
+        if(nightMode as Boolean) {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+            menuItem!!.title = getString(R.string.light_mode)
+            menuItem!!.icon = getDrawable(R.drawable.ic_light_mode)
+        } else {
+            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+            menuItem!!.title = getString(R.string.dark_mode)
+            menuItem!!.icon = getDrawable(R.drawable.ic_dark_mode)
+        }
+        /** Button **/
         bt_btn!!.setOnClickListener(View.OnClickListener {
             val BTMain_intent = Intent()
             BTMain_intent.setClass(this@MainActivity, BTMainActivity::class.java)
@@ -73,7 +105,7 @@ class MainActivity : AppCompatActivity() {
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
         }
         exit_btn!!.setOnClickListener {
-            MaterialAlertDialogBuilder(this)
+            MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
                 .setIcon(R.drawable.ic_leave)
                 .setTitle(resources.getString(R.string.leave_title))
                 .setMessage(resources.getString(R.string.leave))
@@ -93,9 +125,6 @@ class MainActivity : AppCompatActivity() {
         }
     }
     private fun setToolbar() {
-        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
-        navigation_view = findViewById<View>(R.id.navigation_view) as NavigationView
-        main_Toolbar = findViewById<View>(R.id.main_toolbar) as Toolbar
         setSupportActionBar(main_Toolbar)
         /** !!操作符表示一個非空斷言（non-null assertion）。
          * 它告訴編譯器，即使某個變數的類型是可空的，我也確定這個變數在此時不會為null。
@@ -115,6 +144,10 @@ class MainActivity : AppCompatActivity() {
         })
     }
     private fun findView() {
+        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
+        navigation_view = findViewById<View>(R.id.navigation_drawer) as NavigationView
+        main_Toolbar = findViewById<View>(R.id.main_toolbar) as Toolbar
+
         imagePhone = findViewById<View>(R.id.imagePhone) as ImageView
         imageGame = findViewById<View>(R.id.imageGame) as ImageView
         imageTV = findViewById<View>(R.id.imageTV) as ImageView
@@ -178,6 +211,9 @@ class MainActivity : AppCompatActivity() {
                     val intent = Intent(Intent.ACTION_VIEW, uri)
                     startActivity(intent)
                 }
+                R.id.action_change_mode -> {
+                    Change_Mode()
+                }
                 R.id.action_operation -> {
                     operation_Dialog()
                 }
@@ -191,8 +227,34 @@ class MainActivity : AppCompatActivity() {
             false
         }
     }
+    private fun Change_Mode() {
+        try {        // 檢查是否找到了菜單項目
+            if (menuItem != null) {
+                val title: CharSequence? = menuItem!!.title
+                if(nightMode!!) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    edit = sharedPreferences!!.edit()
+                    edit!!.putBoolean("nightMode", false)
+                } else {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    edit = sharedPreferences!!.edit()
+                    edit!!.putBoolean("nightMode", true)
+                }
+                edit!!.apply()
+                if (title.toString() == getString(R.string.light_mode)) {
+                    menuItem!!.title = getString(R.string.dark_mode)
+                    menuItem!!.icon = getDrawable(R.drawable.ic_dark_mode)
+                } else {
+                    menuItem!!.title = getString(R.string.light_mode)
+                    menuItem!!.icon = getDrawable(R.drawable.ic_light_mode)
+                }
+            }
+        } catch (e: Exception) {
+            // 處理例外情況
+        }
+    }
     private fun operation_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.main_operation_title))
             .setMessage(resources.getString(R.string.main_operation))
@@ -204,7 +266,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun about_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_about)
             .setTitle(resources.getString(R.string.about_app))
             .setMessage(resources.getString(R.string.about))
@@ -216,7 +278,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun copyright_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_copyright)
             .setTitle(resources.getString(R.string.copyright_title))
             .setMessage(resources.getString(R.string.copyright))

@@ -416,7 +416,7 @@ class CarControlActivity : AppCompatActivity()  {
         var btn_volume_minus = inflate.findViewById<View>(R.id.volume_minus) as ImageButton
         var btn_volume_add = inflate.findViewById<View>(R.id.volume_add) as ImageButton
         var progressBar = inflate.findViewById<View>(R.id.progressBar) as ProgressBar
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_music_menu)
             .setTitle(resources.getString(R.string.music_control))
             .setView(inflate)
@@ -498,7 +498,7 @@ class CarControlActivity : AppCompatActivity()  {
         val editText_b = inflate.findViewById<View>(R.id.editText_b) as EditText
         val editText_x = inflate.findViewById<View>(R.id.editText_x) as EditText
         val editText_y = inflate.findViewById<View>(R.id.editText_y) as EditText
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_setting)
             .setTitle(resources.getString(R.string.direction_cmd))
             .setView(inflate)
@@ -600,7 +600,7 @@ class CarControlActivity : AppCompatActivity()  {
         sb.append("Music volume up       : $music_volume_up\n")
         sb.append("Music volume down : $music_volume_down\n")
 
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_list)
             .setTitle(resources.getString(R.string.cmd_title))
             .setMessage(sb.toString())
@@ -611,7 +611,7 @@ class CarControlActivity : AppCompatActivity()  {
             .show()
     }
     private fun selectMelody_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_car_music)
             .setTitle(resources.getString(R.string.music_title))
             .setItems(songArrayData) { dialog, i ->
@@ -648,7 +648,7 @@ class CarControlActivity : AppCompatActivity()  {
             .show()
     }
     private fun Instruction_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.car_control_instruction))
