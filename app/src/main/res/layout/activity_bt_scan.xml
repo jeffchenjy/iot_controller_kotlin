@@ -12,23 +12,22 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:theme="@style/Theme.Material3.Dark"
-            app:titleTextColor="@color/toolbar_color_inverse"
             android:elevation="4dp"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:background="@color/toolbar_color">
-
-
+            style="@style/ScreenBackgroundColor">
             <LinearLayout
                 android:layout_width="170dp"
                 android:layout_height="170dp"
+                android:minWidth="100dp"
                 android:layout_marginTop="65dp"
                 android:orientation="vertical">
                 <FrameLayout
@@ -74,10 +73,14 @@
                 android:id="@+id/Scan_ListView"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>-->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/Scan_RecyclerView"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"/>
+                android:layout_height="match_parent">
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/Scan_RecyclerView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"/>
+            </LinearLayout>
         </LinearLayout>
     </RelativeLayout>
 </androidx.drawerlayout.widget.DrawerLayout>

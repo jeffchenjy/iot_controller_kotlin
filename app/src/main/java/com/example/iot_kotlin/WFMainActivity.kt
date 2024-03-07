@@ -208,7 +208,7 @@ class WFMainActivity : AppCompatActivity() {
         }
     }
     private fun Operation_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.wf_operation))
@@ -220,7 +220,7 @@ class WFMainActivity : AppCompatActivity() {
     }
 
     private fun Current_Url_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_http)
             .setTitle(resources.getString(R.string.current_url))
             .setMessage(cmd_url)
@@ -232,7 +232,7 @@ class WFMainActivity : AppCompatActivity() {
     }
 
     private fun Current_Video_Url_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_video)
             .setTitle(resources.getString(R.string.current_video_url))
             .setMessage(video_url)
@@ -255,7 +255,7 @@ class WFMainActivity : AppCompatActivity() {
                 R.id.radioButton_https -> http_text.text = "https://"
             }
         }
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_setting)
             .setTitle(resources.getString(R.string.url_setting))
             .setView(inflate)
@@ -288,7 +288,7 @@ class WFMainActivity : AppCompatActivity() {
                 R.id.radioButton_https -> http_text.text = "https://"
             }
         }
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_video_setting)
             .setTitle(resources.getString(R.string.video_url_setting))
             .setView(inflate)

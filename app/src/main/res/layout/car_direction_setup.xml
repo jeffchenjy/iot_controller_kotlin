@@ -28,13 +28,13 @@
 
             <TextView
                 android:id="@+id/textView_forward"
+                style="@style/textColor"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:text="Forward"
                 android:textAlignment="center"
-                android:textColor="@color/toolbar_color_inverse"
                 android:fontFamily="@font/rounded_mplus"
                 android:textSize="16dp" />
 
@@ -92,13 +92,13 @@
 
             <TextView
                 android:id="@+id/textView_back"
+                style="@style/textColor"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:text="Back"
                 android:textAlignment="center"
-                android:textColor="@color/toolbar_color_inverse"
                 android:fontFamily="@font/rounded_mplus"
                 android:textSize="16dp" />
 
@@ -156,13 +156,13 @@
 
             <TextView
                 android:id="@+id/textView_left"
+                style="@style/textColor"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:text="Left"
                 android:textAlignment="center"
-                android:textColor="@color/toolbar_color_inverse"
                 android:fontFamily="@font/rounded_mplus"
                 android:textSize="16dp" />
 
@@ -220,13 +220,13 @@
 
             <TextView
                 android:id="@+id/textView_right"
+                style="@style/textColor"
                 android:layout_width="50dp"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="1dp"
                 android:layout_weight="1"
                 android:text="Right"
                 android:textAlignment="center"
-                android:textColor="@color/toolbar_color_inverse"
                 android:fontFamily="@font/rounded_mplus"
                 android:textSize="16dp" />
 

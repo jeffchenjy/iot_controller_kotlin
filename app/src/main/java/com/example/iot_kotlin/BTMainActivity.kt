@@ -13,12 +13,8 @@ import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.ArrayAdapter
 import android.widget.Button
 import android.widget.ImageView
-import android.widget.ListAdapter
-import android.widget.ListView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.ActivityResult
@@ -26,11 +22,13 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.navigation.NavigationView
 import pl.droidsonroids.gif.GifDrawable
 
@@ -39,10 +37,9 @@ class BTMainActivity : AppCompatActivity() {
     private val context: Context? = this
     var btMainActivity: BTMainActivity? = this
     /*  Button  */
-    private var mOn_btn: Button? = null
-    private var mOff_btn:Button? = null
     private var mDiscoverable_btn:Button? = null
     private var mPaired_btn:Button? = null
+    private var bt_switch_btn: MaterialSwitch? = null
     /*  ImageView  */
     private var mBluetoothIv: ImageView? = null
     private var mBluetooth_off_Iv: ImageView? = null
@@ -113,6 +110,36 @@ class BTMainActivity : AppCompatActivity() {
         /** BluetoothAdapter **/
         if (mBluetoothAdapter == null) mStatusBluetoothTv!!.text = "Bluetoothは利用できません"
         else mStatusBluetoothTv!!.text = "Bluetoothが利用可能です"
+        /** Switch Button **/
+        bt_switch_btn!!.setOnCheckedChangeListener { buttonView, isChecked ->
+            // 當 Switch 按鈕的狀態發生變化時，會調用此方法
+            if (isChecked) {
+                // Switch 按鈕被打開
+                val thumbDrawable = ContextCompat.getDrawable(this, R.drawable.ic_switch_check)
+                bt_switch_btn!!.thumbIconDrawable = thumbDrawable
+                if (!mBluetoothAdapter!!.isEnabled) {
+                    mPair_title!!.visibility = View.INVISIBLE
+                    mDevice_list!!.visibility = View.INVISIBLE
+                    showToast("Turning On Bluetooth...")
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        mBluetoothAdapter!!.enable()
+                    }
+                } else {
+                    showToast("Bluetooth is already on")
+                }
+            } else {
+                // Switch 按鈕被關閉
+                bt_switch_btn!!.thumbIconDrawable = null
+                mPair_title!!.visibility = View.INVISIBLE
+                mDevice_list!!.visibility = View.INVISIBLE
+                if (mBluetoothAdapter!!.isEnabled) {
+                    mBluetoothAdapter!!.disable()
+                    showToast("Turning Bluetooth Off")
+                } else {
+                    showToast("Bluetooth is already off")
+                }
+            }
+        }
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -140,15 +167,12 @@ class BTMainActivity : AppCompatActivity() {
         mBluetooth_off_Iv = findViewById(R.id.bluetooth_off_Iv)
         imgAnim1 = findViewById(R.id.imgAnim1)
         imgAnim2 = findViewById(R.id.imgAnim2)
-        mOn_btn = findViewById(R.id.on_btn)
-        mOff_btn = findViewById(R.id.off_btn)
         mDiscoverable_btn = findViewById(R.id.discoverable_btn)
         mPaired_btn = findViewById(R.id.paired_btn)
+        bt_switch_btn = findViewById(R.id.bt_switch_btn)
         mDevice_list = findViewById(R.id.device_RecyclerView)
     }
     private fun setClickListener() {
-        mOn_btn!!.setOnClickListener(ButtonClick())
-        mOff_btn!!.setOnClickListener(ButtonClick())
         mDiscoverable_btn!!.setOnClickListener(ButtonClick())
         mPaired_btn!!.setOnClickListener(ButtonClick())
     }
@@ -157,6 +181,10 @@ class BTMainActivity : AppCompatActivity() {
             if (btMainActivity!!.mBluetoothAdapter!!.isEnabled) {
                 mBluetoothIv!!.visibility = View.VISIBLE
                 mBluetooth_off_Iv!!.visibility = View.INVISIBLE
+                if (!bt_switch_btn!!.isChecked) {
+                    bt_switch_btn!!.isChecked = true
+                    bt_switch_btn!!.thumbIconDrawable = getDrawable(R.drawable.ic_switch_check)
+                }
                 /** Animation **/
                 imgAnim1!!.animate().scaleX(2f).scaleY(2f).alpha(0f).setDuration(610)
                     .withEndAction {
@@ -164,10 +192,13 @@ class BTMainActivity : AppCompatActivity() {
                         imgAnim1!!.scaleY = 1f
                         imgAnim1!!.alpha = 1f
                     }
-
             } else {
                 mBluetoothIv!!.visibility = View.INVISIBLE
                 mBluetooth_off_Iv!!.visibility = View.VISIBLE
+                if (bt_switch_btn!!.isChecked) {
+                    bt_switch_btn!!.isChecked = false
+                    bt_switch_btn!!.thumbIconDrawable = null
+                }
                 imgAnim1!!.animate().scaleX(1f).scaleY(1f).alpha(0f).setDuration(1000)
                     .withEndAction {
                         imgAnim1!!.scaleX = 1f
@@ -190,37 +221,12 @@ class BTMainActivity : AppCompatActivity() {
             val view = it as? View
             val viewId = view?.id
             when (viewId){
-                R.id.on_btn -> {
-                    if (!mBluetoothAdapter!!.isEnabled) {
-                        mPair_title!!.visibility = View.INVISIBLE
-                        mDevice_list!!.visibility = View.INVISIBLE
-                        showToast("Turning On Bluetooth...")
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                            mBluetoothAdapter!!.enable()
-                        }
-                        // Intent to On Bluetooth
-                        val intent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
-                        activityResultLauncher.launch(intent)
-                    } else {
-                        showToast("Bluetooth is already on")
-                    }
-                }
-                R.id.off_btn -> {
-                    // Turn off Bluetooth btn click
-                    mPair_title!!.visibility = View.INVISIBLE
-                    mDevice_list!!.visibility = View.INVISIBLE
-                    if (mBluetoothAdapter!!.isEnabled) {
-                        mBluetoothAdapter!!.disable()
-                        showToast("Turning Bluetooth Off")
-                    } else {
-                        showToast("Bluetooth is already off")
-                    }
-                }
                 R.id.discoverable_btn -> {
                     // Discover bluetooth btn click
                     mPair_title!!.visibility = View.INVISIBLE
                     mDevice_list!!.visibility = View.INVISIBLE
                     if (mBluetoothAdapter!!.isEnabled) {
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) { }
                         if (!mBluetoothAdapter!!.isDiscovering) {
                             val discoverintent =
                                 Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
@@ -321,7 +327,7 @@ class BTMainActivity : AppCompatActivity() {
         }
     }
     private fun operation_Dialog() {
-        MaterialAlertDialogBuilder(this)
+        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.bt_operation))

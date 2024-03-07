@@ -12,30 +12,31 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
             android:theme="@style/Theme.Material3.Dark"
-            app:titleTextColor="@color/toolbar_color_inverse"
             android:elevation="4dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center_horizontal"
             android:orientation="vertical"
-            android:background="@color/toolbar_color">
+            style="@style/ScreenBackgroundColor">
             <LinearLayout
                 android:id="@+id/TopLinearLayout"
                 android:layout_width="400dp"
                 android:layout_height="80dp"
                 android:layout_marginTop="65dp"
                 android:orientation="horizontal"
+                android:minWidth="200dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
                 <FrameLayout
                     android:id="@+id/frameLayout"
-                    android:layout_width="match_parent"
+                    android:layout_width="100dp"
                     android:layout_height="match_parent">
 
                     <ImageView
@@ -68,66 +69,38 @@
                         android:layout_marginTop="5dp"
                         android:layout_marginLeft="15dp"
                         android:src="@drawable/ic_bluetooth_off_main" />
-                    <TextView
-                        android:id="@+id/statusBluetoothTv"
-                        android:layout_width="200dp"
-                        android:layout_height="20dp"
-                        android:layout_marginLeft="140dp"
-                        android:layout_marginTop="30dp"
-                        android:fontFamily="@font/rounded_mplus"
-                        android:text=" "
-                        android:textAlignment="center"
-                        android:textColor="@color/toolbar_color_inverse"
-                        android:textSize="14sp"
-                        tools:ignore="SpeakableTextPresentCheck" />
                 </FrameLayout>
-            </LinearLayout>
-            <LinearLayout
-                android:id="@+id/on_and_off_btn_LinearLayout"
-                android:layout_width="match_parent"
-                android:layout_height="70dp"
-                android:orientation="horizontal"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.0"
-                app:layout_constraintStart_toStartOf="parent"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@+id/TopLinearLayout">
-                <Button
-                    android:id="@+id/on_btn"
+                <TextView
+                    android:id="@+id/statusBluetoothTv"
+                    style="@style/textColor"
+                    android:layout_width="200dp"
+                    android:layout_height="20dp"
+                    android:layout_marginLeft="10dp"
+                    android:fontFamily="@font/rounded_mplus"
+                    android:text=" "
+                    android:textAlignment="center"
+                    android:textSize="14sp"
+                    tools:ignore="SpeakableTextPresentCheck" />
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/bt_switch_btn"
                     android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
-                    style="@style/Button_style"
-                    android:drawableLeft="@drawable/ic_bluetooth"
-                    android:minWidth="190dp"
-                    android:text="Turn on"
-                    android:textColor="@color/white" />
-
-                <Button
-                    android:id="@+id/off_btn"
-                    android:layout_width="wrap_content"
-                    android:layout_height="60dp"
-                    android:layout_gravity="center"
-                    android:layout_marginRight="5dp"
-                    style="@style/Button_style"
-                    android:drawableLeft="@drawable/ic_bluetooth_off"
-                    android:minWidth="190dp"
-                    android:text="Turn off"
-                    android:textColor="@color/white" />
+                    android:layout_height="match_parent"
+                    android:layout_marginLeft="15dp"/>
             </LinearLayout>
 
             <LinearLayout
                 android:id="@+id/linearLayout2"
                 android:layout_width="match_parent"
                 android:layout_height="70dp"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:minWidth="200dp"
                 android:orientation="horizontal"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="0.0"
                 app:layout_constraintStart_toStartOf="parent"
-                android:gravity="center"
-                app:layout_constraintTop_toBottomOf="@+id/on_and_off_btn_LinearLayout">
+                app:layout_constraintTop_toBottomOf="@+id/TopLinearLayout">
+
                 <Button
                     android:id="@+id/discoverable_btn"
                     style="@style/Button_style"
@@ -156,12 +129,13 @@
 
             <TextView
                 android:id="@+id/pair_title"
+                style="@style/textColor"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
                 android:fontFamily="@font/rounded_mplus"
                 android:text="Paired Devices List"
                 android:textAlignment="center"
-                android:textColor="@color/toolbar_color_inverse"
                 android:textSize="16sp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintHorizontal_bias="1.0"
@@ -171,10 +145,11 @@
 
             <LinearLayout
                 android:id="@+id/ListLinearLayout"
-                android:layout_width="fill_parent"
-                android:layout_height="350dp"
+                android:layout_width="400dp"
+                android:layout_height="410dp"
                 android:layout_marginTop="15dp"
                 android:orientation="vertical"
+                android:minWidth="200dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/pair_title">

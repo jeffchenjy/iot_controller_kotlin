@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:showIn = "navigation_view">
     <group android:checkableBehavior="single">
@@ -19,6 +20,14 @@
                 android:id="@+id/action_github"
                 android:icon="@drawable/ic_github_logo"
                 android:title="@string/github"/>
+        </menu>
+    </item>
+    <item android:title="Settings">
+        <menu>
+            <item
+                android:id="@+id/action_change_mode"
+                android:icon="@drawable/ic_dark_mode"
+                android:title="@string/dark_mode"/>
         </menu>
     </item>
     <item android:title="About">

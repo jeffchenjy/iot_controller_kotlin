@@ -24,6 +24,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.view.get
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.dialog.MaterialAlertDialogBuilder
 
 class BTscanActivity : AppCompatActivity() {
     /*  About Activity  */
@@ -70,58 +71,75 @@ class BTscanActivity : AppCompatActivity() {
         mScanRecyclerView!!.adapter = scanAdapter
         /** Utilize ItemClickSupport to enable the RecyclerView to utilize click listener methods **/
         ItemClickSupport.addTo(mScanRecyclerView)
-        mScanRecyclerView.onItemClick { recyclerView, position, v ->
-            val itemValue = (recyclerView.adapter as RecyclerViewAdapter).getItem(position)
-            try {
-                if (itemValue.length >= 17) {
-                    val substring = itemValue.substring(itemValue.length - 17)
-                    val remoteDevice = mBluetoothAdapter?.getRemoteDevice(substring)
-                    remoteDevice?.let {
-                        val method = it.javaClass.getMethod("createBond")
-                        method.invoke(it)
+        mScanRecyclerView.onItemClick { recyclerView, position, _ ->
+                val itemValue = (recyclerView.adapter as RecyclerViewAdapter).getItem(position)
+                val name_substring = itemValue.substring(0, itemValue.length - 17)
+                val mac_substring = itemValue.substring(itemValue.length - 17)
+                MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+                    .setIcon(R.drawable.ic_bt_search)
+                    .setTitle(resources.getString(R.string.bluetooth_connect))
+                    .setMessage(resources.getString(R.string.bt_search_dialog_start)+"("+name_substring+")"+resources.getString(R.string.bt_search_dialog_end))
+                    .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                        try {
+                            if (itemValue.length >= 17) {
+                                val remoteDevice = mBluetoothAdapter?.getRemoteDevice(mac_substring)
+                                remoteDevice?.let {
+                                    val method = it.javaClass.getMethod("createBond")
+                                    method.invoke(it)
+                                }
+                            } else {
+                                showToast("Bluetooth MAC's length is not 17!")
+                            }
+                        } catch (e: Exception) {
+                            e.printStackTrace()
+                            showToast("Error Catch!")
+                        }
+                        dialog.dismiss()
                     }
-                } else {
-                    showToast("Bluetooth MAC's length is not 17!")
-                }
-            } catch (e: Exception) {
-                e.printStackTrace()
-                showToast("Error Catch!")
-            }
+                    .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                        dialog.dismiss()
+                    }
+                    .show()
         }
-
         /** Bluetooth **/
-        mBluetoothAdapter!!.startDiscovery()
-        val intentFilter = IntentFilter(BluetoothDevice.ACTION_FOUND)
-        receiverFlag = true
-        broadcastReceiver = object : BroadcastReceiver() {
-            @SuppressLint("MissingPermission")
-            override fun onReceive(context: Context, intent: Intent) {
-                val action = intent.action
-                if (action == "android.bluetooth.device.action.FOUND") {
-                    val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice?
-                    val arrayAdapter = scanAdapter
-                    if (device != null && !arrayAdapter.containsData(device.address)) {
-                        arrayAdapter!!.addData(device.name + "\n" + device.address)
+        try {
+            mBluetoothAdapter!!.startDiscovery()
+            val intentFilter = IntentFilter(BluetoothDevice.ACTION_FOUND)
+            receiverFlag = true
+            broadcastReceiver = object : BroadcastReceiver() {
+                @SuppressLint("MissingPermission")
+                override fun onReceive(context: Context, intent: Intent) {
+                    val action = intent.action
+                    if (action == "android.bluetooth.device.action.FOUND") {
+                        val device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE) as BluetoothDevice?
+                        val arrayAdapter = scanAdapter
+                        if (device != null && !arrayAdapter.containsData(device.address)) {
+                            arrayAdapter!!.addData(device.name + "\n" + device.address)
+                        }
                     }
                 }
             }
+            registerReceiver(broadcastReceiver, intentFilter)
+            showToast("Search BT device first.")
+        } catch (e:Exception) {
+            showToast("Can't get bluetooth device")
         }
-        registerReceiver(broadcastReceiver, intentFilter)
-        showToast("Search BT device first.")
-
         /** Search Button**/
         mSearch_btn = findViewById<View>(R.id.search_btn) as Button
         this.mSearch_btn!!.setOnClickListener(View.OnClickListener {
-            if (receiverFlag) {
-                mBluetoothAdapter!!.cancelDiscovery()
-                btScanDeviceList.clear()
-                scanAdapter!!.clearData()
-                mScanRecyclerView!!.adapter = scanAdapter
-                mBluetoothAdapter!!.startDiscovery()
-                showToast("Search BT device again.")
+            try {
+                if (receiverFlag) {
+                    mBluetoothAdapter!!.cancelDiscovery()
+                    btScanDeviceList.clear()
+                    scanAdapter!!.clearData()
+                    mScanRecyclerView!!.adapter = scanAdapter
+                    mBluetoothAdapter!!.startDiscovery()
+                    showToast("Search BT device again.")
+                }
+            } catch (e: Exception) {
+                showToast("Can't get bluetooth device")
             }
         })
-
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar

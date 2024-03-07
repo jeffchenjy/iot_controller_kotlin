@@ -8,13 +8,22 @@
     <color name="end_color">@color/white</color>
     <!--    Transparent   -->
     <color name="transition_color">@android:color/transparent</color>
-    <!--    Toolbar   -->
+
+    <!--    Dark Themes color   -->
+    <color name="toolbar_color">#212121</color>
+    <color name="text_color">#9A85BD</color>
+    <color name="icon_color">#9A85BD</color>
+    <!--    Light Themes color   -->
+    <color name="toolbar_color_light">#F7F2FA</color>
+    <!-- Button -->
+    <color name="button_color">#613DA1</color>
+
+    <!--
     <color name="toolbar_color">#212121</color>
     <color name="toolbar_color_inverse">#9A85BD</color>
-    <!-- Button -->
-    <color name="button_color">#7E43E6</color>
+    <color name="icon_color">#9A85BD</color>-->
+
     <!-- Icon -->
-    <color name="icon_color">#9A85BD</color>
     <color name="small_icon_color">#9B9B9B</color>
     <!-- Car Button -->
     <color name="state_pressed_color">#535252</color>
