@@ -117,26 +117,33 @@ class BTMainActivity : AppCompatActivity() {
                 // Switch 按鈕被打開
                 val thumbDrawable = ContextCompat.getDrawable(this, R.drawable.ic_switch_check)
                 bt_switch_btn!!.thumbIconDrawable = thumbDrawable
-                if (!mBluetoothAdapter!!.isEnabled) {
-                    mPair_title!!.visibility = View.INVISIBLE
-                    mDevice_list!!.visibility = View.INVISIBLE
-                    showToast("Turning On Bluetooth...")
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
-                        mBluetoothAdapter!!.enable()
+                try{
+                    if (!mBluetoothAdapter!!.isEnabled) {
+                        mPair_title!!.visibility = View.INVISIBLE
+                        mDevice_list!!.visibility = View.INVISIBLE
+                        showToast("Turning On Bluetooth...")
+                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                            mBluetoothAdapter!!.enable()
+                        }
+                    } else {
+                        showToast("Bluetooth is already on")
                     }
-                } else {
-                    showToast("Bluetooth is already on")
+                } catch (e: Exception) {
                 }
             } else {
                 // Switch 按鈕被關閉
                 bt_switch_btn!!.thumbIconDrawable = null
                 mPair_title!!.visibility = View.INVISIBLE
                 mDevice_list!!.visibility = View.INVISIBLE
-                if (mBluetoothAdapter!!.isEnabled) {
-                    mBluetoothAdapter!!.disable()
-                    showToast("Turning Bluetooth Off")
-                } else {
-                    showToast("Bluetooth is already off")
+                try {
+                    if (mBluetoothAdapter!!.isEnabled) {
+                        mBluetoothAdapter!!.disable()
+                        showToast("Turning Bluetooth Off")
+                    } else {
+                        showToast("Bluetooth is already off")
+                    }
+                } catch (e: Exception) {
+
                 }
             }
         }

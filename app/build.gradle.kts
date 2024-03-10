@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
+    id("com.google.gms.google-services") //use firebase
 }
 
 android {
@@ -13,6 +14,7 @@ android {
         targetSdk = 33
         versionCode = 1
         versionName = "1.0"
+        multiDexEnabled = true
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -41,10 +43,12 @@ dependencies {
     implementation("androidx.appcompat:appcompat:1.6.1")
     implementation("com.google.android.material:material:1.11.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    implementation("com.google.firebase:firebase-auth:22.3.1")
+    implementation("com.google.firebase:firebase-database:20.3.1")
+
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
     implementation("androidx.recyclerview:recyclerview-selection:1.1.0")
     implementation("androidx.recyclerview:recyclerview:1.3.2")
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.22")
@@ -55,4 +59,23 @@ dependencies {
     implementation ("androidx.media3:media3-exoplayer:1.1.0")
     implementation ("androidx.media3:media3-exoplayer-dash:1.1.0")
     implementation ("androidx.media3:media3-ui:1.1.0")
+
+
+    //implementation ("com.github.TutorialsAndroid:GButton:v1.0.19")
+    implementation ("com.google.android.gms:play-services-auth:19.0.0")
+    //MultiDex
+    implementation ("androidx.multidex:multidex:2.0.1")
+    //Rounded ImageView 頭像物件
+    implementation ("com.makeramen:roundedimageview:2.3.0")
+    //Firebase
+    implementation("com.google.firebase:firebase-firestore:24.10.3")
+    // Import the Firebase BoM
+    implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
+
+    // TODO: Add the dependencies for Firebase products you want to use
+    // When using the BoM, don't specify versions in Firebase dependencies
+    implementation("com.google.firebase:firebase-analytics")
+
+    // Add the dependencies for any other desired Firebase products
+    // https://firebase.google.com/docs/android/setup#available-libraries
 }
