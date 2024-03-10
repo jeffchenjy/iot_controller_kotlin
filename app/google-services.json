@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "734453622238",
+    "project_id": "account-manager-9a0af",
+    "storage_bucket": "account-manager-9a0af.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:734453622238:android:60991ab08d732fb6bf694f",
+        "android_client_info": {
+          "package_name": "com.example.iot_kotlin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCSKBLwic9TIjODTX_XlL_CxHdABcEmUtE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

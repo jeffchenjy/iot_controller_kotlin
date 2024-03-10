@@ -9,7 +9,6 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
-
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/main_toolbar"
             style="@style/toolBartextColor"
@@ -139,6 +138,7 @@
                 android:layout_marginStart="8dp"
                 android:layout_marginTop="50dp"
                 android:layout_marginEnd="8dp"
+                android:layout_marginBottom="10dp"
                 android:minWidth="140dp"
                 android:minHeight="160dp"
                 android:orientation="vertical"
@@ -148,10 +148,10 @@
 
                 <Button
                     android:id="@+id/bt_btn"
+                    style="@style/Button_style"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginBottom="10dp"
-                    style="@style/Button_style"
                     android:drawableLeft="@drawable/ic_bluetooth"
                     android:minWidth="180dp"
                     android:text="@string/bluetooth_button"
@@ -159,10 +159,10 @@
 
                 <Button
                     android:id="@+id/wifi_btn"
+                    style="@style/Button_style"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
                     android:layout_marginBottom="10dp"
-                    style="@style/Button_style"
                     android:drawableLeft="@drawable/ic_wifi"
                     android:minWidth="180dp"
                     android:text="@string/wifi_button"
@@ -170,15 +170,17 @@
 
                 <Button
                     android:id="@+id/exit_btn"
+                    style="@style/Button_style"
                     android:layout_width="match_parent"
                     android:layout_height="60dp"
-                    style="@style/Button_style"
                     android:drawableLeft="@drawable/ic_exit"
                     android:minWidth="180dp"
                     android:text="@string/exit"
                     android:textColor="@color/white" />
             </LinearLayout>
         </androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Other views -->
+        <include layout="@layout/shared_bottom_navigation" />
     </RelativeLayout>
     <!-- 選單 -->
     <com.google.android.material.navigation.NavigationView
@@ -188,6 +190,6 @@
         android:layout_gravity="start"
         android:fitsSystemWindows="true"
         app:menu="@menu/navigation_drawer_main"
-        app:headerLayout="@layout/navigation_header"
-        />
+        app:headerLayout="@layout/navigation_header" />
+
 </androidx.drawerlayout.widget.DrawerLayout>

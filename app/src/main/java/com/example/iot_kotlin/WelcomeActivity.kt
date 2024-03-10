@@ -19,7 +19,7 @@ class WelcomeActivity : AppCompatActivity() {
             when (msg.what) {
                 GOTO_MAIN_ACTIVITY -> {
                     val intent = Intent()
-                    intent.setClass(this@WelcomeActivity, MainActivity::class.java)
+                    intent.setClass(this@WelcomeActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
                 }

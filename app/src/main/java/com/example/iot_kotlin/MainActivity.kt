@@ -17,15 +17,18 @@ import android.view.View
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
 
 class MainActivity : AppCompatActivity() {
     /*  Button  */
@@ -52,11 +55,11 @@ class MainActivity : AppCompatActivity() {
     /*  About Activity  */
     var mainActivity: MainActivity? = this@MainActivity
     private val context: Context? = this
-
     /*  About ToolBar */
     private var main_Toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
     private var navigation_view: NavigationView? = null
+    private lateinit var bottom_navigation: NavigationBarView
     private var itemIdToFind: Int? = null
     private var menu: Menu? = null
     private var menuItem: MenuItem? =null
@@ -64,32 +67,35 @@ class MainActivity : AppCompatActivity() {
     private lateinit var edit: SharedPreferences.Editor
     private var nightMode: Boolean? = false
     /* URL */
-    val twiter_url = "https://twitter.com/"
-    val github_url = "https://github.com/jeffchenjy/iot_controller_kotlin.git"
+    private val twiter_url = "https://twitter.com/"
+    private val github_url = "https://github.com/jeffchenjy/iot_controller_kotlin.git"
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         findView()
         setToolbar()
         Image_Animation()
+        setNavigationBarViewItemSelectedListener()
         setNavigationItemSelectedListener()
         /** Mode Change **/
-        menu = navigation_view!!.menu
+        menu = navigation_view?.menu
         // 指定要查找的菜單項目的 ID
         itemIdToFind = R.id.action_change_mode
         // 使用 findItem() 方法來查找指定 ID 的菜單項目
-        menuItem = menu!!.findItem(itemIdToFind!!)
+        menuItem = menu?.findItem(itemIdToFind ?: 0)
         /* use sharedPreferences change themes*/
         sharedPreferences = getSharedPreferences("MODE", MODE_PRIVATE)
-        nightMode = sharedPreferences!!.getBoolean("nightMode", false)
-        if(nightMode as Boolean) {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            menuItem!!.title = getString(R.string.light_mode)
-            menuItem!!.icon = getDrawable(R.drawable.ic_light_mode)
-        } else {
-            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-            menuItem!!.title = getString(R.string.dark_mode)
-            menuItem!!.icon = getDrawable(R.drawable.ic_dark_mode)
+        nightMode = sharedPreferences?.getBoolean("nightMode", false)
+        nightMode?.let { isNightMode ->
+            if (isNightMode) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                menuItem?.title = getString(R.string.light_mode)
+                menuItem?.icon = ContextCompat.getDrawable(this, R.drawable.ic_light_mode)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                menuItem?.title = getString(R.string.dark_mode)
+                menuItem?.icon = ContextCompat.getDrawable(this, R.drawable.ic_dark_mode)
+            }
         }
         /** Button **/
         bt_btn!!.setOnClickListener(View.OnClickListener {
@@ -144,23 +150,23 @@ class MainActivity : AppCompatActivity() {
         })
     }
     private fun findView() {
-        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
-        navigation_view = findViewById<View>(R.id.navigation_drawer) as NavigationView
-        main_Toolbar = findViewById<View>(R.id.main_toolbar) as Toolbar
-
-        imagePhone = findViewById<View>(R.id.imagePhone) as ImageView
-        imageGame = findViewById<View>(R.id.imageGame) as ImageView
-        imageTV = findViewById<View>(R.id.imageTV) as ImageView
-        imageHome = findViewById<View>(R.id.imageHome) as ImageView
-        imageWifi = findViewById<View>(R.id.imageWifi) as ImageView
-        imageBT = findViewById<View>(R.id.imageBT) as ImageView
-        imageChip = findViewById<View>(R.id.imageChip) as ImageView
-        imagePerson = findViewById<View>(R.id.imagePerson) as ImageView
-        imageCar = findViewById<View>(R.id.imageCar) as ImageView
-        textViewCloud = findViewById<View>(R.id.textViewCloud) as TextView
-        bt_btn = findViewById<View>(R.id.bt_btn) as Button
-        wifi_btn = findViewById<View>(R.id.wifi_btn) as Button
-        exit_btn = findViewById<View>(R.id.exit_btn) as Button
+        drawerLayout = findViewById(R.id.drawerLayout)
+        navigation_view = findViewById(R.id.navigation_drawer)
+        main_Toolbar = findViewById(R.id.main_toolbar)
+        bottom_navigation = findViewById(R.id.bottom_navigation)
+        imagePhone = findViewById(R.id.imagePhone)
+        imageGame = findViewById(R.id.imageGame)
+        imageTV = findViewById(R.id.imageTV)
+        imageHome = findViewById(R.id.imageHome)
+        imageWifi = findViewById(R.id.imageWifi)
+        imageBT = findViewById(R.id.imageBT)
+        imageChip = findViewById(R.id.imageChip)
+        imagePerson = findViewById(R.id.imagePerson)
+        imageCar = findViewById(R.id.imageCar)
+        textViewCloud = findViewById(R.id.textViewCloud)
+        bt_btn = findViewById(R.id.bt_btn)
+        wifi_btn = findViewById(R.id.wifi_btn)
+        exit_btn = findViewById(R.id.exit_btn)
     }
     private fun Image_Animation() {
         val path = Path()
@@ -189,6 +195,29 @@ class MainActivity : AppCompatActivity() {
             Iv_handler.removeCallbacksAndMessages(null)
         }
     }
+    private fun setNavigationBarViewItemSelectedListener() {
+        bottom_navigation.setOnItemSelectedListener { item ->
+            when(item.itemId) {
+                R.id.nbar_home -> {
+                    // Respond to navigation item 1 click
+                    showToast("Already at home page")
+                    true
+                }
+                R.id.nbar_info -> {
+                    val Profile_intent = Intent()
+                    Profile_intent.setClass(this@MainActivity, ProfileActivity::class.java)
+                    startActivity(Profile_intent)
+                    finish()
+                    true
+                }
+                else -> false
+            }
+        }
+    }
+    /*
+    private fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.frame_container, fragment).commit()
+    }*/
 
     private fun setNavigationItemSelectedListener() {
         navigation_view!!.setNavigationItemSelectedListener { item -> // 點選時收起選單
@@ -196,10 +225,7 @@ class MainActivity : AppCompatActivity() {
             // 取得選項id
             when (item.itemId) {
                 R.id.action_home -> {
-                    val Main_intent = Intent()
-                    Main_intent.setClass(this@MainActivity, MainActivity::class.java)
-                    startActivity(Main_intent)
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                    showToast("Already at HomePage")
                 }
                 R.id.action_twitter -> {
                     val uri = Uri.parse(twiter_url)
@@ -250,7 +276,7 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         } catch (e: Exception) {
-            // 處理例外情況
+            showToast(e.toString())
         }
     }
     private fun operation_Dialog() {
@@ -302,5 +328,7 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
         Iv_handler.removeCallbacksAndMessages(null)
     }
-
+    private fun showToast(msg: String) {
+        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+    }
 }
