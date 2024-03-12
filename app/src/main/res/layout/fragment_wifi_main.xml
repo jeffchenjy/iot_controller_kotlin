@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/fragment_container"
+    tools:context=".WFMainFragment">
+    <androidx.drawerlayout.widget.DrawerLayout
+        android:id="@+id/drawerLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <androidx.appcompat.widget.Toolbar
+                android:id="@+id/toolbar"
+                style="@style/toolBartextColor"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="@android:color/transparent"
+                android:theme="@style/Theme.Material3.Dark"
+                android:elevation="4dp"/>
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                style="@style/ScreenBackgroundColor">
+
+                <LinearLayout
+                    android:id="@+id/wifiLinearLayout"
+                    android:layout_width="410dp"
+                    android:layout_height="80dp"
+                    android:layout_marginTop="65dp"
+                    android:orientation="vertical"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+
+                    <FrameLayout
+                        android:id="@+id/frameLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="80dp">
+
+                        <ImageView
+                            android:id="@+id/imgAnim2"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/circle" />
+
+                        <ImageView
+                            android:id="@+id/imgAnim1"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="5dp"
+                            android:scaleType="centerCrop"
+                            android:src="@drawable/circle" />
+
+                        <ImageView
+                            android:id="@+id/wifi_Iv"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="5dp"
+                            android:src="@drawable/ic_iot_wifi" />
+                        <ImageView
+                            android:id="@+id/wifi_off_Iv"
+                            android:layout_width="70dp"
+                            android:layout_height="70dp"
+                            android:layout_marginLeft="20dp"
+                            android:layout_marginTop="5dp"
+                            android:src="@drawable/ic_iot_wifi_off" />
+
+                        <TextView
+                            android:id="@+id/wifi_ssid_Tv"
+                            style="@style/textColor"
+                            android:layout_width="250dp"
+                            android:layout_height="50dp"
+                            android:layout_marginLeft="115dp"
+                            android:layout_marginTop="15dp"
+                            android:fontFamily="@font/rounded_mplus"
+                            android:paddingTop="14dp"
+                            android:textAlignment="center"
+                            android:textSize="26dp" />
+                    </FrameLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="250dp"
+                    android:layout_height="70dp"
+                    android:layout_marginBottom="100dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent">
+
+                    <Button
+                        android:id="@+id/CCI_button"
+                        android:layout_width="match_parent"
+                        android:layout_height="70dp"
+                        style="@style/Button_style"
+                        android:text="Car Control Interface"
+                        android:textColor="@color/white" />
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </RelativeLayout>
+        <!-- 選單 -->
+        <com.google.android.material.navigation.NavigationView
+            android:id="@+id/navigation_view"
+            android:layout_width="280dp"
+            android:layout_height="match_parent"
+            android:layout_gravity="end"
+            android:fitsSystemWindows="true"
+            app:menu="@menu/navigation_drawer_wf_main"
+            app:headerLayout="@layout/navigation_header" />
+    </androidx.drawerlayout.widget.DrawerLayout>
+</FrameLayout>

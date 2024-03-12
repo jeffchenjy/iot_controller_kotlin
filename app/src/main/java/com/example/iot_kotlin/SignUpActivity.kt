@@ -86,6 +86,13 @@ class SignUpActivity : AppCompatActivity() {
                 errorEmailTextView.visibility = View.GONE
                 errorUsernameTextView.visibility = View.GONE
                 errorPasswordTextView.visibility = View.GONE
+                /** Show progress indicators **/
+                val builder = AlertDialog.Builder(this@SignUpActivity)
+                val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
+                builder.setView(dialogView)
+                val dialog: AlertDialog = builder.create()
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.show()
                 /** Authentication **/
                 auth.createUserWithEmailAndPassword(email, passwd).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
@@ -96,21 +103,13 @@ class SignUpActivity : AppCompatActivity() {
                             val uid = currentUser.uid
                             reference.child("UID").child(uid).setValue(helperClass)
                                 .addOnSuccessListener {
-                                    val builder = AlertDialog.Builder(this@SignUpActivity)
-                                    val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
-                                    builder.setView(dialogView)
-                                    val dialog: AlertDialog = builder.create()
-                                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                                    dialog.show()
-                                    Handler(Looper.myLooper()!!).postDelayed({
-                                        dialog.dismiss()
-                                        val Login_intent = Intent()
-                                        Login_intent.setClass(this@SignUpActivity, LoginActivity::class.java)
-                                        startActivity(Login_intent)
-                                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-                                        finish()
-                                        showToast(getString(R.string.signUp_success))
-                                    }, 2000)
+                                    dialog.dismiss()
+                                    val Login_intent = Intent()
+                                    Login_intent.setClass(this@SignUpActivity, LoginActivity::class.java)
+                                    startActivity(Login_intent)
+                                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                                    finish()
+                                    showToast(getString(R.string.signUp_success))
                                     Log.d("Database entry created successfully", "Database entry created successfully")
                                 }
                                 .addOnFailureListener { e ->

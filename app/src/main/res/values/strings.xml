@@ -74,6 +74,8 @@
     <string name="cancel">キャンセル</string>
     <!-- BottomNavigationView  -->
     <string name="home">ホーム</string>
+    <string name="nav_bt">ブルートゥース</string>
+    <string name="nav_wifi">ワイファイ</string>
     <string name="personal_info">アカウント</string>
     <!-- Login -->
     <string name="login">ログイン</string>
@@ -87,6 +89,7 @@
     <string name="signup">新規登録</string>
     <string name="username">ユーザーネーム</string>
     <string name="email">メールアドレス</string>
+    <string name="date">作成日</string>
     <string name="password">パスワード</string>
     <string name="signUp_btn">入力内容を確認</string>
     <string name="signUp_success">サインアップが成功しました</string>

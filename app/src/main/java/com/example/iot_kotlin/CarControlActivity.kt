@@ -153,8 +153,10 @@ class CarControlActivity : AppCompatActivity()  {
         /**設置Icon圖樣的點擊事件 */
         toolbar!!.setNavigationOnClickListener(View.OnClickListener {
             val BTMain_intent = Intent()
-            BTMain_intent.setClass(this@CarControlActivity, BTMainActivity::class.java)
+            BTMain_intent.setClass(this@CarControlActivity, MainActivity::class.java)
+            BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
             startActivity(BTMain_intent)
+            finish()
         })
     }
     private fun findView() {
@@ -673,5 +675,13 @@ class CarControlActivity : AppCompatActivity()  {
             mChatService!!.stop()
             mChatService = null
         }
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val BTMain_intent = Intent()
+        BTMain_intent.setClass(this@CarControlActivity, MainActivity::class.java)
+        BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
+        startActivity(BTMain_intent)
+        finish()
     }
 }

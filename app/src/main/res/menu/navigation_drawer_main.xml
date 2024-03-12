@@ -44,7 +44,10 @@
                 android:id="@+id/action_copyright"
                 android:icon="@drawable/ic_copyright"
                 android:title="@string/copyright_title" />
+            <item
+                android:id="@+id/action_exit"
+                android:icon="@drawable/ic_exit"
+                android:title="@string/exit" />
         </menu>
     </item>
-
 </menu>
