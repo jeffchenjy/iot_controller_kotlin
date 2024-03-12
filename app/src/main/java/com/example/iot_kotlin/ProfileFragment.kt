@@ -1,33 +1,40 @@
 package com.example.iot_kotlin
 
 import android.content.Intent
+import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.app.AppCompatActivity
+import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import okhttp3.internal.concurrent.formatDuration
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
 
-class ProfileActivity : AppCompatActivity() {
+class ProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var reference: DatabaseReference
-    /* NavigationBarView */
-    private lateinit var bottom_navigation: NavigationBarView
     /* TextView */
     private lateinit var titleUsername: TextView
     private lateinit var profileUsername: TextView
     private lateinit var profileEmail: TextView
+    private lateinit var profileDate: TextView
     private lateinit var profilePassword: TextView
     /* Button */
     private lateinit var editButton: Button
@@ -36,52 +43,70 @@ class ProfileActivity : AppCompatActivity() {
     private lateinit var password: String
     /* flag */
     private var nouserflag: Boolean? = false
-    override fun onCreate(bundle : Bundle?) {
-        super.onCreate(bundle)
-        setContentView(R.layout.activity_profile)
-        findView()
-        setNavigationBarViewItemSelectedListener()
-        /** Show User Info **/
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_profile, container, false)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        findView(view)
+        /** Get firebase data **/
         auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
-
         if (currentUser != null) {
+            /** Show progress indicators **/
+            val builder = AlertDialog.Builder(requireContext())
+            val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
+            builder.setView(dialogView)
+            val dialog: AlertDialog = builder.create()
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.show()
             val currentUserUID = currentUser.uid
             reference = FirebaseDatabase.getInstance().getReference("users/UID/$currentUserUID")
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
+                        dialog.dismiss()
                         val username = snapshot.child("username").getValue(String::class.java)
                         val email = snapshot.child("email").getValue(String::class.java)
                         password = snapshot.child("password").getValue(String::class.java)!!
-                        titleUsername.text = username
-                        profileUsername.text = username
-                        profileEmail.text = email
                         //profilePassword.text = password
                         val subText = password!!.substring(0, 2)
                         val hiddenText = "*".repeat(10)
+                        currentUser?.metadata?.creationTimestamp?.let { creationTimestamp ->
+                            val creationDate = Date(creationTimestamp)
+                            val sdf = SimpleDateFormat("yyyy-MM-dd", Locale.getDefault())
+                            val formattedDate = sdf.format(creationDate)
+                            profileDate.text = formattedDate
+                        }
+                        titleUsername.text = username
+                        profileUsername.text = username
+                        profileEmail.text = email
                         profilePassword.text = subText+hiddenText
                     } else {
                         // 處理資料不存在的情況
-                        showToast("User data not found")
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
-                    showToast("Error: ${databaseError.message}")
                 }
             })
         } else {
             nouserflag = true
             titleUsername.text = "Guest"
-            profileUsername.text = "Guest"
-            profileEmail.text = "Guest"
-            profilePassword.text = "Guest"
+            profileUsername.text = " "
+            profileEmail.text = " "
+            profileDate.text = " "
+            profilePassword.text = " "
         }
         /** Button OnClickListener **/
         editButton!!.setOnClickListener{
             if(!nouserflag!!) {
-                val builder = AlertDialog.Builder(this@ProfileActivity)
+                val builder = AlertDialog.Builder(requireContext())
                 val dialogView: View = layoutInflater.inflate(R.layout.dialog_password_verify, null)
                 val codeBox = dialogView.findViewById<EditText>(R.id.codeBox)
                 builder.setView(dialogView)
@@ -90,10 +115,10 @@ class ProfileActivity : AppCompatActivity() {
                     val userCode = codeBox.text.toString()
                     if (userCode.equals(password)) {
                         dialog.dismiss()
-                        val edit_intent = Intent()
-                        edit_intent.setClass(this@ProfileActivity, EditProfileActivity::class.java)
-                        startActivity(edit_intent)
-                        finish()
+                        val currentActivity = requireActivity()
+                        val editIntent = Intent(currentActivity, EditProfileActivity::class.java)
+                        currentActivity.intent.removeExtra("fragmentToShow")
+                        currentActivity.startActivity(editIntent)
                     } else {
                         showToast("Password error")
                     }
@@ -108,7 +133,7 @@ class ProfileActivity : AppCompatActivity() {
             }
         }
         signOutButton!!.setOnClickListener {
-            MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+            MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
                 .setIcon(R.drawable.ic_leave)
                 .setTitle(resources.getString(R.string.logout))
                 .setMessage(resources.getString(R.string.signout_message))
@@ -117,11 +142,12 @@ class ProfileActivity : AppCompatActivity() {
                     if(!nouserflag!!) {
                         auth.signOut()
                     }
-                    val Login_intent = Intent()
-                    Login_intent.setClass(this@ProfileActivity, LoginActivity::class.java)
-                    startActivity(Login_intent)
-                    finish()
                     dialog.dismiss()
+                    val currentActivity = requireActivity()
+                    val loginIntent = Intent(currentActivity, LoginActivity::class.java)
+                    currentActivity.startActivity(loginIntent)
+                    currentActivity.finish()
+
                 }
                 .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
                     dialog.dismiss()
@@ -129,47 +155,16 @@ class ProfileActivity : AppCompatActivity() {
                 .show()
         }
     }
-    private fun findView(){
-        bottom_navigation = findViewById(R.id.bottom_navigation)
-        titleUsername = findViewById(R.id.titleUsername)
-        profileUsername = findViewById(R.id.profileUsername)
-        profileEmail = findViewById(R.id.profileEmail)
-        profilePassword = findViewById(R.id.profilePassword)
-        editButton = findViewById(R.id.editButton)
-        signOutButton = findViewById(R.id.signOutButton)
-    }
-    private fun setNavigationBarViewItemSelectedListener() {
-        val menu = bottom_navigation.menu
-        menu.findItem(R.id.nbar_home).isChecked = false
-        menu.findItem(R.id.nbar_info).isChecked = true
-        // 通知 BottomNavigationView 重新繪製界面
-        bottom_navigation.invalidate()
-        bottom_navigation.setOnItemSelectedListener { item ->
-            when(item.itemId) {
-                R.id.nbar_home -> {
-                    val Profile_intent = Intent()
-                    Profile_intent.setClass(this@ProfileActivity, MainActivity::class.java)
-                    startActivity(Profile_intent)
-                    finish()
-                    true
-                }
-                R.id.nbar_info -> {
-                    // Respond to navigation item 2 click
-                    showToast("Already at account page")
-                    true
-                }
-                else -> false
-            }
-        }
+    private fun findView(view: View){
+        titleUsername = view.findViewById(R.id.titleUsername)
+        profileUsername = view.findViewById(R.id.profileUsername)
+        profileEmail = view.findViewById(R.id.profileEmail)
+        profileDate = view.findViewById(R.id.profileDate)
+        profilePassword = view.findViewById(R.id.profilePassword)
+        editButton = view.findViewById(R.id.editButton)
+        signOutButton = view.findViewById(R.id.signOutButton)
     }
     private fun showToast(msg: String) {
-        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-    }
-    override fun onBackPressed() {
-        super.onBackPressed()
-        val Profile_intent = Intent()
-        Profile_intent.setClass(this@ProfileActivity, MainActivity::class.java)
-        startActivity(Profile_intent)
-        finish()
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
 }

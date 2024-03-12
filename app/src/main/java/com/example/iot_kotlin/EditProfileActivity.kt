@@ -1,7 +1,11 @@
 package com.example.iot_kotlin
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -9,8 +13,12 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationView
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -27,7 +35,6 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var editPassword: EditText
     /* Button */
     private lateinit var saveButton: Button
-    private lateinit var cancelButton: Button
     private lateinit var deleteButton: Button
     /* TextView */
     private lateinit var errorEmailTextView: TextView
@@ -39,12 +46,15 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var newPassword: String
     private lateinit var currentUserPassword: String
     private var currentUserUID: String? = null
+    /*  About ToolBar */
+    private lateinit var toolbar: Toolbar
+    private lateinit var drawerLayout: DrawerLayout
 
     override fun onCreate(bundle : Bundle?) {
         super.onCreate(bundle)
         setContentView(R.layout.activity_edit_profile)
         findView()
-
+        setToolbar()
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
         /** 抓取 Firebase 的資料 */
@@ -111,7 +121,7 @@ class EditProfileActivity : AppCompatActivity() {
                     )
                     reference.updateChildren(newData)
                         .addOnSuccessListener {
-                            showToast("Data updated successfully")
+                            //showToast("Data updated successfully")
                         }
                         .addOnFailureListener { e ->
                             showToast("Error updating data: ${e.message}")
@@ -146,20 +156,25 @@ class EditProfileActivity : AppCompatActivity() {
                                 }
                             }
                     }
-                    val Profile_intent = Intent()
-                    Profile_intent.setClass(this@EditProfileActivity, ProfileActivity::class.java)
-                    startActivity(Profile_intent)
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-                    finish()
+                    val builder = AlertDialog.Builder(this@EditProfileActivity)
+                    val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
+                    builder.setView(dialogView)
+                    val dialog: AlertDialog = builder.create()
+                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                    dialog.show()
+                    Handler(Looper.myLooper()!!).postDelayed({
+                        dialog.dismiss()
+                        showToast("Data updated successfully")
+                        val Profile_intent = Intent()
+                        Profile_intent.setClass(this@EditProfileActivity, MainActivity::class.java)
+                        Profile_intent.putExtra("fragmentToShow", "ProfileFragment")
+                        startActivity(Profile_intent)
+                        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+                        finish()
+                    }, 1000)
+
                 }
             }
-        }
-        cancelButton!!.setOnClickListener {
-            val Profile_intent = Intent()
-            Profile_intent.setClass(this@EditProfileActivity, ProfileActivity::class.java)
-            startActivity(Profile_intent)
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-            finish()
         }
         deleteButton!!.setOnClickListener {
             MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
@@ -210,6 +225,8 @@ class EditProfileActivity : AppCompatActivity() {
         }
     }
     private fun findView(){
+        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
         editUsername = findViewById(R.id.editUsername)
         editEmail = findViewById(R.id.editEmail)
         editPassword = findViewById(R.id.editPassword)
@@ -217,8 +234,24 @@ class EditProfileActivity : AppCompatActivity() {
         errorUsernameTextView = findViewById(R.id.errorUsernameTextView)
         errorPasswordTextView = findViewById(R.id.errorPasswordTextView)
         saveButton = findViewById(R.id.saveButton)
-        cancelButton = findViewById(R.id.cancelButton)
         deleteButton = findViewById(R.id.deleteButton)
+    }
+    private fun setToolbar() {
+        setSupportActionBar(toolbar)
+        supportActionBar!!.title = ""
+        /**set Navigation Icon **/
+        toolbar!!.navigationIcon = getDrawable(R.drawable.ic_navigation_back)
+        /**設置前方Icon與Title之距離為0 **/
+        toolbar!!.contentInsetStartWithNavigation = 0
+        /**設置Icon圖樣的點擊事件 **/
+        toolbar!!.setNavigationOnClickListener(View.OnClickListener {
+            val Profile_intent = Intent()
+            Profile_intent.setClass(this@EditProfileActivity, MainActivity::class.java)
+            Profile_intent.putExtra("fragmentToShow", "ProfileFragment")
+            startActivity(Profile_intent)
+            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            finish()
+        })
     }
     private fun showToast(msg: String) {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
@@ -226,7 +259,8 @@ class EditProfileActivity : AppCompatActivity() {
     override fun onBackPressed() {
         super.onBackPressed()
         val Profile_intent = Intent()
-        Profile_intent.setClass(this@EditProfileActivity, ProfileActivity::class.java)
+        Profile_intent.setClass(this@EditProfileActivity, MainActivity::class.java)
+        Profile_intent.putExtra("fragmentToShow", "ProfileFragment")
         startActivity(Profile_intent)
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
         finish()

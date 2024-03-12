@@ -1,6 +1,8 @@
 package com.example.iot_kotlin
 
 import android.Manifest
+import android.app.Activity
+import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
 import android.content.Context
@@ -10,9 +12,12 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.util.Log
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -25,6 +30,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -32,13 +38,10 @@ import com.google.android.material.materialswitch.MaterialSwitch
 import com.google.android.material.navigation.NavigationView
 import pl.droidsonroids.gif.GifDrawable
 
-class BTMainActivity : AppCompatActivity() {
-    /*  About Activity  */
-    private val context: Context? = this
-    var btMainActivity: BTMainActivity? = this
+class BTMainFragment: Fragment() {
     /*  Button  */
-    private var mDiscoverable_btn:Button? = null
-    private var mPaired_btn:Button? = null
+    private var mDiscoverable_btn: Button? = null
+    private var mPaired_btn: Button? = null
     private var bt_switch_btn: MaterialSwitch? = null
     /*  ImageView  */
     private var mBluetoothIv: ImageView? = null
@@ -48,7 +51,7 @@ class BTMainActivity : AppCompatActivity() {
     private val AnimHandler = Handler(Looper.myLooper()!!)
     /*  TextView  */
     private var mStatusBluetoothTv: TextView? = null
-    private var mPair_title:TextView? = null
+    private var mPair_title: TextView? = null
     /*  About ToolBar */
     private var toolbar: Toolbar? = null
     private var drawerLayout: DrawerLayout? = null
@@ -67,39 +70,47 @@ class BTMainActivity : AppCompatActivity() {
     private var activityResultLauncher = registerForActivityResult<Intent, ActivityResult>(
         ActivityResultContracts.StartActivityForResult()
     ) { result: ActivityResult ->
-        if (result.resultCode == RESULT_OK) {
+        if (result.resultCode == AppCompatActivity.RESULT_OK) {
             Log.e("Activity result", "OK")
             // There are no request codes
             val data = result.data
         }
     }
-    override fun onCreate(bundle: Bundle?) {
-        super.onCreate(bundle)
-        setContentView(R.layout.activity_bt_main)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_bluetooth_main, container, false)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        findView(view)
         setToolbar()
-        findView()
         setClickListener()
         setNavigationItemSelectedListener()
+
         /** Init **/
-        this.mDevice_list!!.visibility = View.INVISIBLE
-        this.mPair_title!!.visibility = View.INVISIBLE
+        mDevice_list.visibility = View.INVISIBLE
+        mPair_title!!.visibility = View.INVISIBLE
 
         /** Initial the RecyclerView **/
-        mDevice_list.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        mDevice_list.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
         PairedAdapter = RecyclerViewAdapter(btPairedDeviceList) // 創建自定義的 Adapter
         mDevice_list!!.adapter = PairedAdapter
         /** Utilize ItemClickSupport to enable the RecyclerView to utilize click listener methods **/
         ItemClickSupport.addTo(mDevice_list)
-        mDevice_list.onItemClick { recyclerView, position, v ->
+        mDevice_list.onItemClick { recyclerView, position, _ ->
             itemData = (recyclerView.adapter as RecyclerViewAdapter).getItem(position)
-            val mainActivity1 = Intent()
+            val currentActivity = requireActivity()
+            val mainActivity1 = Intent(currentActivity, CarControlActivity::class.java)
             mainActivity1.putExtra("btData", itemData)
-            mainActivity1.setClass(this@BTMainActivity, CarControlActivity::class.java)
-            startActivity(mainActivity1)
+            currentActivity.startActivity(mainActivity1)
+            currentActivity.finish()
         }
         /** Animation initial**/
         try {
-            val gifDrawable = GifDrawable(assets, "bluetooth_on.gif")
+            val gifDrawable = context?.assets?.let { GifDrawable(it, "bluetooth_on.gif") }
             mBluetoothIv!!.setImageDrawable(gifDrawable)
         } catch (e: Exception) {
             e.printStackTrace()
@@ -115,14 +126,14 @@ class BTMainActivity : AppCompatActivity() {
             // 當 Switch 按鈕的狀態發生變化時，會調用此方法
             if (isChecked) {
                 // Switch 按鈕被打開
-                val thumbDrawable = ContextCompat.getDrawable(this, R.drawable.ic_switch_check)
+                val thumbDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_switch_check)
                 bt_switch_btn!!.thumbIconDrawable = thumbDrawable
                 try{
                     if (!mBluetoothAdapter!!.isEnabled) {
                         mPair_title!!.visibility = View.INVISIBLE
                         mDevice_list!!.visibility = View.INVISIBLE
                         showToast("Turning On Bluetooth...")
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                             mBluetoothAdapter!!.enable()
                         }
                     } else {
@@ -148,81 +159,29 @@ class BTMainActivity : AppCompatActivity() {
             }
         }
     }
-    private fun setToolbar() {
-        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = resources.getString(R.string.bluetooth)
-        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
-        navigation_view = findViewById<View>(R.id.navigation_view) as NavigationView
-        /**set Navigation Icon **/
-        toolbar!!.navigationIcon = getDrawable(R.drawable.ic_navigation_back)
-        /**設置前方Icon與Title之距離為0 **/
-        toolbar!!.contentInsetStartWithNavigation = 0
-        /**設置Icon圖樣的點擊事件 **/
-        toolbar!!.setNavigationOnClickListener(View.OnClickListener {
-            val Main_intent = Intent()
-            Main_intent.setClass(this@BTMainActivity, MainActivity::class.java)
-            startActivity(Main_intent)
-            //overrideActivityTransition(OVERRIDE_TRANSITION_CLOSE,R.anim.slide_in_left, R.anim.slide_out_right, R.color.transition_color)//API 34
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        })
+    private fun findView(view: View) {
+        toolbar = view.findViewById(R.id.toolbar)
+        drawerLayout = view.findViewById(R.id.drawerLayout)
+        navigation_view = view.findViewById(R.id.navigation_view)
+        mStatusBluetoothTv = view.findViewById(R.id.statusBluetoothTv)
+        mPair_title = view.findViewById(R.id.pair_title)
+        mBluetoothIv = view.findViewById(R.id.bluetooth_Iv)
+        mBluetooth_off_Iv = view.findViewById(R.id.bluetooth_off_Iv)
+        imgAnim1 = view.findViewById(R.id.imgAnim1)
+        imgAnim2 = view.findViewById(R.id.imgAnim2)
+        mDiscoverable_btn = view.findViewById(R.id.discoverable_btn)
+        mPaired_btn = view.findViewById(R.id.paired_btn)
+        bt_switch_btn = view.findViewById(R.id.bt_switch_btn)
+        mDevice_list = view.findViewById(R.id.device_RecyclerView)
     }
-    private fun findView() {
-        mStatusBluetoothTv = findViewById(R.id.statusBluetoothTv)
-        mPair_title = findViewById(R.id.pair_title)
-        mBluetoothIv = findViewById(R.id.bluetooth_Iv)
-        mBluetooth_off_Iv = findViewById(R.id.bluetooth_off_Iv)
-        imgAnim1 = findViewById(R.id.imgAnim1)
-        imgAnim2 = findViewById(R.id.imgAnim2)
-        mDiscoverable_btn = findViewById(R.id.discoverable_btn)
-        mPaired_btn = findViewById(R.id.paired_btn)
-        bt_switch_btn = findViewById(R.id.bt_switch_btn)
-        mDevice_list = findViewById(R.id.device_RecyclerView)
+    private fun setToolbar() {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title  = resources.getString(R.string.bluetooth)
     }
     private fun setClickListener() {
         mDiscoverable_btn!!.setOnClickListener(ButtonClick())
         mPaired_btn!!.setOnClickListener(ButtonClick())
     }
-    private val runnableAnim: Runnable = object : Runnable {
-        override fun run() {
-            if (btMainActivity!!.mBluetoothAdapter!!.isEnabled) {
-                mBluetoothIv!!.visibility = View.VISIBLE
-                mBluetooth_off_Iv!!.visibility = View.INVISIBLE
-                if (!bt_switch_btn!!.isChecked) {
-                    bt_switch_btn!!.isChecked = true
-                    bt_switch_btn!!.thumbIconDrawable = getDrawable(R.drawable.ic_switch_check)
-                }
-                /** Animation **/
-                imgAnim1!!.animate().scaleX(2f).scaleY(2f).alpha(0f).setDuration(610)
-                    .withEndAction {
-                        imgAnim1!!.scaleX = 1f
-                        imgAnim1!!.scaleY = 1f
-                        imgAnim1!!.alpha = 1f
-                    }
-            } else {
-                mBluetoothIv!!.visibility = View.INVISIBLE
-                mBluetooth_off_Iv!!.visibility = View.VISIBLE
-                if (bt_switch_btn!!.isChecked) {
-                    bt_switch_btn!!.isChecked = false
-                    bt_switch_btn!!.thumbIconDrawable = null
-                }
-                imgAnim1!!.animate().scaleX(1f).scaleY(1f).alpha(0f).setDuration(1000)
-                    .withEndAction {
-                        imgAnim1!!.scaleX = 1f
-                        imgAnim1!!.scaleY = 1f
-                        imgAnim1!!.alpha = 1f
-                    }
-                imgAnim2!!.animate().scaleX(1f).scaleY(1f).alpha(0f).setDuration(700)
-                    .withEndAction {
-                        imgAnim2!!.scaleX = 1f
-                        imgAnim2!!.scaleY = 1f
-                        imgAnim2!!.alpha = 1f
-                    }
-            }
-            AnimHandler.postDelayed(this, 1650)
-        }
-    }
-
     private fun ButtonClick(): View.OnClickListener? {
         return View.OnClickListener {
             val view = it as? View
@@ -233,7 +192,7 @@ class BTMainActivity : AppCompatActivity() {
                     mPair_title!!.visibility = View.INVISIBLE
                     mDevice_list!!.visibility = View.INVISIBLE
                     if (mBluetoothAdapter!!.isEnabled) {
-                        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) { }
+                        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) { }
                         if (!mBluetoothAdapter!!.isDiscovering) {
                             val discoverintent =
                                 Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE)
@@ -269,57 +228,93 @@ class BTMainActivity : AppCompatActivity() {
             }
         }
     }
+    private val runnableAnim: Runnable = object : Runnable {
+        override fun run() {
+                if (mBluetoothAdapter!!.isEnabled) {
+                    mBluetoothIv!!.visibility = View.VISIBLE
+                    mBluetooth_off_Iv!!.visibility = View.INVISIBLE
+                    if (!bt_switch_btn!!.isChecked) {
+                        bt_switch_btn!!.isChecked = true
+                        bt_switch_btn!!.thumbIconDrawable = ContextCompat.getDrawable(requireContext(), R.drawable.ic_switch_check)
+                    }
+                    /** Animation **/
+                    imgAnim1!!.animate().scaleX(2f).scaleY(2f).alpha(0f).setDuration(610)
+                        .withEndAction {
+                            imgAnim1!!.scaleX = 1f
+                            imgAnim1!!.scaleY = 1f
+                            imgAnim1!!.alpha = 1f
+                        }
+                } else {
+                    mBluetoothIv!!.visibility = View.INVISIBLE
+                    mBluetooth_off_Iv!!.visibility = View.VISIBLE
+                    if (bt_switch_btn!!.isChecked) {
+                        bt_switch_btn!!.isChecked = false
+                        bt_switch_btn!!.thumbIconDrawable = null
+                    }
+                    imgAnim1!!.animate().scaleX(1f).scaleY(1f).alpha(0f).setDuration(1000)
+                        .withEndAction {
+                            imgAnim1!!.scaleX = 1f
+                            imgAnim1!!.scaleY = 1f
+                            imgAnim1!!.alpha = 1f
+                        }
+                    imgAnim2!!.animate().scaleX(1f).scaleY(1f).alpha(0f).setDuration(700)
+                        .withEndAction {
+                            imgAnim2!!.scaleX = 1f
+                            imgAnim2!!.scaleY = 1f
+                            imgAnim2!!.alpha = 1f
+                        }
+                }
+                AnimHandler.postDelayed(this, 1650)
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<String?>,
         grantResults: IntArray
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        if (requestCode == Permission_REQUEST_Code || grantResults.isEmpty()) {
-            // Check if the permission was granted
-            return
-        }
-        if (grantResults[0] == -1 && grantResults[1] == -1) {
-            showToast("BT scan is denied.")
+        if (requestCode == Permission_REQUEST_Code && grantResults.isNotEmpty()) {
+            val permissionDenied = grantResults.any { it == PackageManager.PERMISSION_DENIED }
+            if (permissionDenied) {
+                showToast("BT scan is denied.")
+            } else {
+            }
         }
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.bt_main_menu, menu)
-        return true
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.bt_main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.bt_nav -> bt_main_nav()
         }
-        return super.onOptionsItemSelected(menuItem)
+        return super.onOptionsItemSelected(item)
     }
-
     private fun setNavigationItemSelectedListener() {
-        navigation_view!!.setNavigationItemSelectedListener { item -> // 點選時收起選單
-            drawerLayout!!.closeDrawer(GravityCompat.END)
-            // 取得選項id
+        navigation_view?.setNavigationItemSelectedListener { item ->
+            drawerLayout?.closeDrawer(GravityCompat.END)
             when (item.itemId) {
-                R.id.action_home -> {
-                    val Main_intent = Intent()
-                    Main_intent.setClass(this@BTMainActivity, MainActivity::class.java)
-                    startActivity(Main_intent)
-                    overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-                }
                 R.id.bluetooth_search -> {
-                    mPair_title!!.visibility = View.INVISIBLE
-                    mDevice_list!!.visibility = View.INVISIBLE
-                    if (mBluetoothAdapter!!.isEnabled) {
-                        val BTScan_intent = Intent()
-                        BTScan_intent.setClass(this@BTMainActivity, BTscanActivity::class.java)
-                        startActivity(BTScan_intent)
-                        overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+                    mPair_title?.visibility = View.INVISIBLE
+                    mDevice_list?.visibility = View.INVISIBLE
+                    if (mBluetoothAdapter?.isEnabled == true) {
+                        startBluetoothScanActivity()
                     } else {
                         showToast("Please turn on Bluetooth to search devices")
                     }
                 }
                 R.id.bt_Operation -> {
                     operation_Dialog()
+                }
+                R.id.action_exit -> {
+                    exit_app()
                 }
             }
             false
@@ -333,8 +328,15 @@ class BTMainActivity : AppCompatActivity() {
             drawerLayout!!.openDrawer(GravityCompat.END)
         }
     }
+
+    private fun startBluetoothScanActivity() {
+        val currentActivity = requireActivity()
+        val BTScan_intent = Intent(currentActivity, BTscanActivity::class.java)
+        currentActivity.intent.removeExtra("fragmentToShow")
+        currentActivity.startActivity(BTScan_intent)
+    }
     private fun operation_Dialog() {
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.bt_operation))
@@ -344,12 +346,30 @@ class BTMainActivity : AppCompatActivity() {
             }
             .show()
     }
-
-    private fun showToast(msg: String) {
-        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
+    private fun exit_app() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogTheme)
+            .setIcon(R.drawable.ic_leave)
+            .setTitle(resources.getString(R.string.leave_title))
+            .setMessage(resources.getString(R.string.leave))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                // Respond to positive button press
+                val activityManager = requireActivity().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val tasks = activityManager.appTasks
+                for (task in tasks) {
+                    task.finishAndRemoveTask()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
-    override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+    private fun showToast(msg: String) {
+        Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+    override fun onDestroy() {
+        AnimHandler.removeCallbacks(runnableAnim)
+        super.onDestroy()
     }
 }

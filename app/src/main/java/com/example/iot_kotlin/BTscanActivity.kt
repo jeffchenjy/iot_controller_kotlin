@@ -29,7 +29,6 @@ import com.google.android.material.dialog.MaterialAlertDialogBuilder
 class BTscanActivity : AppCompatActivity() {
     /*  About Activity  */
     private val context: Context? = this
-    var btscanActivity: BTscanActivity? = this
     /*  About ToolBar */
     private var toolbar: Toolbar? = null
     /*  Anim ImageView  */
@@ -55,7 +54,7 @@ class BTscanActivity : AppCompatActivity() {
         setToolbar()
         imgAnim1 = findViewById<View>(R.id.imgAnim1) as ImageView
         imgAnim2 = findViewById<View>(R.id.imgAnim2) as ImageView
-        this.runnableAnim.run()
+        this.runnableAnimScan.run()
         /** Bluetooth Check Permission **/
         val checkSelfPermission = ActivityCompat.checkSelfPermission(context!!, "android.permission.ACCESS_FINE_LOCATION")
         val checkSelfPermission2 = ActivityCompat.checkSelfPermission(context!!, "android.permission.ACCESS_COARSE_LOCATION")
@@ -142,7 +141,7 @@ class BTscanActivity : AppCompatActivity() {
         })
     }
     private fun setToolbar() {
-        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
+        toolbar = findViewById(R.id.toolbar)
         setSupportActionBar(toolbar)
         supportActionBar!!.title = resources.getString(R.string.bluetooth_scan)
         /**set Navigation Icon */
@@ -152,12 +151,14 @@ class BTscanActivity : AppCompatActivity() {
         /**設置Icon圖樣的點擊事件 */
         toolbar!!.setNavigationOnClickListener(View.OnClickListener {
             val BTMain_intent = Intent()
-            BTMain_intent.setClass(this@BTscanActivity, BTMainActivity::class.java)
+            BTMain_intent.setClass(this@BTscanActivity, MainActivity::class.java)
+            BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
             startActivity(BTMain_intent)
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+            finish()
         })
     }
-    private val runnableAnim: Runnable = object : Runnable {
+    private val runnableAnimScan: Runnable = object : Runnable {
         override fun run() {
             imgAnim1!!.animate().scaleX(4f).scaleY(4f).alpha(0f).setDuration(1000).withEndAction {
                 imgAnim1!!.scaleX = 1f
@@ -190,7 +191,6 @@ class BTscanActivity : AppCompatActivity() {
 
     @SuppressLint("MissingPermission")
     override fun onDestroy() {
-        super.onDestroy()
         mBluetoothAdapter!!.cancelDiscovery()
         if (broadcastReceiver == null || !receiverFlag) {
             return
@@ -198,7 +198,8 @@ class BTscanActivity : AppCompatActivity() {
         // Unregister the Bluetooth discovery receiver when the activity is destroyed
         unregisterReceiver(broadcastReceiver)
         receiverFlag = false
-        AnimHandler.removeCallbacks(runnableAnim)
+        AnimHandler.removeCallbacks(runnableAnimScan)
+        super.onDestroy()
     }
 
     private fun showToast(msg: String) {
@@ -206,6 +207,11 @@ class BTscanActivity : AppCompatActivity() {
     }
     override fun onBackPressed() {
         super.onBackPressed()
+        val BTMain_intent = Intent()
+        BTMain_intent.setClass(this@BTscanActivity, MainActivity::class.java)
+        BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
+        startActivity(BTMain_intent)
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
+        finish()
     }
 }

@@ -1,41 +1,41 @@
 package com.example.iot_kotlin
 
+import android.app.ActivityManager
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.view.LayoutInflater
 import android.view.Menu
+import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
 import okhttp3.OkHttpClient
 
-
-class WFMainActivity : AppCompatActivity() {
+class WFMainFragment: Fragment() {
     /*  ImageView  */
     private var imgAnim1: ImageView? = null
-    private var imgAnim2:ImageView? = null
-    private var wifi_Iv:ImageView? = null
-    private var wifi_off_Iv:ImageView? = null
+    private var imgAnim2: ImageView? = null
+    private var wifi_Iv: ImageView? = null
+    private var wifi_off_Iv: ImageView? = null
     /* Button and TextView*/
     private var CCI_button: Button? = null
     private var wifi_ssid_Tv: TextView? = null
-    /*  About Activity  */
-    private val context: Context? = this
-    var wfMainActivity: WFMainActivity? = this@WFMainActivity
 
     private val client = OkHttpClient()
     private val AnimHandler = Handler(Looper.myLooper()!!)
@@ -52,16 +52,20 @@ class WFMainActivity : AppCompatActivity() {
     private var v_url_title = "https://"
     private var v_url: StringBuilder? = null
     private var video_url: String? = null
-
-
-    override fun onCreate(bundle: Bundle?) {
-        super.onCreate(bundle)
-        setContentView(R.layout.activity_wf_main)
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        return inflater.inflate(R.layout.fragment_wifi_main, container, false)
+    }
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        findView(view)
         setToolbar()
-        findView()
         button_setOnClickListener()
         setNavigationItemSelectedListener()
-        shareData = getSharedPreferences("URL", 0)
+        shareData = requireContext().getSharedPreferences("URL", 0)
         /*CMD URL*/
         this.url = java.lang.StringBuilder()
         this.url!!.append(shareData!!.getString("Url", "hook.eu2.make.com/7fzzzajfbkl9j15hp93au3tqrlw5ighm?color=color = "))
@@ -72,8 +76,8 @@ class WFMainActivity : AppCompatActivity() {
         video_url = v_url_title + this.v_url
 
         /*Wifi*/
-        WifiUtils.connectWifi(this)
-        if (WifiUtils.isWifiEnabled(context)) {
+        WifiUtils.connectWifi(requireContext())
+        if (WifiUtils.isWifiEnabled(requireContext())) {
             wifi_Iv!!.visibility = View.VISIBLE
             imgAnim1!!.visibility = View.VISIBLE
             imgAnim2!!.visibility = View.VISIBLE
@@ -85,33 +89,23 @@ class WFMainActivity : AppCompatActivity() {
             imgAnim2!!.visibility = View.INVISIBLE
             wifi_off_Iv!!.visibility = View.VISIBLE
         }
+
         runnableAnim.run()
     }
-    private fun setToolbar() {
-        toolbar = findViewById<View>(R.id.toolbar) as Toolbar
-        setSupportActionBar(toolbar)
-        supportActionBar!!.title = resources.getString(R.string.wifi)
-        drawerLayout = findViewById<View>(R.id.drawerLayout) as DrawerLayout
-        navigation_view = findViewById<View>(R.id.navigation_view) as NavigationView
-        /**set Navigation Icon */
-        toolbar!!.navigationIcon = getDrawable(R.drawable.ic_navigation_back)
-        /**設置前方Icon與Title之距離為0 */
-        toolbar!!.contentInsetStartWithNavigation = 0
-        /**設置Icon圖樣的點擊事件 */
-        toolbar!!.setNavigationOnClickListener(View.OnClickListener { v: View? ->
-            val Main_intent = Intent()
-            Main_intent.setClass(this@WFMainActivity, MainActivity::class.java)
-            startActivity(Main_intent)
-            overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-        })
+    private fun findView(view: View) {
+        toolbar = view.findViewById(R.id.toolbar)
+        drawerLayout = view.findViewById(R.id.drawerLayout)
+        navigation_view = view.findViewById(R.id.navigation_view)
+        wifi_ssid_Tv = view.findViewById(R.id.wifi_ssid_Tv)
+        CCI_button = view.findViewById(R.id.CCI_button)
+        imgAnim1 = view.findViewById(R.id.imgAnim1)
+        imgAnim2 = view.findViewById(R.id.imgAnim2)
+        wifi_Iv = view.findViewById(R.id.wifi_Iv)
+        wifi_off_Iv = view.findViewById(R.id.wifi_off_Iv)
     }
-    private fun findView() {
-        wifi_ssid_Tv = findViewById<View>(R.id.wifi_ssid_Tv) as TextView
-        CCI_button = findViewById<View>(R.id.CCI_button) as Button
-        imgAnim1 = findViewById<View>(R.id.imgAnim1) as ImageView
-        imgAnim2 = findViewById<View>(R.id.imgAnim2) as ImageView
-        wifi_Iv = findViewById<View>(R.id.wifi_Iv) as ImageView
-        wifi_off_Iv = findViewById<View>(R.id.wifi_off_Iv) as ImageView
+    private fun setToolbar() {
+        (requireActivity() as AppCompatActivity).setSupportActionBar(toolbar)
+        (requireActivity() as AppCompatActivity).supportActionBar?.title  = resources.getString(R.string.wifi)
     }
     private fun button_setOnClickListener() {
         CCI_button!!.setOnClickListener(ButtonClick())
@@ -122,11 +116,12 @@ class WFMainActivity : AppCompatActivity() {
             val viewId = view?.id
             when(viewId) {
                 R.id.CCI_button -> {
-                    val WFCarControl_intent = Intent()
+                    val currentActivity = requireActivity()
+                    val WFCarControl_intent = Intent(currentActivity, WFCarControlActivity::class.java)
                     WFCarControl_intent.putExtra("CmdUrl", cmd_url)
                     WFCarControl_intent.putExtra("VideoUrl", video_url)
-                    WFCarControl_intent.setClass(this@WFMainActivity, WFCarControlActivity::class.java)
-                    startActivity(WFCarControl_intent)
+                    currentActivity.startActivity(WFCarControl_intent)
+                    currentActivity.finish()
                 }
             }
         }
@@ -173,42 +168,57 @@ class WFMainActivity : AppCompatActivity() {
             AnimHandler.postDelayed(this, 1500)
         }
     }
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.wf_main_menu, menu)
-        return true
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
+    }
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        inflater.inflate(R.menu.wf_main_menu, menu)
+        super.onCreateOptionsMenu(menu, inflater)
     }
 
-    override fun onOptionsItemSelected(menuItem: MenuItem): Boolean {
-        when (menuItem.itemId) {
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.itemId) {
             R.id.wifi_nav -> wf_main_nav()
         }
-        return super.onOptionsItemSelected(menuItem)
+        return super.onOptionsItemSelected(item)
     }
     private fun setNavigationItemSelectedListener() {
-        navigation_view!!.setNavigationItemSelectedListener { item -> // 點選時收起選單
-            drawerLayout!!.closeDrawer(GravityCompat.END)
-            // 取得選項id
-            val id = item.itemId
-            if (id == R.id.action_home) {
-                val Main_intent = Intent()
-                Main_intent.setClass(this@WFMainActivity, MainActivity::class.java)
-                startActivity(Main_intent)
-            } else if (id == R.id.current_url) {
-                Current_Url_Dialog()
-            } else if (id == R.id.action_url) {
-                Url_Setup_Dialog()
-            } else if (id == R.id.current_video_url) {
-                Current_Video_Url_Dialog()
-            } else if (id == R.id.action_video_url) {
-                Video_Url_Setup_Dialog()
-            } else if (id == R.id.wf_Operation) {
-                Operation_Dialog()
+        navigation_view?.setNavigationItemSelectedListener { item ->
+            drawerLayout?.closeDrawer(GravityCompat.END)
+            when (item.itemId) {
+                R.id.current_url -> {
+                    Current_Url_Dialog()
+                }
+                R.id.action_url -> {
+                    Url_Setup_Dialog()
+                }
+                R.id.current_video_url -> {
+                    Current_Video_Url_Dialog()
+                }
+                R.id.action_video_url -> {
+                    Video_Url_Setup_Dialog()
+                }
+                R.id.wf_Operation -> {
+                    Operation_Dialog()
+                }
+                R.id.action_exit -> {
+                    exit_app()
+                }
             }
             false
         }
     }
+
+    private fun wf_main_nav() {
+        if (drawerLayout!!.isDrawerOpen(GravityCompat.END)) {
+            drawerLayout!!.closeDrawer(GravityCompat.END)
+        } else {
+            drawerLayout!!.openDrawer(GravityCompat.END)
+        }
+    }
     private fun Operation_Dialog() {
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.wf_operation))
@@ -220,7 +230,7 @@ class WFMainActivity : AppCompatActivity() {
     }
 
     private fun Current_Url_Dialog() {
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_http)
             .setTitle(resources.getString(R.string.current_url))
             .setMessage(cmd_url)
@@ -232,7 +242,7 @@ class WFMainActivity : AppCompatActivity() {
     }
 
     private fun Current_Video_Url_Dialog() {
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_video)
             .setTitle(resources.getString(R.string.current_video_url))
             .setMessage(video_url)
@@ -255,7 +265,7 @@ class WFMainActivity : AppCompatActivity() {
                 R.id.radioButton_https -> http_text.text = "https://"
             }
         }
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_setting)
             .setTitle(resources.getString(R.string.url_setting))
             .setView(inflate)
@@ -263,12 +273,12 @@ class WFMainActivity : AppCompatActivity() {
                 // Respond to positive button press
                 val obj = editText_url.text.toString()
                 if (obj.length != 0) {
-                    wfMainActivity!!.url!!.setLength(0)
-                    wfMainActivity!!.url!!.append(obj)
+                    url!!.setLength(0)
+                    url!!.append(obj)
                     shareData!!.edit().putString("Url", obj).commit()
                 }
                 url_title = http_text.text.toString()
-                cmd_url = url_title + wfMainActivity!!.url
+                cmd_url = url_title + url
                 dialog.dismiss()
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
@@ -288,7 +298,7 @@ class WFMainActivity : AppCompatActivity() {
                 R.id.radioButton_https -> http_text.text = "https://"
             }
         }
-        MaterialAlertDialogBuilder(this,  R.style.CustomDialogTheme)
+        MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
             .setIcon(R.drawable.ic_video_setting)
             .setTitle(resources.getString(R.string.video_url_setting))
             .setView(inflate)
@@ -296,12 +306,12 @@ class WFMainActivity : AppCompatActivity() {
                 // Respond to positive button press
                 val obj = editText_url.text.toString()
                 if (obj.length != 0) {
-                    wfMainActivity!!.v_url!!.setLength(0)
-                    wfMainActivity!!.v_url!!.append(obj)
+                    v_url!!.setLength(0)
+                    v_url!!.append(obj)
                     shareData!!.edit().putString("video_Url", obj).commit()
                 }
                 v_url_title = http_text.text.toString()
-                video_url = v_url_title + wfMainActivity!!.v_url
+                video_url = v_url_title + v_url
                 dialog.dismiss()
             }
             .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
@@ -309,23 +319,27 @@ class WFMainActivity : AppCompatActivity() {
             }
             .show()
     }
-    private fun wf_main_nav() {
-        if (drawerLayout!!.isDrawerOpen(GravityCompat.END)) {
-            drawerLayout!!.closeDrawer(GravityCompat.END)
-        } else {
-            drawerLayout!!.openDrawer(GravityCompat.END)
-        }
+    private fun exit_app() {
+        MaterialAlertDialogBuilder(requireContext(), R.style.CustomDialogTheme)
+            .setIcon(R.drawable.ic_leave)
+            .setTitle(resources.getString(R.string.leave_title))
+            .setMessage(resources.getString(R.string.leave))
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                // Respond to positive button press
+                val activityManager = requireActivity().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                val tasks = activityManager.appTasks
+                for (task in tasks) {
+                    task.finishAndRemoveTask()
+                }
+                dialog.dismiss()
+            }
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                dialog.dismiss()
+            }
+            .show()
     }
-    private fun showToast(msg: String) {
-        Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
-    }
-    override fun onBackPressed() {
-        super.onBackPressed()
-        overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
-    }
-
     override fun onDestroy() {
-        super.onDestroy()
         AnimHandler.removeCallbacksAndMessages(null)
+        super.onDestroy()
     }
 }

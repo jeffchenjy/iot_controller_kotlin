@@ -38,6 +38,10 @@
                 android:id="@+id/wf_Operation"
                 android:icon="@drawable/ic_help"
                 android:title="@string/operation_title" />
+            <item
+                android:id="@+id/action_exit"
+                android:icon="@drawable/ic_exit"
+                android:title="@string/exit" />
         </menu>
     </item>
 </menu>

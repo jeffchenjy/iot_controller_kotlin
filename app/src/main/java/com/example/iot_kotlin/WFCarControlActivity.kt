@@ -108,9 +108,11 @@ class WFCarControlActivity : AppCompatActivity() {
         toolbar!!.contentInsetStartWithNavigation = 0
         /**設置Icon圖樣的點擊事件 */
         toolbar!!.setNavigationOnClickListener(View.OnClickListener {
-            val BTMain_intent = Intent()
-            BTMain_intent.setClass(this@WFCarControlActivity, BTMainActivity::class.java)
-            startActivity(BTMain_intent)
+            val WFMain_intent = Intent()
+            WFMain_intent.setClass(this@WFCarControlActivity, MainActivity::class.java)
+            WFMain_intent.putExtra("fragmentToShow", "WFMainFragment")
+            startActivity(WFMain_intent)
+            finish()
         })
     }
     private fun findView() {
@@ -693,5 +695,13 @@ class WFCarControlActivity : AppCompatActivity() {
     override fun onDestroy() {
         super.onDestroy()
         exoPlayer?.release()
+    }
+    override fun onBackPressed() {
+        super.onBackPressed()
+        val WFMain_intent = Intent()
+        WFMain_intent.setClass(this@WFCarControlActivity, MainActivity::class.java)
+        WFMain_intent.putExtra("fragmentToShow", "WFMainFragment")
+        startActivity(WFMain_intent)
+        finish()
     }
 }
