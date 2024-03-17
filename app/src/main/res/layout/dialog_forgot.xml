@@ -58,7 +58,7 @@
                 android:background="@drawable/custom_edittext"
                 android:maxLines="1"
                 android:textSize="14sp"
-                android:paddingLeft="10dp"
+                android:paddingLeft="15dp"
                 android:hint="@string/forgot_password_hint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

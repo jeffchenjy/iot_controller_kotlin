@@ -89,11 +89,12 @@
     <string name="signup">新規登録</string>
     <string name="username">ユーザーネーム</string>
     <string name="email">メールアドレス</string>
+    <string name="mail">メール</string>
     <string name="date">作成日</string>
     <string name="password">パスワード</string>
     <string name="signUp_btn">入力内容を確認</string>
     <string name="signUp_success">サインアップが成功しました</string>
-    <string name="signUp_failed">メールアドレスまたはパスワードが正しくありません。</string>
+    <string name="signUp_failed">入力されたメールアドレスは既に使用されています。</string>
     <string name="isMember">すでにメンバーですか? ログイン</string>
     <!-- Profile -->
     <string name="edit_profile">アカウント設定</string>
@@ -108,7 +109,10 @@
     <string name="new_password">新しいパスワード</string>
     <string name="delete">アカウントを削除</string>
     <string name="errorEmail_message">メールアドレスが正しくありません</string>
-    <string name="errorUsername_message">ユーザーネームが短すぎます</string>
-    <string name="errorPassword_message">パスワードが短すぎます</string>
+    <string name="errorUsername_message">名前が短すぎます(3文字以上の英数字文字)</string>
+    <string name="errorPassword_message">パスワードが短すぎます(8文字以上の英数字文字)</string>
+    <string name="data_update_success">データが正常に更新されました</string>
+    <string name="Password_update_message">パスワードが正常に更新されました</string>
+    <string name="Password_update_failed">パスワードの更新に失敗しました</string>
 
 </resources>

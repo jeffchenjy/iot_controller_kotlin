@@ -411,7 +411,7 @@ class CarControlActivity : AppCompatActivity()  {
         return super.onOptionsItemSelected(menuItem)
     }
     private fun Music_Control_Dialog() {
-        val inflate: View = layoutInflater.inflate(R.layout.music_control, null)
+        val inflate: View = layoutInflater.inflate(R.layout.dialog_music_control, null)
         var btn_music_previous  = inflate.findViewById<View>(R.id.music_previous) as ImageButton
         var btn_music_play = inflate.findViewById<View>(R.id.music_play) as ImageButton
         var btn_music_next = inflate.findViewById<View>(R.id.music_next) as ImageButton

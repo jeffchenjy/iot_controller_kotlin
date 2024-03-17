@@ -1,11 +1,15 @@
 package com.example.iot_kotlin
 
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
+import android.text.Editable
+import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
 import android.view.View
@@ -19,6 +23,8 @@ import androidx.appcompat.widget.Toolbar
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.android.material.textfield.TextInputEditText
+import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -33,13 +39,13 @@ class EditProfileActivity : AppCompatActivity() {
     private lateinit var editUsername: EditText
     private lateinit var editEmail: EditText
     private lateinit var editPassword: EditText
+    /* TextInputLayout */
+    private lateinit var emailTextInputLayout : TextInputLayout
+    private lateinit var usernameTextInputLayout : TextInputLayout
+    private lateinit var passwordTextInputLayout : TextInputLayout
     /* Button */
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
-    /* TextView */
-    private lateinit var errorEmailTextView: TextView
-    private lateinit var errorUsernameTextView: TextView
-    private lateinit var errorPasswordTextView: TextView
     /* String */
     private lateinit var newUsername: String
     private lateinit var newEmail: String
@@ -57,13 +63,91 @@ class EditProfileActivity : AppCompatActivity() {
         setToolbar()
         val auth = FirebaseAuth.getInstance()
         val currentUser = auth.currentUser
+        /**  Text Changed Listener **/
+        passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+        editEmail.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val email = s.toString()
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    emailTextInputLayout.error  = null
+                    editEmail.error = "Emaill can't be empty"
+                    saveButton.isEnabled = false
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches() && charCount > 0) {
+                    emailTextInputLayout.error = getString(R.string.errorEmail_message)
+                    saveButton.isEnabled = false
+                } else {
+                    emailTextInputLayout.error  = null
+                    saveButton.isEnabled = true
+                }
+            }
+        })
+        editUsername.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    usernameTextInputLayout.error  = null
+                    editUsername.error = "Username can't be empty"
+                    saveButton.isEnabled = false
+                } else if(charCount in 1..2) {
+                    usernameTextInputLayout.error  = getString(R.string.errorUsername_message)
+                    saveButton.isEnabled = false
+                } else {
+                    usernameTextInputLayout.error  = null
+                    saveButton.isEnabled = true
+                }
+            }
+        })
+        editPassword.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    passwordTextInputLayout.error = null
+                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+                    saveButton.isEnabled = false
+                } else if(charCount in 1..7) {
+                    passwordTextInputLayout.error = getString(R.string.errorPassword_message)
+                    saveButton.isEnabled = false
+                } else {
+                    passwordTextInputLayout.error  = null
+                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
+                    saveButton.isEnabled = true
+                }
+            }
+        })
         /** 抓取 Firebase 的資料 */
+        /** Show progress indicators **/
+        val builder = AlertDialog.Builder(this@EditProfileActivity)
+        val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
+        builder.setView(dialogView)
+        val dialog: AlertDialog = builder.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+        dialog.show()
         if (currentUser != null) {
             currentUserUID = currentUser.uid
             reference = FirebaseDatabase.getInstance().getReference("users/UID/$currentUserUID")
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
                     if (snapshot.exists()) {
+                        dialog.dismiss()
                         val username = snapshot.child("username").getValue(String::class.java)
                         val email = snapshot.child("email").getValue(String::class.java)
                         val password = snapshot.child("password").getValue(String::class.java)
@@ -73,11 +157,13 @@ class EditProfileActivity : AppCompatActivity() {
                         //editPassword.setText(password)
                     } else {
                         // 處理資料不存在的情況
+                        dialog.dismiss()
                         showToast("User data not found")
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
+                    dialog.dismiss()
                     showToast("Error: ${databaseError.message}")
                 }
             })
@@ -94,25 +180,9 @@ class EditProfileActivity : AppCompatActivity() {
                 } else {
                     editPassword.text.toString()
                 }
-                if(!Patterns.EMAIL_ADDRESS.matcher(newEmail).matches()) {
-                    errorEmailTextView.text = getString(R.string.errorEmail_message)
-                    errorEmailTextView.visibility = View.VISIBLE
-                } else errorEmailTextView.visibility = View.GONE
-
-                if(newUsername.length < 3) {
-                    errorUsernameTextView.text  = getString(R.string.errorUsername_message)
-                    errorUsernameTextView.visibility = View.VISIBLE
-                } else errorUsernameTextView.visibility = View.GONE
-
-                if(newPassword.length < 8) {
-                    errorPasswordTextView.text = getString(R.string.errorPassword_message)
-                    errorPasswordTextView.visibility = View.VISIBLE
-                } else errorPasswordTextView.visibility = View.GONE
-
                 if(Patterns.EMAIL_ADDRESS.matcher(newEmail).matches() && newUsername.length >= 3 && newPassword.length >= 8) {
-                    errorEmailTextView.visibility = View.GONE
-                    errorUsernameTextView.visibility = View.GONE
-                    errorPasswordTextView.visibility = View.GONE
+                    /** Show progress indicators **/
+                    dialog.show()
                     // 更新資料庫中的資料
                     val newData = mapOf<String, Any>(
                         "username" to newUsername,
@@ -121,13 +191,15 @@ class EditProfileActivity : AppCompatActivity() {
                     )
                     reference.updateChildren(newData)
                         .addOnSuccessListener {
-                            //showToast("Data updated successfully")
+                            dialog.dismiss()
+                            showToast(getString(R.string.data_update_success))
                         }
                         .addOnFailureListener { e ->
-                            showToast("Error updating data: ${e.message}")
+                            dialog.dismiss()
+                            showToast("User data updated failed")
                         }
                     currentUser?.let {
-                        if(!newEmail.equals(currentUser.email)){
+                        if(newEmail != currentUser.email){
                             // 要求用戶重新驗證身份
                             val credential = EmailAuthProvider.getCredential(currentUser.email!!, currentUserPassword)
                             currentUser.reauthenticate(credential)
@@ -138,6 +210,7 @@ class EditProfileActivity : AppCompatActivity() {
                                             .addOnCompleteListener { updateEmailTask ->
                                                 if (updateEmailTask.isSuccessful) {
                                                     // 電子郵件地址更新成功
+                                                    dialog.dismiss()
                                                     showToast("Please check your email")
                                                 }
                                             }
@@ -145,16 +218,21 @@ class EditProfileActivity : AppCompatActivity() {
                                 }
                         }
                         // 更新密碼
-                        it.updatePassword(newPassword)
-                            .addOnCompleteListener { task ->
-                                if (task.isSuccessful) {
-                                    // 更新成功
-                                    showToast("Password updated successfully")
-                                } else {
-                                    // 更新失敗，顯示錯誤消息
-                                    Log.d("updatePassword", "Error updating password: ${task.exception?.message}")
+                        if(newPassword != currentUserPassword) {
+                            it.updatePassword(newPassword)
+                                .addOnCompleteListener { task ->
+                                    if (task.isSuccessful) {
+                                        // 更新成功
+                                        dialog.dismiss()
+                                        showToast(getString(R.string.Password_update_message))
+                                    } else {
+                                        // 更新失敗，顯示錯誤消息
+                                        dialog.dismiss()
+                                        showToast(getString(R.string.Password_update_failed))
+                                        Log.d("updatePassword", "Error updating password: ${task.exception?.message}")
+                                    }
                                 }
-                            }
+                        }
                     }
                     val builder = AlertDialog.Builder(this@EditProfileActivity)
                     val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
@@ -230,9 +308,9 @@ class EditProfileActivity : AppCompatActivity() {
         editUsername = findViewById(R.id.editUsername)
         editEmail = findViewById(R.id.editEmail)
         editPassword = findViewById(R.id.editPassword)
-        errorEmailTextView = findViewById(R.id.errorEmailTextView)
-        errorUsernameTextView = findViewById(R.id.errorUsernameTextView)
-        errorPasswordTextView = findViewById(R.id.errorPasswordTextView)
+        emailTextInputLayout = findViewById(R.id.emailTextInputLayout)
+        usernameTextInputLayout = findViewById(R.id.usernameTextInputLayout)
+        passwordTextInputLayout = findViewById(R.id.passwordTextInputLayout)
         saveButton = findViewById(R.id.saveButton)
         deleteButton = findViewById(R.id.deleteButton)
     }

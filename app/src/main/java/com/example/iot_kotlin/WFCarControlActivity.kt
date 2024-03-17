@@ -3,6 +3,7 @@ package com.example.iot_kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -10,6 +11,8 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
+import android.webkit.WebSettings
+import android.webkit.WebView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -18,17 +21,16 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
-import androidx.media3.common.MediaItem
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.ui.PlayerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.longdo.mjpegviewer.MjpegView
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
 
+
 class WFCarControlActivity : AppCompatActivity() {
     /*  About Activity  */
-    private val context: Context? = this
+    private val context: Context = this
     var wfcarcontrolActivity: WFCarControlActivity? = this@WFCarControlActivity
     /*  About ToolBar */
     private var toolbar: Toolbar? = null
@@ -36,8 +38,8 @@ class WFCarControlActivity : AppCompatActivity() {
     private var CAR_STOP: StringBuilder? = null
     private var CAR_BACK: StringBuilder? = null
     private var CAR_FORWARD: StringBuilder? = null
-    private var CAR_LEFT: StringBuilder? = null;
-    private var CAR_RIGHT: StringBuilder? = null;
+    private var CAR_LEFT: StringBuilder? = null
+    private var CAR_RIGHT: StringBuilder? = null
     private var CAR_A_Func: StringBuilder? = null
     private var CAR_B_Func: StringBuilder? = null
     private var CAR_X_Func: StringBuilder? = null
@@ -74,12 +76,11 @@ class WFCarControlActivity : AppCompatActivity() {
     val Btn_delay = 200 // 每0.2秒輸出一次
     var longPressRunnable: Runnable? = null
 
-    /* Internet and Exoplayer */
+    /* Internet */
     private val client = OkHttpClient()
-    private var cmd_url: String? = null
-    private var video_url: String? = null
-    private var playerView: PlayerView? = null
-    private var exoPlayer: ExoPlayer? = null
+    private lateinit var cmd_url: String
+    private lateinit var video_url: String
+    private lateinit var mjpegView: MjpegView
 
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
@@ -91,11 +92,18 @@ class WFCarControlActivity : AppCompatActivity() {
         Button_setOnClickListener()
         Button_setOnLongClickListener()
         Button_setOnTouchListener()
-        /*URL get*/
-        cmd_url = intent.getStringExtra("CmdUrl")
-        video_url = intent.getStringExtra("VideoUrl")
         /*Wifi*/
         WifiUtils.connectWifi(this)
+
+        /* URL get */
+        cmd_url = intent.getStringExtra("CmdUrl")!!
+        video_url = intent.getStringExtra("VideoUrl")!!
+        /** MJPG Video Get **/
+        mjpegView.mode = MjpegView.MODE_FIT_WIDTH
+        mjpegView.isAdjustHeight = true
+        mjpegView.supportPinchZoomAndPan = true
+        mjpegView.setUrl(video_url)
+        mjpegView.startStream()
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -125,7 +133,7 @@ class WFCarControlActivity : AppCompatActivity() {
         button_B = findViewById<View>(R.id.button_b) as Button
         button_X = findViewById<View>(R.id.button_x) as Button
         button_Y = findViewById<View>(R.id.button_y) as Button
-        playerView = findViewById(R.id.playerView)
+        mjpegView = findViewById(R.id.mjpegView)
     }
     private fun stringBuilder() {
         this.CAR_FORWARD = java.lang.StringBuilder()
@@ -166,9 +174,9 @@ class WFCarControlActivity : AppCompatActivity() {
         this.button_X!!.setOnClickListener(ButtonClick())
         this.button_Y!!.setOnClickListener(ButtonClick())
     }
-    private fun ButtonClick() : View.OnClickListener? {
+    private fun ButtonClick() : View.OnClickListener {
         return View.OnClickListener {
-            val view = it as? View
+            val view = it
             val viewId = view?.id
             when(viewId) {
                 R.id.button_up -> {
@@ -263,9 +271,9 @@ class WFCarControlActivity : AppCompatActivity() {
         this.button_Left!!.setOnLongClickListener(ButtonLongClick())
         this.button_Right!!.setOnLongClickListener(ButtonLongClick())
     }
-    private fun ButtonLongClick() : View.OnLongClickListener? {
+    private fun ButtonLongClick() : View.OnLongClickListener {
         return View.OnLongClickListener {
-            val view = it as? View
+            val view = it
             val viewId = view?.id
             when (viewId) {
                 R.id.button_up -> {
@@ -335,7 +343,7 @@ class WFCarControlActivity : AppCompatActivity() {
         button_Left!!.setOnTouchListener(ButtonOnTouch())
         button_Right!!.setOnTouchListener(ButtonOnTouch())
     }
-    private fun ButtonOnTouch() : View.OnTouchListener? {
+    private fun ButtonOnTouch() : View.OnTouchListener {
         return View.OnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
@@ -369,7 +377,7 @@ class WFCarControlActivity : AppCompatActivity() {
         return super.onOptionsItemSelected(menuItem)
     }
     private fun Music_Control_Dialog() {
-        val inflate: View = layoutInflater.inflate(R.layout.music_control, null)
+        val inflate: View = layoutInflater.inflate(R.layout.dialog_music_control, null)
         var btn_music_previous  = inflate.findViewById<View>(R.id.music_previous) as ImageButton
         var btn_music_play = inflate.findViewById<View>(R.id.music_play) as ImageButton
         var btn_music_next = inflate.findViewById<View>(R.id.music_next) as ImageButton
@@ -393,7 +401,7 @@ class WFCarControlActivity : AppCompatActivity() {
             val music_play_drawable = ContextCompat.getDrawable(this, R.drawable.ic_music_play)
             btn_music_play.setImageDrawable(music_play_drawable)
         }
-        btn_music_previous!!.setOnClickListener(View.OnClickListener {
+        btn_music_previous.setOnClickListener(View.OnClickListener {
             music_controlCmd = this.music_previous_btn!!.toString()
             val carActivity = this@WFCarControlActivity
             carActivity.sendCMD(carActivity.music_controlCmd!!)
@@ -401,7 +409,7 @@ class WFCarControlActivity : AppCompatActivity() {
             btn_music_play.setImageDrawable(music_play_drawable)
             music_flag = true
         })
-        btn_music_next!!.setOnClickListener(View.OnClickListener {
+        btn_music_next.setOnClickListener(View.OnClickListener {
             music_controlCmd = this.music_next_btn!!.toString()
             val carActivity = this@WFCarControlActivity
             carActivity.sendCMD(carActivity.music_controlCmd!!)
@@ -409,7 +417,7 @@ class WFCarControlActivity : AppCompatActivity() {
             btn_music_play.setImageDrawable(music_play_drawable)
             music_flag = true
         })
-        btn_music_play!!.setOnClickListener(View.OnClickListener {
+        btn_music_play.setOnClickListener(View.OnClickListener {
             if (music_flag) {
                 val carActivity = this@WFCarControlActivity
                 carActivity.sendCMD(carActivity.music_pause)
@@ -426,7 +434,7 @@ class WFCarControlActivity : AppCompatActivity() {
                 btn_music_play.setImageDrawable(music_play_drawable)
             }
         })
-        btn_volume_minus!!.setOnClickListener(View.OnClickListener {
+        btn_volume_minus.setOnClickListener(View.OnClickListener {
             if (music_volume_value > 0) {
                 music_volume_value--
                 progressBar.progress = music_volume_value
@@ -436,7 +444,7 @@ class WFCarControlActivity : AppCompatActivity() {
                 showToast(volume_value)
             }
         })
-        btn_volume_add!!.setOnClickListener(View.OnClickListener {
+        btn_volume_add.setOnClickListener(View.OnClickListener {
             if (music_volume_value < progressBar.max) {
                 music_volume_value++
                 progressBar.progress = music_volume_value
@@ -647,55 +655,10 @@ class WFCarControlActivity : AppCompatActivity() {
             }
         }.start()
     }
-    private fun initializeExoPlayer() {
-        if (exoPlayer == null) {
-            exoPlayer = ExoPlayer.Builder(this).build()
-            playerView!!.player = exoPlayer
-        }
-        val mediaItem = MediaItem.fromUri(video_url!!)
-        exoPlayer!!.setMediaItem(mediaItem)
-        exoPlayer!!.prepare()
-        exoPlayer!!.play()
-    }
-
-    private fun releaseExoPlayer() {
-        if (exoPlayer != null) {
-            exoPlayer!!.release()
-            exoPlayer = null
-        }
-    }
-
     private fun showToast(msg: String) {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
     }
-    override fun onStart() {
-        super.onStart()
-        initializeExoPlayer()
-    }
 
-    override fun onStop() {
-        super.onStop()
-        releaseExoPlayer()
-    }
-
-    override fun onResume() {
-        super.onResume()
-        if (exoPlayer != null) {
-            exoPlayer!!.playWhenReady = true
-        }
-    }
-
-    override fun onPause() {
-        super.onPause()
-        if (exoPlayer != null) {
-            exoPlayer!!.playWhenReady = false
-        }
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
-        exoPlayer?.release()
-    }
     override fun onBackPressed() {
         super.onBackPressed()
         val WFMain_intent = Intent()

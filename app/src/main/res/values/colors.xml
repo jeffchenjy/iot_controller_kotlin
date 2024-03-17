@@ -11,13 +11,14 @@
 
     <!--    Dark Themes color   -->
     <color name="toolbar_color">#212121</color>
+    <!--#9A85BD-->
     <color name="text_color">#9A85BD</color>
     <color name="icon_color">#9A85BD</color>
     <!--    Light Themes color   -->
     <color name="toolbar_color_light">#F7F2FA</color>
     <!-- Button -->
-    <color name="button_color">#613DA1</color>
-
+    <!--#613DA1-->
+    <color name="button_color">#3A2267</color>
     <!--
     <color name="toolbar_color">#212121</color>
     <color name="toolbar_color_inverse">#9A85BD</color>
@@ -25,10 +26,11 @@
 
     <!-- Icon -->
     <color name="small_icon_color">#9B9B9B</color>
+    <color name="text_icon_color">#5E5E5E</color>
     <!-- Car Button -->
     <color name="state_pressed_color">#535252</color>
     <color name="default_color">#000000</color>
     <!-- SeekBar Button -->
-    <color name="seekbar_start_color">#917EB3</color>
+    <color name="seekbar_start_color">#9A85BD</color>
     <color name="seekbar_end_color">#6831CA</color>
 </resources>

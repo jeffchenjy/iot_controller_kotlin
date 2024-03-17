@@ -26,6 +26,9 @@
     <style name="textColor">
         <item name="android:textColor">@color/text_color</item>
     </style>
+    <style name="inputtextColor">
+        <item name="android:textColor">@color/toolbar_color</item>
+    </style>
     <style name="toolBartextColor">
         <item name="titleTextColor">@color/text_color</item>
     </style>
