@@ -89,10 +89,14 @@ class ProfileFragment : Fragment() {
                         profilePassword.text = subText+hiddenText
                     } else {
                         // 處理資料不存在的情況
+                        showToast("User data not found")
+                        dialog.dismiss()
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
+                    showToast("User data load failed")
+                    dialog.dismiss()
                 }
             })
         } else {

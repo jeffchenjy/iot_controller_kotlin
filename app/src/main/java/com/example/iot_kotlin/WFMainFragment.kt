@@ -49,7 +49,7 @@ class WFMainFragment: Fragment() {
     private var url: StringBuilder? = null
     private var cmd_url: String? = null
     /*video url*/
-    private var v_url_title = "https://"
+    private var v_url_title = "http://"
     private var v_url: StringBuilder? = null
     private var video_url: String? = null
     override fun onCreateView(
@@ -72,7 +72,7 @@ class WFMainFragment: Fragment() {
         cmd_url = url_title + this.url
         /*VIDEO URL*/
         this.v_url = java.lang.StringBuilder()
-        this.v_url!!.append(shareData!!.getString("video_Url", "storage.googleapis.com/exoplayer-test-media-0/play.mp3"))
+        this.v_url!!.append(shareData!!.getString("video_Url", "192.168.50.73:8080/?action=stream"))
         video_url = v_url_title + this.v_url
 
         /*Wifi*/

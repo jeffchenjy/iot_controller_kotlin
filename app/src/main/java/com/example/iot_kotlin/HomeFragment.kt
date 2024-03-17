@@ -144,8 +144,6 @@ class HomeFragment : Fragment() {
             drawerLayout?.closeDrawer(GravityCompat.START)
             // 获取选项 id
             when (item.itemId) {
-                R.id.action_home -> {
-                }
                 R.id.action_twitter -> {
                     val uri = Uri.parse(twiter_url)
                     val intent = Intent(Intent.ACTION_VIEW, uri)

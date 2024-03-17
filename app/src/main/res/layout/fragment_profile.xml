@@ -22,7 +22,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
-
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -39,9 +38,8 @@
             android:id="@+id/infoCardView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="24dp"
             android:layout_marginTop="20dp"
-            android:layout_marginEnd="24dp"
+            android:layout_marginHorizontal="40dp"
             app:cardCornerRadius="20dp"
             android:background="@drawable/login_box"
             app:layout_constraintEnd_toEndOf="parent"
@@ -54,7 +52,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:padding="10dp">
+                android:padding="5dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
@@ -69,7 +67,9 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawableLeft="@drawable/ic_email"
-                        android:text="@string/email"
+                        android:gravity="center_vertical"
+                        android:drawablePadding="5dp"
+                        android:text="@string/mail"
                         android:textSize="14sp"
                         android:textStyle="bold" />
 
@@ -79,6 +79,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minWidth="120dp"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp" />
 
@@ -94,7 +95,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="5dp">
                     <TextView
                         android:id="@+id/username"
                         style="@style/textColor"
@@ -102,6 +103,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawableLeft="@drawable/ic_person_pin"
+                        android:drawablePadding="5dp"
+                        android:gravity="center_vertical"
                         android:text="@string/username"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -112,6 +115,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minWidth="120dp"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp" />
                 </LinearLayout>
@@ -127,7 +131,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/date"
@@ -136,6 +140,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawableLeft="@drawable/ic_date"
+                        android:gravity="center_vertical"
+                        android:drawablePadding="5dp"
                         android:text="@string/date"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -146,6 +152,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minWidth="120dp"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp" />
 
@@ -161,7 +168,7 @@
                     android:layout_height="match_parent"
                     android:layout_margin="10dp"
                     android:orientation="horizontal"
-                    android:padding="8dp">
+                    android:padding="5dp">
 
                     <TextView
                         android:id="@+id/password"
@@ -170,6 +177,8 @@
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
                         android:drawableLeft="@drawable/ic_account_lock"
+                        android:gravity="center_vertical"
+                        android:drawablePadding="5dp"
                         android:text="@string/password"
                         android:textSize="14sp"
                         android:textStyle="bold" />
@@ -180,6 +189,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
+                        android:minWidth="120dp"
                         android:textAlignment="viewEnd"
                         android:textSize="16sp" />
 
@@ -191,7 +201,7 @@
             style="@style/Button_style"
             android:layout_width="0dp"
             android:layout_height="50dp"
-            android:layout_marginTop="30dp"
+            android:layout_marginTop="35dp"
             android:gravity="center"
             android:text="@string/edit_profile"
             android:textColor="@color/white"
