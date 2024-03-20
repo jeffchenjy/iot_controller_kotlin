@@ -87,7 +87,8 @@
     <string name="new_member">新メンバー? 新規登録</string>
     <!-- Signup -->
     <string name="signup">新規登録</string>
-    <string name="username">ユーザーネーム</string>
+    <string name="username">ユーザー ID</string>
+    <string name="nickname">ニックネーム</string>
     <string name="email">メールアドレス</string>
     <string name="mail">メール</string>
     <string name="date">作成日</string>
@@ -97,14 +98,15 @@
     <string name="signUp_failed">入力されたメールアドレスは既に使用されています。</string>
     <string name="isMember">すでにメンバーですか? ログイン</string>
     <!-- Profile -->
-    <string name="edit_profile">アカウント設定</string>
+    <string name="edit_profile">プロフィール設定</string>
+    <string name="edit_account">アカウント設定</string>
     <string name="save">アカウント情報を更新</string>
     <string name="logout">ログアウト</string>
     <string name="id_verify">パスワード入力</string>
     <string name="id_verify_massage">パスワードを入力してください。</string>
     <string name="id_verify_hint">現在のパスワード</string>
     <string name="id_verify_ok">OK</string>
-    <string name="new_username">新しいユーザーネーム</string>
+    <string name="new_username">新しいユーザー ID</string>
     <string name="new_email">新しいメールアドレス</string>
     <string name="new_password">新しいパスワード</string>
     <string name="delete">アカウントを削除</string>

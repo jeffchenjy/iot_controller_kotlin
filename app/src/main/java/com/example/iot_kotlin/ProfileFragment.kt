@@ -4,8 +4,6 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,6 +13,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.DataSnapshot
@@ -22,7 +22,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
-import okhttp3.internal.concurrent.formatDuration
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -31,13 +30,13 @@ class ProfileFragment : Fragment() {
     private lateinit var auth: FirebaseAuth
     private lateinit var reference: DatabaseReference
     /* TextView */
-    private lateinit var titleUsername: TextView
+    private lateinit var titleNickname: TextView
     private lateinit var profileUsername: TextView
     private lateinit var profileEmail: TextView
     private lateinit var profileDate: TextView
     private lateinit var profilePassword: TextView
     /* Button */
-    private lateinit var editButton: Button
+    private lateinit var editAccountButton: Button
     private lateinit var signOutButton: Button
     /* String */
     private lateinit var password: String
@@ -72,6 +71,7 @@ class ProfileFragment : Fragment() {
                     if (snapshot.exists()) {
                         dialog.dismiss()
                         val username = snapshot.child("username").getValue(String::class.java)
+                        val nickname = snapshot.child("nickname").getValue(String::class.java)
                         val email = snapshot.child("email").getValue(String::class.java)
                         password = snapshot.child("password").getValue(String::class.java)!!
                         //profilePassword.text = password
@@ -83,7 +83,7 @@ class ProfileFragment : Fragment() {
                             val formattedDate = sdf.format(creationDate)
                             profileDate.text = formattedDate
                         }
-                        titleUsername.text = username
+                        titleNickname.text = nickname
                         profileUsername.text = username
                         profileEmail.text = email
                         profilePassword.text = subText+hiddenText
@@ -101,37 +101,26 @@ class ProfileFragment : Fragment() {
             })
         } else {
             nouserflag = true
-            titleUsername.text = "Guest"
+            titleNickname.text = "Guest"
             profileUsername.text = " "
             profileEmail.text = " "
             profileDate.text = " "
             profilePassword.text = " "
         }
         /** Button OnClickListener **/
-        editButton!!.setOnClickListener{
+        editAccountButton!!.setOnClickListener{
             if(!nouserflag!!) {
-                val builder = AlertDialog.Builder(requireContext())
-                val dialogView: View = layoutInflater.inflate(R.layout.dialog_password_verify, null)
-                val codeBox = dialogView.findViewById<EditText>(R.id.codeBox)
-                builder.setView(dialogView)
-                val dialog: AlertDialog = builder.create()
-                dialogView.findViewById<View>(R.id.btnCheck).setOnClickListener(View.OnClickListener {
-                    val userCode = codeBox.text.toString()
-                    if (userCode.equals(password)) {
-                        dialog.dismiss()
-                        val currentActivity = requireActivity()
-                        val editIntent = Intent(currentActivity, EditProfileActivity::class.java)
-                        currentActivity.intent.removeExtra("fragmentToShow")
-                        currentActivity.startActivity(editIntent)
-                    } else {
-                        showToast("Password error")
-                    }
-                })
-                dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
-                if (dialog.window != null) {
-                    dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
-                }
-                dialog.show()
+                val fragment = EditAccountFragment()
+                requireActivity().supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(
+                        R.anim.slide_in_right,  // enter
+                        R.anim.slide_out_left,  // exit
+                        R.anim.slide_in_left,   // popEnter
+                        R.anim.slide_out_right  // popExit
+                    )
+                    .replace(R.id.fragment_container, fragment)
+                    .addToBackStack(null)
+                    .commit()
             } else {
                 showToast("Unable to modify without logging in")
             }
@@ -141,7 +130,7 @@ class ProfileFragment : Fragment() {
                 .setIcon(R.drawable.ic_leave)
                 .setTitle(resources.getString(R.string.logout))
                 .setMessage(resources.getString(R.string.signout_message))
-                .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+                .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                     // Respond to positive button press
                     if(!nouserflag!!) {
                         auth.signOut()
@@ -153,19 +142,19 @@ class ProfileFragment : Fragment() {
                     currentActivity.finish()
 
                 }
-                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                     dialog.dismiss()
                 }
                 .show()
         }
     }
     private fun findView(view: View){
-        titleUsername = view.findViewById(R.id.titleUsername)
+        titleNickname = view.findViewById(R.id.titleNickname)
         profileUsername = view.findViewById(R.id.profileUsername)
         profileEmail = view.findViewById(R.id.profileEmail)
         profileDate = view.findViewById(R.id.profileDate)
         profilePassword = view.findViewById(R.id.profilePassword)
-        editButton = view.findViewById(R.id.editButton)
+        editAccountButton = view.findViewById(R.id.editAccountButton)
         signOutButton = view.findViewById(R.id.signOutButton)
     }
     private fun showToast(msg: String) {

@@ -12,18 +12,16 @@ class WelcomeActivity : AppCompatActivity() {
         super.onCreate(bundle)
         setContentView(R.layout.activity_welcome)
         mHandler.sendEmptyMessageDelayed(GOTO_MAIN_ACTIVITY, 1000) //1秒跳轉
-    }
 
+    }
     private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
         override fun handleMessage(msg: Message) {
             when (msg.what) {
                 GOTO_MAIN_ACTIVITY -> {
-                    val intent = Intent()
-                    intent.setClass(this@WelcomeActivity, LoginActivity::class.java)
+                    val intent = Intent(this@WelcomeActivity, LoginActivity::class.java)
                     startActivity(intent)
                     finish()
                 }
-
                 else -> {}
             }
         }

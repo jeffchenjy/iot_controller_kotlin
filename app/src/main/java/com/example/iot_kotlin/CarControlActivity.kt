@@ -54,7 +54,7 @@ class CarControlActivity : AppCompatActivity()  {
     private var songCmd: String? = null
     private val songArrayData = arrayOf("Song 1", "Song 2", "Song 3", "Song 4", "Song 5", "Song 6", "Song 7", "Song 8", "Song 9", "Song 10")
     /* Int and Boolean */
-    private var music_volume_value: Int = 15
+    private var music_volume_value: Int = 10
     private var music_flag= false
     private var cmd_flag= false
     private var control_flag= false
@@ -152,8 +152,7 @@ class CarControlActivity : AppCompatActivity()  {
         toolbar!!.contentInsetStartWithNavigation = 0
         /**設置Icon圖樣的點擊事件 */
         toolbar!!.setNavigationOnClickListener(View.OnClickListener {
-            val BTMain_intent = Intent()
-            BTMain_intent.setClass(this@CarControlActivity, MainActivity::class.java)
+            val BTMain_intent = Intent(this@CarControlActivity, MainActivity::class.java)
             BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
             startActivity(BTMain_intent)
             finish()
@@ -311,7 +310,7 @@ class CarControlActivity : AppCompatActivity()  {
             val viewId = view?.id
             when (viewId) {
                 R.id.button_up -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = carcontrolActivity!!.CAR_FORWARD.toString()
@@ -325,7 +324,7 @@ class CarControlActivity : AppCompatActivity()  {
                     }
                 }
                 R.id.button_down -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = carcontrolActivity!!.CAR_BACK.toString()
@@ -339,7 +338,7 @@ class CarControlActivity : AppCompatActivity()  {
                     }
                 }
                 R.id.button_left -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = carcontrolActivity!!.CAR_LEFT.toString()
@@ -353,7 +352,7 @@ class CarControlActivity : AppCompatActivity()  {
                     }
                 }
                 R.id.button_right -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = carcontrolActivity!!.CAR_RIGHT.toString()
@@ -381,9 +380,10 @@ class CarControlActivity : AppCompatActivity()  {
         return View.OnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    if(cmd_flag && control_flag) {
+                    if(control_flag) {
                         if(v.id == R.id.button_down || v.id == R.id.button_left || v.id == R.id.button_right || v.id == R.id.button_up) {
                             // 放開按鈕時停止持續執行的操作
+                            Btn_handler.removeCallbacks(longPressRunnable!!)
                             Btn_handler.removeCallbacksAndMessages(null)
                             directionCmd = carcontrolActivity!!.CAR_STOP.toString()
                             val carActivity = this@CarControlActivity
@@ -422,7 +422,7 @@ class CarControlActivity : AppCompatActivity()  {
             .setIcon(R.drawable.ic_music_menu)
             .setTitle(resources.getString(R.string.music_control))
             .setView(inflate)
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -435,7 +435,7 @@ class CarControlActivity : AppCompatActivity()  {
             val music_play_drawable = ContextCompat.getDrawable(this, R.drawable.ic_music_play)
             btn_music_play.setImageDrawable(music_play_drawable)
         }
-        btn_music_previous!!.setOnClickListener(View.OnClickListener {
+        btn_music_previous.setOnClickListener(View.OnClickListener {
             music_controlCmd = this.music_previous_btn!!.toString()
             val carActivity = this@CarControlActivity
             carActivity.sendCMD(carActivity.music_controlCmd!!)
@@ -443,7 +443,7 @@ class CarControlActivity : AppCompatActivity()  {
             btn_music_play.setImageDrawable(music_play_drawable)
             music_flag = true
         })
-        btn_music_next!!.setOnClickListener(View.OnClickListener {
+        btn_music_next.setOnClickListener(View.OnClickListener {
             music_controlCmd = this.music_next_btn!!.toString()
             val carActivity = this@CarControlActivity
             carActivity.sendCMD(carActivity.music_controlCmd!!)
@@ -451,7 +451,7 @@ class CarControlActivity : AppCompatActivity()  {
             btn_music_play.setImageDrawable(music_play_drawable)
             music_flag = true
         })
-        btn_music_play!!.setOnClickListener(View.OnClickListener {
+        btn_music_play.setOnClickListener(View.OnClickListener {
             if (music_flag) {
                 val carActivity = this@CarControlActivity
                 carActivity.sendCMD(carActivity.music_pause)
@@ -468,7 +468,7 @@ class CarControlActivity : AppCompatActivity()  {
                 btn_music_play.setImageDrawable(music_play_drawable)
             }
         })
-        btn_volume_minus!!.setOnClickListener(View.OnClickListener {
+        btn_volume_minus.setOnClickListener(View.OnClickListener {
             if (music_volume_value > 0) {
                 music_volume_value--
                 progressBar.progress = music_volume_value
@@ -478,7 +478,7 @@ class CarControlActivity : AppCompatActivity()  {
                 showToast(volume_value)
             }
         })
-        btn_volume_add!!.setOnClickListener(View.OnClickListener {
+        btn_volume_add.setOnClickListener(View.OnClickListener {
             if (music_volume_value < progressBar.max) {
                 music_volume_value++
                 progressBar.progress = music_volume_value
@@ -504,7 +504,7 @@ class CarControlActivity : AppCompatActivity()  {
             .setIcon(R.drawable.ic_setting)
             .setTitle(resources.getString(R.string.direction_cmd))
             .setView(inflate)
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 val obj = editText_forward.text.toString()
                 if (obj.isNotEmpty()) {
@@ -606,7 +606,7 @@ class CarControlActivity : AppCompatActivity()  {
             .setIcon(R.drawable.ic_list)
             .setTitle(resources.getString(R.string.cmd_title))
             .setMessage(sb.toString())
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -643,7 +643,7 @@ class CarControlActivity : AppCompatActivity()  {
                 music_flag = true
                 dialog.dismiss()
             }
-            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -654,14 +654,14 @@ class CarControlActivity : AppCompatActivity()  {
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.car_control_instruction))
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
             .show()
     }
     private fun sendCMD(str: String) {
-        if (mChatService!!.state !== 3 || str.length <= 0) {
+        if (mChatService!!.state !== 3 || str.isEmpty()) {
             return
         }
         mChatService!!.write(str.toByteArray())
@@ -678,8 +678,7 @@ class CarControlActivity : AppCompatActivity()  {
     }
     override fun onBackPressed() {
         super.onBackPressed()
-        val BTMain_intent = Intent()
-        BTMain_intent.setClass(this@CarControlActivity, MainActivity::class.java)
+        val BTMain_intent = Intent(this@CarControlActivity, MainActivity::class.java)
         BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
         startActivity(BTMain_intent)
         finish()

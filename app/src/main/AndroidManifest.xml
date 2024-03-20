@@ -47,10 +47,6 @@
             android:name=".MainActivity"
             android:screenOrientation="portrait">
         </activity>
-        <activity
-            android:name=".EditProfileActivity"
-            android:screenOrientation="portrait">
-        </activity>
         <activity android:name=".CarControlActivity"
             android:screenOrientation="landscape">
         </activity>

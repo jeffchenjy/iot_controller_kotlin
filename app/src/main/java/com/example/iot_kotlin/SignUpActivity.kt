@@ -36,12 +36,14 @@ class SignUpActivity : AppCompatActivity() {
     /* EditText */
     private lateinit var signup_username: EditText
     private lateinit var signup_email: EditText
+    private lateinit var signup_nickname: EditText
     private lateinit var signup_password: EditText
     /* Button */
     private lateinit var signupButton: Button
     /* TextInputLayout */
     private lateinit var emailTextInputLayout : TextInputLayout
     private lateinit var usernameTextInputLayout : TextInputLayout
+    private lateinit var nicknameTextInputLayout : TextInputLayout
     private lateinit var passwordTextInputLayout : TextInputLayout
     /* TextView */
     private lateinit var loginRedirectText: TextView
@@ -99,6 +101,25 @@ class SignUpActivity : AppCompatActivity() {
                 }
             }
         })
+        signup_nickname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    nicknameTextInputLayout.error  = null
+                    signup_nickname.error = "Nickname can't be empty"
+                } else if(charCount in 1..2) {
+                    nicknameTextInputLayout.error  = getString(R.string.errorUsername_message)
+                } else {
+                    nicknameTextInputLayout.error  = null
+                }
+            }
+        })
         signup_password.addTextChangedListener(object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
                 // No need to implement
@@ -123,9 +144,10 @@ class SignUpActivity : AppCompatActivity() {
         /** Button **/
         signupButton.setOnClickListener(View.OnClickListener {
             val username = signup_username.text.toString()
+            val nickname = signup_nickname.text.toString()
             val email = signup_email.text.toString()
             val passwd = signup_password.text.toString()
-            if(Patterns.EMAIL_ADDRESS.matcher(email).matches() && username.length >= 3 && passwd.length >= 8) {
+            if(Patterns.EMAIL_ADDRESS.matcher(email).matches() && username.length >= 3 && nickname.length>= 3 && passwd.length >= 8) {
                 /** Show progress indicators **/
                 val builder = AlertDialog.Builder(this@SignUpActivity)
                 val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
@@ -138,14 +160,13 @@ class SignUpActivity : AppCompatActivity() {
                     if (task.isSuccessful) {
                         // 註冊成功
                         val currentUser = auth.currentUser
-                        val helperClass = HelperClass(username, email, passwd)
+                        val helperClass = HelperClass(username, nickname, email, passwd)
                         if (currentUser != null) {
                             val uid = currentUser.uid
                             reference.child("UID").child(uid).setValue(helperClass)
                                 .addOnSuccessListener {
                                     dialog.dismiss()
-                                    val Login_intent = Intent()
-                                    Login_intent.setClass(this@SignUpActivity, LoginActivity::class.java)
+                                    val Login_intent = Intent(this@SignUpActivity, LoginActivity::class.java)
                                     startActivity(Login_intent)
                                     overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
                                     finish()
@@ -167,8 +188,7 @@ class SignUpActivity : AppCompatActivity() {
             }
         })
         loginRedirectText.setOnClickListener {
-            val Login_intent = Intent()
-            Login_intent.setClass(this@SignUpActivity, LoginActivity::class.java)
+            val Login_intent = Intent(this@SignUpActivity, LoginActivity::class.java)
             startActivity(Login_intent)
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
             finish()
@@ -177,11 +197,13 @@ class SignUpActivity : AppCompatActivity() {
     }
     private fun findView() {
         signup_username = findViewById(R.id.signup_username)
+        signup_nickname = findViewById(R.id.signup_nickname)
         signup_email = findViewById(R.id.signup_email)
         signup_password = findViewById(R.id.signup_password)
         signupButton = findViewById(R.id.signup_button)
         emailTextInputLayout = findViewById(R.id.emailTextInputLayout)
         usernameTextInputLayout = findViewById(R.id.usernameTextInputLayout)
+        nicknameTextInputLayout = findViewById(R.id.nicknameTextInputLayout)
         passwordTextInputLayout = findViewById(R.id.passwordTextInputLayout)
         loginRedirectText = findViewById(R.id.loginRedirectText)
     }

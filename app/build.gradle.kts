@@ -54,12 +54,9 @@ dependencies {
     implementation ("pl.droidsonroids.gif:android-gif-drawable:1.2.22")
     implementation("androidx.gridlayout:gridlayout:1.0.0")
     implementation("com.squareup.okhttp3:okhttp:4.10.0")
-    implementation ("com.google.android.material:material:1.6.1")
 
 
-    implementation ("com.perthcpe23.dev:android-mjpeg-view:1.1.2")
-
-
+    implementation ("com.github.faizkhan12:mjpeg-view-android-kotlin:v1.0.0")
     //implementation ("com.github.TutorialsAndroid:GButton:v1.0.19")
     implementation ("com.google.android.gms:play-services-auth:19.0.0")
     //MultiDex
@@ -71,7 +68,6 @@ dependencies {
     // Import the Firebase BoM
     implementation(platform("com.google.firebase:firebase-bom:32.7.3"))
 
-    // TODO: Add the dependencies for Firebase products you want to use
     // When using the BoM, don't specify versions in Firebase dependencies
     implementation("com.google.firebase:firebase-analytics")
 

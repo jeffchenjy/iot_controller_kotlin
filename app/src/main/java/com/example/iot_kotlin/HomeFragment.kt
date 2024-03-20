@@ -16,7 +16,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
@@ -54,8 +53,6 @@ class HomeFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
-
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         drawerLayout = view.findViewById(R.id.drawerLayout)
@@ -68,7 +65,6 @@ class HomeFragment : Fragment() {
         menuItem = navigation_view?.menu?.findItem(itemIdToFind ?: 0)
         /* use sharedPreferences change themes*/
         sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
-
         changeTheme()
         imageAnimation()
     }

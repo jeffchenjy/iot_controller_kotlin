@@ -43,8 +43,7 @@ class LoginActivity : AppCompatActivity()  {
         findView()
         val currentUser = auth.currentUser
         if(currentUser != null) {
-            val Main_intent = Intent()
-            Main_intent.setClass(this@LoginActivity, MainActivity::class.java)
+            val Main_intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(Main_intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
@@ -109,8 +108,7 @@ class LoginActivity : AppCompatActivity()  {
                             if (task.isSuccessful) {
                                 dialog.dismiss()
                                 // 登錄成功
-                                val Main_intent = Intent()
-                                Main_intent.setClass(this@LoginActivity, MainActivity::class.java)
+                                val Main_intent = Intent(this@LoginActivity, MainActivity::class.java)
                                 startActivity(Main_intent)
                                 overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
                                 finish()
@@ -127,8 +125,7 @@ class LoginActivity : AppCompatActivity()  {
             }
         })
         signupRedirectText.setOnClickListener{
-            val Login_intent = Intent()
-            Login_intent.setClass(this@LoginActivity, SignUpActivity::class.java)
+            val Login_intent = Intent(this@LoginActivity, SignUpActivity::class.java)
             startActivity(Login_intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()
@@ -138,8 +135,7 @@ class LoginActivity : AppCompatActivity()  {
             if(currentUser != null) {
                 auth.signOut()
             }
-            val Main_intent = Intent()
-            Main_intent.setClass(this@LoginActivity, MainActivity::class.java)
+            val Main_intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(Main_intent)
             overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
             finish()

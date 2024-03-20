@@ -21,7 +21,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="20dp"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
         android:backgroundTint="#61FFFFFF">
@@ -35,34 +36,12 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:src="@drawable/iot_original" />
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/emailTextInputLayout"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="25dp"
-                app:errorEnabled="true"
-                app:endIconMode="clear_text"
-                app:boxCornerRadiusBottomEnd="15dp"
-                app:boxCornerRadiusTopStart="15dp"
-                app:boxCornerRadiusTopEnd="15dp"
-                app:boxCornerRadiusBottomStart="15dp"
-                android:hint="@string/email">
-                <com.google.android.material.textfield.TextInputEditText
-                    style="@style/inputtextColor"
-                    android:id="@+id/signup_email"
-                    android:layout_width="match_parent"
-                    android:drawableStart="@drawable/ic_email"
-                    android:layout_height="40dp"
-                    android:padding="8dp"
-                    android:drawablePadding="8dp"
-                    android:textSize="14sp" />
-            </com.google.android.material.textfield.TextInputLayout>
+                android:src="@drawable/ic_person_circle" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/usernameTextInputLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="5dp"
+                android:layout_marginTop="25dp"
                 app:endIconMode="clear_text"
                 app:errorEnabled="true"
                 app:boxCornerRadiusBottomEnd="15dp"
@@ -75,6 +54,50 @@
                     android:id="@+id/signup_username"
                     android:layout_width="match_parent"
                     android:drawableStart="@drawable/ic_person_pin"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    android:drawablePadding="8dp"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nicknameTextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:endIconMode="clear_text"
+                app:errorEnabled="true"
+                app:boxCornerRadiusBottomEnd="15dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                android:hint="@string/nickname">
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/inputtextColor"
+                    android:id="@+id/signup_nickname"
+                    android:layout_width="match_parent"
+                    android:drawableStart="@drawable/ic_account_person"
+                    android:layout_height="40dp"
+                    android:padding="8dp"
+                    android:drawablePadding="8dp"
+                    android:textSize="14sp" />
+            </com.google.android.material.textfield.TextInputLayout>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailTextInputLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                app:errorEnabled="true"
+                app:endIconMode="clear_text"
+                app:boxCornerRadiusBottomEnd="15dp"
+                app:boxCornerRadiusTopStart="15dp"
+                app:boxCornerRadiusTopEnd="15dp"
+                app:boxCornerRadiusBottomStart="15dp"
+                android:hint="@string/email">
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/inputtextColor"
+                    android:id="@+id/signup_email"
+                    android:layout_width="match_parent"
+                    android:drawableStart="@drawable/ic_email"
                     android:layout_height="40dp"
                     android:padding="8dp"
                     android:drawablePadding="8dp"

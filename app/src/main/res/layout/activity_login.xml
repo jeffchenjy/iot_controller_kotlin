@@ -21,7 +21,8 @@
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="50dp"
+        android:layout_marginHorizontal="50dp"
+        android:layout_marginTop="20dp"
         app:cardCornerRadius="30dp"
         app:cardElevation="0dp"
         android:backgroundTint="#61FFFFFF">
@@ -35,7 +36,7 @@
                 android:layout_width="80dp"
                 android:layout_height="80dp"
                 android:layout_gravity="center"
-                android:src="@drawable/iot_original" />
+                android:src="@drawable/ic_person_circle" />
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/emailTextInputLayout"
                 android:layout_width="match_parent"
@@ -86,6 +87,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
+                android:layout_marginTop="10dp"
                 android:layout_gravity="center">
                 <TextView
                     android:textColor="@color/white"
@@ -118,7 +120,7 @@
                 android:text="@string/login"
                 android:id="@+id/login_button"
                 android:textSize="14sp"
-                android:layout_marginTop="55dp"
+                android:layout_marginTop="115dp"
                 android:layout_marginBottom="10dp"
                 app:cornerRadius = "20dp"/>
 

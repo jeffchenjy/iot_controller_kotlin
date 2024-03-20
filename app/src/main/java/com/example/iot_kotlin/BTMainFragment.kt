@@ -206,16 +206,16 @@ class BTMainFragment: Fragment() {
                     try {
                         /*Clear DeviceList*/
                         this.btPairedDeviceList.clear()
-                        this.PairedAdapter!!.clearData()
-                        this.mDevice_list!!.adapter = this.PairedAdapter
+                        this.PairedAdapter.clearData()
+                        this.mDevice_list.adapter = this.PairedAdapter
                         if (mBluetoothAdapter!!.isEnabled) {
                             /*Set mPair_title and mDevice_list VISIBLE*/
                             mPair_title!!.visibility = View.VISIBLE
-                            mDevice_list!!.visibility = View.VISIBLE
+                            mDevice_list.visibility = View.VISIBLE
                             var devices: Set<BluetoothDevice> = mBluetoothAdapter!!.bondedDevices
                             var arrayAdapter = this.PairedAdapter
                             for (device: BluetoothDevice in devices) {
-                                arrayAdapter!!.addData(device.name+"\n"+device.address)
+                                arrayAdapter.addData(device.name+"\n"+device.address)
                             }
                         } else {
                             //bluetooth is off so can't get paired devices
@@ -334,6 +334,7 @@ class BTMainFragment: Fragment() {
         val BTScan_intent = Intent(currentActivity, BTscanActivity::class.java)
         currentActivity.intent.removeExtra("fragmentToShow")
         currentActivity.startActivity(BTScan_intent)
+        currentActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
     }
     private fun operation_Dialog() {
         MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
