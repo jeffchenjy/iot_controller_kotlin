@@ -45,7 +45,7 @@ class WFMainFragment: Fragment() {
     private var drawerLayout: DrawerLayout? = null
     private var navigation_view: NavigationView? = null
     /*cmd url*/
-    private var url_title = "https://"
+    private var url_title = "http://"
     private var url: StringBuilder? = null
     private var cmd_url: String? = null
     /*video url*/
@@ -68,13 +68,12 @@ class WFMainFragment: Fragment() {
         shareData = requireContext().getSharedPreferences("URL", 0)
         /*CMD URL*/
         this.url = java.lang.StringBuilder()
-        this.url!!.append(shareData!!.getString("Url", "hook.eu2.make.com/7fzzzajfbkl9j15hp93au3tqrlw5ighm?color=color = "))
+        this.url!!.append(shareData!!.getString("Url", "192.168.58.108:8000/car/"))
         cmd_url = url_title + this.url
         /*VIDEO URL*/
         this.v_url = java.lang.StringBuilder()
-        this.v_url!!.append(shareData!!.getString("video_Url", "192.168.50.73:8080/?action=stream"))
+        this.v_url!!.append(shareData!!.getString("video_Url", "192.168.58.108:8080/?action=stream"))
         video_url = v_url_title + this.v_url
-
         /*Wifi*/
         WifiUtils.connectWifi(requireContext())
         if (WifiUtils.isWifiEnabled(requireContext())) {
@@ -128,10 +127,10 @@ class WFMainFragment: Fragment() {
     }
     private val runnableAnim: Runnable = object : Runnable {
         override fun run() {
-            if (WifiUtils.isWifiEnabled(context)) {
+            if (WifiUtils.isWifiEnabled(requireContext())) {
                 wifi_Iv!!.visibility = View.VISIBLE
                 wifi_off_Iv!!.visibility = View.INVISIBLE
-                wifi_ssid_Tv!!.text = WifiUtils.WifiSSID(context)
+                wifi_ssid_Tv!!.text = WifiUtils.WifiSSID(requireContext())
                 /** Animation **/
                 wifi_Iv!!.setImageResource(R.drawable.ic_iot_wifi)
                 imgAnim1!!.animate().scaleX(2f).scaleY(2f).alpha(0f).setDuration(1000)
@@ -163,7 +162,7 @@ class WFMainFragment: Fragment() {
                         imgAnim2!!.scaleY = 1f
                         imgAnim2!!.alpha = 1f
                     }
-                wifi_ssid_Tv!!.text = "No Wifi"
+                wifi_ssid_Tv!!.text = "No Wi-Fi"
             }
             AnimHandler.postDelayed(this, 1500)
         }

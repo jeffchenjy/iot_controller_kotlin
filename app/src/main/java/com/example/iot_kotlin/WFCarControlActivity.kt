@@ -3,7 +3,6 @@ package com.example.iot_kotlin
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -11,8 +10,6 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.MotionEvent
 import android.view.View
-import android.webkit.WebSettings
-import android.webkit.WebView
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageButton
@@ -21,8 +18,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import com.faizkhan.mjpegviewer.MjpegView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.longdo.mjpegviewer.MjpegView
 import okhttp3.OkHttpClient
 import okhttp3.Request
 import java.io.IOException
@@ -57,7 +54,7 @@ class WFCarControlActivity : AppCompatActivity() {
     private var songCmd: String? = null
     private val songArrayData = arrayOf("Song 1", "Song 2", "Song 3", "Song 4", "Song 5", "Song 6", "Song 7", "Song 8", "Song 9", "Song 10")
     /* Int and Boolean */
-    private var music_volume_value: Int = 15
+    private var music_volume_value: Int = 10
     private var music_flag= false
     private var cmd_flag= false
     private var control_flag= false
@@ -80,8 +77,7 @@ class WFCarControlActivity : AppCompatActivity() {
     private val client = OkHttpClient()
     private lateinit var cmd_url: String
     private lateinit var video_url: String
-    private lateinit var mjpegView: MjpegView
-
+    private lateinit var mjpegid: MjpegView
     override fun onCreate(bundle: Bundle?) {
         super.onCreate(bundle)
         setContentView(R.layout.activity_wifi_car_control)
@@ -98,12 +94,12 @@ class WFCarControlActivity : AppCompatActivity() {
         /* URL get */
         cmd_url = intent.getStringExtra("CmdUrl")!!
         video_url = intent.getStringExtra("VideoUrl")!!
-        /** MJPG Video Get **/
-        mjpegView.mode = MjpegView.MODE_FIT_WIDTH
-        mjpegView.isAdjustHeight = true
-        mjpegView.supportPinchZoomAndPan = true
-        mjpegView.setUrl(video_url)
-        mjpegView.startStream()
+        /** MJPG Get **/
+        mjpegid!!.isAdjustHeight = true
+        mjpegid!!.mode1 = MjpegView.MODE_FIT_WIDTH
+        mjpegid!!.setUrl(video_url)
+        mjpegid!!.isRecycleBitmap1 = true
+        mjpegid!!.startStream()
     }
     private fun setToolbar() {
         toolbar = findViewById<View>(R.id.toolbar) as Toolbar
@@ -133,7 +129,8 @@ class WFCarControlActivity : AppCompatActivity() {
         button_B = findViewById<View>(R.id.button_b) as Button
         button_X = findViewById<View>(R.id.button_x) as Button
         button_Y = findViewById<View>(R.id.button_y) as Button
-        mjpegView = findViewById(R.id.mjpegView)
+        //mjpegvideoLayout = findViewById(R.id.videoLayout)
+        mjpegid = findViewById(R.id.mjpegid)
     }
     private fun stringBuilder() {
         this.CAR_FORWARD = java.lang.StringBuilder()
@@ -277,7 +274,7 @@ class WFCarControlActivity : AppCompatActivity() {
             val viewId = view?.id
             when (viewId) {
                 R.id.button_up -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = wfcarcontrolActivity!!.CAR_FORWARD.toString()
@@ -291,7 +288,7 @@ class WFCarControlActivity : AppCompatActivity() {
                     }
                 }
                 R.id.button_down -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = wfcarcontrolActivity!!.CAR_BACK.toString()
@@ -305,7 +302,7 @@ class WFCarControlActivity : AppCompatActivity() {
                     }
                 }
                 R.id.button_left -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = wfcarcontrolActivity!!.CAR_LEFT.toString()
@@ -319,7 +316,7 @@ class WFCarControlActivity : AppCompatActivity() {
                     }
                 }
                 R.id.button_right -> {
-                    if (cmd_flag) {
+                    if (control_flag) {
                         longPressRunnable = object : Runnable {
                             override fun run() {
                                 directionCmd = wfcarcontrolActivity!!.CAR_RIGHT.toString()
@@ -338,18 +335,19 @@ class WFCarControlActivity : AppCompatActivity() {
     }
     /** Button Touch **/
     private fun Button_setOnTouchListener() {
-        button_Up!!.setOnTouchListener(ButtonOnTouch())
-        button_Down!!.setOnTouchListener(ButtonOnTouch())
-        button_Left!!.setOnTouchListener(ButtonOnTouch())
-        button_Right!!.setOnTouchListener(ButtonOnTouch())
+        button_Up!!.setOnTouchListener(setButtonOnTouch())
+        button_Down!!.setOnTouchListener(setButtonOnTouch())
+        button_Left!!.setOnTouchListener(setButtonOnTouch())
+        button_Right!!.setOnTouchListener(setButtonOnTouch())
     }
-    private fun ButtonOnTouch() : View.OnTouchListener {
+    private fun setButtonOnTouch() : View.OnTouchListener {
         return View.OnTouchListener { v, event ->
             when (event.action) {
                 MotionEvent.ACTION_UP -> {
-                    if(cmd_flag && control_flag) {
+                    if(control_flag) {
                         if(v.id == R.id.button_down || v.id == R.id.button_left || v.id == R.id.button_right || v.id == R.id.button_up) {
                             // 放開按鈕時停止持續執行的操作
+                            Btn_handler.removeCallbacks(longPressRunnable!!)
                             Btn_handler.removeCallbacksAndMessages(null)
                             directionCmd = wfcarcontrolActivity!!.CAR_STOP.toString()
                             val carActivity = this@WFCarControlActivity
@@ -572,7 +570,7 @@ class WFCarControlActivity : AppCompatActivity() {
             .setIcon(R.drawable.ic_list)
             .setTitle(resources.getString(R.string.cmd_title))
             .setMessage(sb.toString())
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -609,7 +607,7 @@ class WFCarControlActivity : AppCompatActivity() {
                 music_flag = true
                 dialog.dismiss()
             }
-            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, which ->
+            .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -620,7 +618,7 @@ class WFCarControlActivity : AppCompatActivity() {
             .setIcon(R.drawable.ic_help)
             .setTitle(resources.getString(R.string.operation_title))
             .setMessage(resources.getString(R.string.car_control_instruction))
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 dialog.dismiss()
             }
@@ -629,27 +627,10 @@ class WFCarControlActivity : AppCompatActivity() {
 
     private fun sendCMD(cmd: String) {
         Thread {
-            val command = cmd_url + cmd
+            val command = "$cmd_url$cmd/"
             val request: Request = Request.Builder().url(command).build()
             try {
                 val response = client.newCall(request).execute()
-                /**Not Need */
-                /*
-                    String myResponse = response.body().string();
-                    final String cleanResponse = myResponse.replaceAll("\\<.*?\\>", ""); // remove HTML tags
-                    cleanResponse.replace("\n", ""); // remove all new line characters
-                    cleanResponse.replace("\r", ""); // remove all carriage characters
-                    cleanResponse.replace(" ", ""); // removes all space characters
-                    cleanResponse.replace("\t", ""); // removes all tab characters
-                    cleanResponse.trim();
-                    showToast(cleanResponse);
-                    runOnUiThread(new Runnable() {
-                        @Override
-                        public void run() {
-                            text_color.setText(cleanResponse);
-                        }
-                    });
-                    */
             } catch (e: IOException) {
                 e.printStackTrace()
             }
@@ -658,11 +639,13 @@ class WFCarControlActivity : AppCompatActivity() {
     private fun showToast(msg: String) {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()
     }
-
+    override fun onPause() {
+        mjpegid.stopStream()
+        super.onPause()
+    }
     override fun onBackPressed() {
         super.onBackPressed()
-        val WFMain_intent = Intent()
-        WFMain_intent.setClass(this@WFCarControlActivity, MainActivity::class.java)
+        val WFMain_intent = Intent(this@WFCarControlActivity, MainActivity::class.java)
         WFMain_intent.putExtra("fragmentToShow", "WFMainFragment")
         startActivity(WFMain_intent)
         finish()

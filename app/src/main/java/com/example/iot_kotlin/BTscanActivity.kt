@@ -150,8 +150,7 @@ class BTscanActivity : AppCompatActivity() {
         toolbar!!.contentInsetStartWithNavigation = 0
         /**設置Icon圖樣的點擊事件 */
         toolbar!!.setNavigationOnClickListener(View.OnClickListener {
-            val BTMain_intent = Intent()
-            BTMain_intent.setClass(this@BTscanActivity, MainActivity::class.java)
+            val BTMain_intent = Intent(this@BTscanActivity, MainActivity::class.java)
             BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
             startActivity(BTMain_intent)
             overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)
@@ -207,8 +206,7 @@ class BTscanActivity : AppCompatActivity() {
     }
     override fun onBackPressed() {
         super.onBackPressed()
-        val BTMain_intent = Intent()
-        BTMain_intent.setClass(this@BTscanActivity, MainActivity::class.java)
+        val BTMain_intent = Intent(this@BTscanActivity, MainActivity::class.java)
         BTMain_intent.putExtra("fragmentToShow", "BTMainFragment")
         startActivity(BTMain_intent)
         overridePendingTransition(R.anim.slide_in_left, R.anim.slide_out_right)

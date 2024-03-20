@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.drawerlayout.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.drawerlayout.widget.DrawerLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/drawerLayout"
+    tools:context=".WFCarControlActivity"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
     <RelativeLayout
@@ -11,12 +13,12 @@
 
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            style="@style/toolBartextColor"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="@android:color/transparent"
-            android:theme="@style/Theme.AppCompat"
+            android:theme="@style/Theme.Material3.Dark"
             app:popupTheme="@style/OverflowMenuStyle"
-            app:titleTextColor="@color/white"
             android:fitsSystemWindows="true"
             android:elevation="4dp"/>
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -28,15 +30,27 @@
             android:orientation="vertical">
 
             <LinearLayout
-                android:id="@+id/linearLayout"
-                android:layout_width="220dp"
-                android:layout_height="48dp"
-                android:layout_marginTop="80dp"
-                android:orientation="horizontal"
+                android:layout_width="420dp"
+                android:layout_height="200dp"
+                android:layout_marginTop="65dp"
+                android:orientation="vertical"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.916"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toTopOf="parent">
+                <TextureView
+                    android:id="@+id/textureView"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="100dp"
+                android:layout_height="48dp"
+                android:layout_marginBottom="8dp"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
 
                 <Button
                     android:id="@+id/Stop_button"
@@ -44,20 +58,12 @@
                     android:layout_height="48dp"
                     android:layout_marginEnd="20dp"
                     android:background="@drawable/button_style_stop"
-                    android:fontFamily="sans-serif-condensed-medium"
+                    android:fontFamily="@font/rounded_mplus"
                     android:text="Stop"
                     android:textColor="#FFFFFF"
-                    app:backgroundTint="@null" />
-
-                <Button
-                    android:id="@+id/BT_Link_Button"
-                    android:layout_width="100dp"
-                    android:layout_height="48dp"
-                    android:background="@drawable/button_style_link"
-                    android:fontFamily="sans-serif-condensed-medium"
-                    android:text="Link"
-                    android:textColor="#FFFFFF"
-                    app:backgroundTint="@null" />
+                    android:textSize="12dp"
+                    app:backgroundTint="@null"
+                    tools:ignore="TextSizeCheck" />
 
             </LinearLayout>
 
@@ -65,12 +71,11 @@
                 android:id="@+id/gridLayout"
                 android:layout_width="180dp"
                 android:layout_height="180dp"
-                android:layout_marginTop="212dp"
+                android:layout_marginStart="10dp"
+                android:layout_marginBottom="10dp"
                 app:columnCount="3"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
                 app:rowCount="3">
 
                 <TextView
@@ -188,12 +193,11 @@
                 android:id="@+id/gridLayout_2"
                 android:layout_width="wrap_content"
                 android:layout_height="180dp"
-                android:layout_marginTop="120dp"
+                android:layout_marginEnd="10dp"
+                android:layout_marginBottom="10dp"
                 app:columnCount="3"
+                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintHorizontal_bias="0.497"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/gridLayout"
                 app:rowCount="3">
 
                 <TextView
