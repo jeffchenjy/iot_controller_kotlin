@@ -330,11 +330,17 @@ class BTMainFragment: Fragment() {
     }
 
     private fun startBluetoothScanActivity() {
-        val currentActivity = requireActivity()
-        val BTScan_intent = Intent(currentActivity, BTscanActivity::class.java)
-        currentActivity.intent.removeExtra("fragmentToShow")
-        currentActivity.startActivity(BTScan_intent)
-        currentActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.slide_out_left)
+        val fragment = BTSearchFragment()
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,  // enter
+                R.anim.fade_out,  // exit
+                R.anim.fade_in,   // popEnter
+                R.anim.slide_out_right  // popExit
+            )
+            .replace(R.id.fragment_container, fragment)
+            .addToBackStack(null)
+            .commit()
     }
     private fun operation_Dialog() {
         MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)

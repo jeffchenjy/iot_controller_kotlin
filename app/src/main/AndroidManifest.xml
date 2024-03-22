@@ -27,7 +27,7 @@
         android:theme="@style/Theme.Iot_kotlin"
         tools:targetApi="31">
         <activity
-            android:name=".WelcomeActivity"
+            android:name=".StartLogActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -36,23 +36,11 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".SignUpActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
-            android:name=".LoginActivity"
-            android:screenOrientation="portrait">
-        </activity>
-        <activity
             android:name=".MainActivity"
             android:screenOrientation="portrait">
         </activity>
         <activity android:name=".CarControlActivity"
             android:screenOrientation="landscape">
-        </activity>
-        <activity
-            android:name=".BTscanActivity"
-            android:screenOrientation="portrait">
         </activity>
         <activity android:name=".WFCarControlActivity"
             android:screenOrientation="landscape">

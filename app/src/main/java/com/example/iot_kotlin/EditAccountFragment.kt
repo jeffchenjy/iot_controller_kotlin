@@ -224,8 +224,10 @@ class EditAccountFragment : Fragment() {
                                             auth.signOut()
                                         }
                                         val currentActivity = requireActivity()
-                                        val loginIntent = Intent(currentActivity, LoginActivity::class.java)
+                                        val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
+                                        loginIntent.putExtra("fragmentShow", "LoginFragment")
                                         currentActivity.startActivity(loginIntent)
+                                        currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
                                         currentActivity.finish()
                                     } else {
                                         Log.d("Error deleting user account:","${deleteTask.exception?.message}")

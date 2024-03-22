@@ -3,10 +3,8 @@
     android:id="@+id/fragment_container"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".ProfileFragment">
+    android:layout_height="match_parent">
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
@@ -203,6 +201,7 @@
             android:gravity="center"
             android:text="@string/edit_profile"
             android:textColor="@color/white"
+            android:drawableEnd="@drawable/ic_nav_next"
             android:textSize="14sp"
             app:cornerRadius="20dp"
             app:layout_constraintEnd_toEndOf="@id/infoCardView"
@@ -221,6 +220,7 @@
             android:textColor="@color/white"
             android:textSize="14sp"
             app:cornerRadius="20dp"
+            android:drawableEnd="@drawable/ic_nav_next"
             app:layout_constraintEnd_toEndOf="@id/editProfileButton"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="@id/editProfileButton"

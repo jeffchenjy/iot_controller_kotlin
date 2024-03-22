@@ -137,8 +137,10 @@ class ProfileFragment : Fragment() {
                     }
                     dialog.dismiss()
                     val currentActivity = requireActivity()
-                    val loginIntent = Intent(currentActivity, LoginActivity::class.java)
+                    val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
+                    loginIntent.putExtra("fragmentShow", "LoginFragment")
                     currentActivity.startActivity(loginIntent)
+                    currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
                     currentActivity.finish()
 
                 }

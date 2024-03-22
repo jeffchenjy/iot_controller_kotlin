@@ -38,24 +38,23 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation = findViewById(R.id.bottom_navigation)
 
 
-        var fragmentToShow = intent.getStringExtra("fragmentToShow")
-        if (fragmentToShow != null) {
-            if(fragmentToShow == "BTMainFragment") {
+        val fragmentToShow = intent.getStringExtra("fragmentToShow")
+        when (fragmentToShow) {
+            "BTMainFragment" -> {
                 bottom_navigation.selectedItemId = R.id.nbar_bt
                 replaceFragment(BTMainFragment())
             }
-            if(fragmentToShow == "WFMainFragment") {
+            "WFMainFragment" -> {
                 bottom_navigation.selectedItemId = R.id.nbar_wifi
                 replaceFragment(WFMainFragment())
+
             }
-            if(fragmentToShow == "ProfileFragment") {
-                bottom_navigation.selectedItemId = R.id.nbar_info
-                replaceFragment(ProfileFragment())
+            else -> {
+                replaceFragment(HomeFragment())
             }
-        } else {
-            replaceFragment(HomeFragment())
         }
         intent.removeExtra("fragmentToShow")
+
 
 
 
