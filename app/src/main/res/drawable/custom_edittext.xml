@@ -6,5 +6,5 @@
         android:color="@color/text_color"/>
     <corners
         android:radius="30dp"/>
-    <solid android:color="@color/transition_color"/>
+    <solid android:color="@color/transparent_color"/>
 </shape>

@@ -57,6 +57,8 @@
                 android:layout_marginHorizontal="20dp"
                 android:background="@drawable/custom_edittext"
                 android:maxLines="1"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:textSize="14sp"
                 android:paddingLeft="15dp"
                 android:hint="@string/forgot_password_hint"

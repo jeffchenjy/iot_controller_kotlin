@@ -1,16 +1,21 @@
 package com.example.iot_kotlin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -24,6 +29,7 @@ import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 
 class SignupFragment: Fragment() {
+    private var colorhandler = Handler(Looper.myLooper()!!)
     /* EditText */
     private lateinit var signup_username: EditText
     private lateinit var signup_email: EditText
@@ -61,6 +67,7 @@ class SignupFragment: Fragment() {
         database = FirebaseDatabase.getInstance();
         reference = database.getReference("users")
         TextChangedListener()
+        textViewListener()
         /** Button **/
         signupButton.setOnClickListener(View.OnClickListener {
             val username = signup_username.text.toString()
@@ -80,7 +87,8 @@ class SignupFragment: Fragment() {
                     if (task.isSuccessful) {
                         // 註冊成功
                         val currentUser = auth.currentUser
-                        val helperClass = HelperClass(username, nickname, email, passwd)
+                        val initValue = resources.getString(R.string.unselect)
+                        val helperClass = HelperClass(username, nickname, email, passwd, initValue, initValue, initValue)
                         if (currentUser != null) {
                             val uid = currentUser.uid
                             reference.child("UID").child(uid).setValue(helperClass)
@@ -104,9 +112,6 @@ class SignupFragment: Fragment() {
                 }
             }
         })
-        loginRedirectText.setOnClickListener {
-            ReturnLoginFragment()
-        }
     }
     private fun findView(view: View) {
         signup_username = view.findViewById(R.id.signup_username)
@@ -135,7 +140,7 @@ class SignupFragment: Fragment() {
                 val charCount = s?.length ?: 0
                 if (s.isNullOrEmpty()) {
                     emailTextInputLayout.error  = null
-                    signup_email.error = "Emaill can't be empty"
+                    signup_email.error = getString(R.string.email_empty)
                 } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches() && charCount > 0) {
                     emailTextInputLayout.error = getString(R.string.errorEmail_message)
                 } else {
@@ -154,7 +159,7 @@ class SignupFragment: Fragment() {
                 val charCount = s?.length ?: 0
                 if (s.isNullOrEmpty()) {
                     usernameTextInputLayout.error  = null
-                    signup_username.error = "Username can't be empty"
+                    signup_username.error = getString(R.string.username_empty)
                 } else if(charCount in 1..2) {
                     usernameTextInputLayout.error  = getString(R.string.errorUsername_message)
                 } else {
@@ -173,7 +178,7 @@ class SignupFragment: Fragment() {
                 val charCount = s?.length ?: 0
                 if (s.isNullOrEmpty()) {
                     nicknameTextInputLayout.error  = null
-                    signup_nickname.error = "Nickname can't be empty"
+                    signup_nickname.error = getString(R.string.nickname_empty)
                 } else if(charCount in 1..2) {
                     nicknameTextInputLayout.error  = getString(R.string.errorUsername_message)
                 } else {
@@ -192,7 +197,7 @@ class SignupFragment: Fragment() {
                 val charCount = s?.length ?: 0
                 if (s.isNullOrEmpty()) {
                     passwordTextInputLayout.error = null
-                    signup_password.error  = "Password can't be empty"
+                    signup_password.error  = getString(R.string.password_empty)
                     passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
                 } else if(charCount in 1..7) {
                     passwordTextInputLayout.error = getString(R.string.errorPassword_message)
@@ -202,6 +207,29 @@ class SignupFragment: Fragment() {
                 }
             }
         })
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewListener() {
+        loginRedirectText.setOnClickListener {
+            ReturnLoginFragment()
+        }
+        loginRedirectText.setOnTouchListener{ _, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // 按下時的處理
+                    loginRedirectText.setTextColor(Color.GRAY)
+                    colorhandler.postDelayed({
+                        loginRedirectText.setTextColor(Color.WHITE)
+                    }, 800)
+                }
+                MotionEvent.ACTION_UP -> {
+                    // 放開時的處理
+                    colorhandler.removeCallbacksAndMessages(null)
+                    loginRedirectText.setTextColor(Color.WHITE) // 恢復文字原本的顏色
+                }
+            }
+            false
+        }
     }
     private fun ReturnLoginFragment() {
         val fragmentManager = requireActivity().supportFragmentManager

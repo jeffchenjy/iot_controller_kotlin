@@ -40,4 +40,18 @@
     </style>
     <style name="CustomDialogTheme">
     </style>
+    <style name="DialogAnimation">
+        <item name="android:windowEnterAnimation">@anim/slide_in_bottom</item>
+        <item name="android:windowExitAnimation">@anim/slide_out_bottom</item>
+    </style>
+    <style name="BottomSheetBackgroundStyle">
+        <item name="android:background">@drawable/bottomsheetbg</item>
+        <item name="android:backgroundTint">@color/toolbar_color</item>
+    </style>
+    <style name="MySpinnerDatePickerStyle">
+        <item name="android:datePickerMode">spinner</item>
+        <item name="android:calendarViewShown">false</item>
+        <item name="android:textColor">@color/toolbar_color_light</item>
+        <item name="android:background">@color/toolbar_color</item>
+    </style>
 </resources>

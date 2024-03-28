@@ -25,7 +25,6 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 
 class HomeFragment : Fragment() {
@@ -43,7 +42,7 @@ class HomeFragment : Fragment() {
     private var menuItem: MenuItem? =null
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var edit: SharedPreferences.Editor
-    private var nightMode: Boolean? = false
+    private var isNightMode: Boolean? = false
     /* URL */
     private val twiter_url = "https://twitter.com/"
     private val github_url = "https://github.com/jeffchenjy/iot_controller_kotlin.git"
@@ -58,8 +57,6 @@ class HomeFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
         drawerLayout = view.findViewById(R.id.drawerLayout)
         navigation_view = view.findViewById(R.id.navigation_view)
-        setToolbar(view)
-        setNavigationItemSelectedListener()
         /** Mode Change **/
         menu = navigation_view?.menu
         itemIdToFind = R.id.action_change_mode
@@ -67,6 +64,10 @@ class HomeFragment : Fragment() {
         /* use sharedPreferences change themes*/
         sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
         changeTheme()
+        /**/
+        setToolbar(view)
+        setNavigationItemSelectedListener()
+
         imageAnimation()
     }
     private fun setToolbar(view: View) {
@@ -98,7 +99,7 @@ class HomeFragment : Fragment() {
                 Runnable { ViewPathAnimator.animate(view?.findViewById(R.id.imageBT), path, 200 / 30, 7) },
                 Runnable { ViewPathAnimator.animate(view?.findViewById(R.id.imageChip), path, 200 / 30, 7) },
                 Runnable { ViewPathAnimator.animate(view?.findViewById(R.id.imagePerson), path, 200 / 30, 7) },
-                Runnable { ViewPathAnimator.animate(view?.findViewById(R.id.imageCar), path, 200 / 30, 7) },
+                Runnable { ViewPathAnimator.animate(view?.findViewById(R.id.imageDatabase), path, 200 / 30, 7) },
                 Runnable { view?.findViewById<TextView>(R.id.textViewCloud)?.text = "IoT" }
             )
             imageTasks += runnableList
@@ -123,23 +124,32 @@ class HomeFragment : Fragment() {
 
     }
     private fun changeTheme() {
-        nightMode = sharedPreferences.getBoolean("nightMode", false)
-        nightMode?.let { isNightMode ->
-            if (isNightMode) {
-                menuItem?.title = getString(R.string.light_mode)
-                menuItem?.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_light_mode)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-            } else {
-                menuItem?.title = getString(R.string.dark_mode)
-                menuItem?.icon = ContextCompat.getDrawable(requireContext(), R.drawable.ic_dark_mode)
-                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        isNightMode = sharedPreferences.getBoolean("nightMode", false)
+        if (menuItem != null) {
+            val title: CharSequence? = menuItem!!.title
+            val context = requireContext()
+            if (title != null) {
+                isNightMode?.let { isNightMode ->
+                    if (isNightMode) {
+                        if(title.toString() != getString(R.string.light_mode)) {
+                            menuItem!!.title = getString(R.string.light_mode)
+                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                        }
+                    } else {
+                        if(title.toString() != getString(R.string.dark_mode)) {
+                            menuItem!!.title = getString(R.string.dark_mode)
+                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
+                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                        }
+                    }
+                }
             }
         }
     }
     private fun setNavigationItemSelectedListener() {
         navigation_view?.setNavigationItemSelectedListener { item -> // 点击时收起菜单
             drawerLayout?.closeDrawer(GravityCompat.START)
-            // 获取选项 id
             when (item.itemId) {
                 R.id.action_twitter -> {
                     val uri = Uri.parse(twiter_url)
@@ -173,27 +183,25 @@ class HomeFragment : Fragment() {
     private fun changeMode() {
         try {
             animationPaused = true
-            if (menuItem != null && requireContext() != null) {
+            if (menuItem != null) {
                 val title: CharSequence? = menuItem!!.title
                 val context = requireContext()
                 if (title != null) {
-                    if (nightMode!!) {
+                    if (isNightMode!!) {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
                         edit = sharedPreferences.edit()
                         edit.putBoolean("nightMode", false)
+                        menuItem!!.title = context.getString(R.string.dark_mode)
+                        menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
                     } else {
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
                         edit = sharedPreferences.edit()
                         edit.putBoolean("nightMode", true)
-                    }
-                    edit.apply()
-                    if (title.toString() == context.getString(R.string.light_mode)) { // 使用正确的上下文调用 getString()
-                        menuItem!!.title = context.getString(R.string.dark_mode)
-                        menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
-                    } else {
                         menuItem!!.title = context.getString(R.string.light_mode)
                         menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
                     }
+                    edit.apply()
+                    navigation_view?.invalidate()
                 }
             }
         } catch (e: Exception) {

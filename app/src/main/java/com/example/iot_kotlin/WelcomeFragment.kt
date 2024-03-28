@@ -21,7 +21,7 @@ class WelcomeFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        mHandler.sendEmptyMessageDelayed(GOTO_LoginFragment, 1000) //1秒跳轉
+        mHandler.sendEmptyMessageDelayed(GOTO_LoginFragment, 800) //跳轉
     }
     private val GOTO_LoginFragment = 0
     private val mHandler: Handler = object : Handler(Looper.getMainLooper()) {
@@ -35,6 +35,7 @@ class WelcomeFragment : Fragment() {
                             R.anim.fade_out,  // exit
                         )
                         .replace(R.id.fragment_container, fragment)
+                        .hide(WelcomeFragment())
                         .commit()
                 }
             }
