@@ -1,16 +1,21 @@
 package com.example.iot_kotlin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Patterns
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -20,9 +25,12 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 
 class LoginFragment: Fragment() {
     private lateinit var auth: FirebaseAuth
+    private var currentUser: FirebaseUser? = null
+    private var colorhandler = Handler(Looper.myLooper()!!)
     /* EditText */
     private lateinit var login_email: EditText
     private lateinit var login_password: EditText
@@ -51,8 +59,11 @@ class LoginFragment: Fragment() {
         findView(view)
         setupViews()
         TextChangedListener()
+        /** TextView Listener **/
+        textViewClickListener()
+        textViewTouchListener()
         // 確認用戶是否已經登入 Firebase
-        val currentUser = auth.currentUser
+        currentUser = auth.currentUser
         if (currentUser != null) {
             startMainActivity()
             return
@@ -83,61 +94,13 @@ class LoginFragment: Fragment() {
                             }
                         }
                 } else {
-                    login_password.error  = "Password can't be empty"
+                    login_password.error  = getString(R.string.password_empty)
                 }
             } else {
                 // 電子郵件無效
-                login_email.error = "Invalid email address"
+                login_email.error = getString(R.string.invalid_email_address)
             }
         }
-        signupRedirectText.setOnClickListener{
-            val fragment = SignupFragment()
-            currentActivity.supportFragmentManager.beginTransaction()
-                .setCustomAnimations(
-                    R.anim.slide_in_right,  // enter
-                    R.anim.fade_out,  // exit
-                    R.anim.fade_in,   // popEnter
-                    R.anim.slide_out_right  // popExit
-                )
-                .replace(R.id.fragment_container, fragment)
-                .addToBackStack(null)
-                .commit()
-        }
-        free_login.setOnClickListener {
-            if(currentUser != null) {
-                auth.signOut()
-            }
-            startMainActivity()
-        }
-        forgotPassword.setOnClickListener(View.OnClickListener {
-            val builder = AlertDialog.Builder(requireContext())
-            val dialogView: View = layoutInflater.inflate(R.layout.dialog_forgot, null)
-            val emailBox = dialogView.findViewById<EditText>(R.id.emailBox)
-            builder.setView(dialogView)
-            val dialog: AlertDialog = builder.create()
-            dialogView.findViewById<View>(R.id.btnReset).setOnClickListener(View.OnClickListener {
-                val userEmail = emailBox.text.toString()
-                if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail)
-                        .matches()
-                ) {
-                    showToast("Please enter your registered email address")
-                    return@OnClickListener
-                }
-                auth.sendPasswordResetEmail(userEmail).addOnCompleteListener { task ->
-                    if (task.isSuccessful) {
-                        showToast("Please check your email")
-                        dialog.dismiss()
-                    } else {
-                        showToast("Unable to send, failed")
-                    }
-                }
-            })
-            dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
-            if (dialog.window != null) {
-                dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
-            }
-            dialog.show()
-        })
     }
     private fun findView(view: View) {
         login_email = view.findViewById(R.id.login_email)
@@ -192,6 +155,123 @@ class LoginFragment: Fragment() {
                 }
             }
         })
+    }
+    private fun textViewClickListener() {
+        signupRedirectText.setOnClickListener(textViewOnClickListener())
+        free_login.setOnClickListener(textViewOnClickListener())
+        forgotPassword.setOnClickListener(textViewOnClickListener())
+    }
+    private fun textViewOnClickListener() : View.OnClickListener?  {
+        return View.OnClickListener {
+            val view = it as? View
+            val viewId = view?.id
+            when(viewId) {
+                R.id.signUpRedirectText -> {
+                    val fragment = SignupFragment()
+                    currentActivity.supportFragmentManager.beginTransaction()
+                        .setCustomAnimations(
+                            R.anim.slide_in_right,  // enter
+                            R.anim.fade_out,  // exit
+                            R.anim.fade_in,   // popEnter
+                            R.anim.slide_out_right  // popExit
+                        )
+                        .replace(R.id.fragment_container, fragment)
+                        .addToBackStack(null)
+                        .commit()
+                }
+                R.id.free_login -> {
+                    if(currentUser != null) {
+                        auth.signOut()
+                    }
+                    startMainActivity()
+                }
+                R.id.forgot_password -> {
+                    val builder = AlertDialog.Builder(requireContext())
+                    val dialogView: View = layoutInflater.inflate(R.layout.dialog_passwd_forgot, null)
+                    val emailBox = dialogView.findViewById<EditText>(R.id.emailBox)
+                    builder.setView(dialogView)
+                    val dialog: AlertDialog = builder.create()
+                    dialogView.findViewById<View>(R.id.btnReset).setOnClickListener(View.OnClickListener {
+                        val userEmail = emailBox.text.toString()
+                        if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail)
+                                .matches()
+                        ) {
+                            showToast("Please enter your registered email address")
+                            return@OnClickListener
+                        }
+                        auth.sendPasswordResetEmail(userEmail).addOnCompleteListener { task ->
+                            if (task.isSuccessful) {
+                                showToast("Please check your email")
+                                dialog.dismiss()
+                            } else {
+                                showToast("Unable to send, failed")
+                            }
+                        }
+                    })
+                    dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
+                    if (dialog.window != null) {
+                        dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+                    }
+                    dialog.show()
+                }
+            }
+        }
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewTouchListener() {
+        signupRedirectText.setOnTouchListener(textViewOnTouchListener())
+        free_login.setOnTouchListener(textViewOnTouchListener())
+        forgotPassword.setOnTouchListener(textViewOnTouchListener())
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewOnTouchListener(): View.OnTouchListener? {
+        return View.OnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    when(v.id) {
+                        R.id.signUpRedirectText -> {
+                            signupRedirectText.setTextColor(Color.GRAY)
+                        }
+                        R.id.free_login -> {
+                            free_login.setTextColor(Color.GRAY)
+                        }
+                        R.id.forgot_password -> {
+                            forgotPassword.setTextColor(Color.GRAY)
+                        }
+                    }
+                    // 延遲 2 秒後恢復原本的顏色
+                    colorhandler.postDelayed({
+                        when(v.id) {
+                            R.id.signUpRedirectText -> {
+                                signupRedirectText.setTextColor(Color.WHITE)
+                            }
+                            R.id.free_login -> {
+                                free_login.setTextColor(Color.WHITE)
+                            }
+                            R.id.forgot_password -> {
+                                forgotPassword.setTextColor(Color.WHITE)
+                            }
+                        }
+                    }, 600) // 0.6 秒後執行
+                }
+                MotionEvent.ACTION_UP -> {
+                    // 取消延遲執行，防止在 2 秒內放開時顏色恢復的操作執行
+                    colorhandler.removeCallbacksAndMessages(null)
+                    when(v.id) {
+                        R.id.signUpRedirectText -> {
+                            signupRedirectText.setTextColor(Color.WHITE)
+                        }
+                        R.id.free_login -> {
+                            free_login.setTextColor(Color.WHITE)
+                        }
+                        R.id.forgot_password -> {
+                            forgotPassword.setTextColor(Color.WHITE)
+                        }
+                    }
+                }
+            }
+            false
+        }
     }
     private fun startMainActivity() {
         Main_intent = Intent(currentActivity, MainActivity::class.java)

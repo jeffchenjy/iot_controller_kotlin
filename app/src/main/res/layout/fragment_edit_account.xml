@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <FrameLayout
     android:id="@+id/fragment_container"
+    style="@style/ScreenBackgroundColor"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -21,133 +22,141 @@
                 android:background="@android:color/transparent"
                 android:theme="@style/Theme.Material3.Dark"
                 android:elevation="4dp"/>
-            <LinearLayout
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="horizontal"
-                android:gravity="center">
-                <ImageView
-                    android:layout_width="400dp"
-                    android:layout_height="wrap_content"/>
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:gravity="center">
-                <androidx.cardview.widget.CardView
+                android:layout_height="match_parent">
+                <LinearLayout
+                    android:id="@+id/editTextLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_margin="50dp"
-                    app:cardCornerRadius="30dp"
-                    app:cardElevation="0dp"
-                    android:backgroundTint="#61FFFFFF">
-                    <LinearLayout
-                        style="@style/ScreenBackgroundColor"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginTop="65dp"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent">
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="?attr/textInputFilledStyle"
+                        android:id="@+id/emailTextInputLayout"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:layout_gravity="center_horizontal"
-                        android:padding="24dp"
-                        android:background="@drawable/custom_edittext">
-                        <TextView
-                            style="@style/textColor"
+                        android:layout_marginTop="20dp"
+                        android:hint="@string/new_email"
+                        app:startIconDrawable="@drawable/ic_email"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="true"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editEmail"
+                            style="@style/inputtextColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="@string/edit_account"
-                            android:textSize="22sp"
-                            android:textAlignment="center"
-                            android:textStyle="bold"/>
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/emailTextInputLayout"
+                            android:background="@color/transparent_color"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"
+                            android:paddingStart="48dp"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="?attr/textInputFilledStyle"
+                        android:id="@+id/usernameTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/new_username"
+                        app:startIconDrawable="@drawable/ic_person_pin"
+                        app:endIconMode="clear_text"
+                        app:hintEnabled="true"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editUsername"
+                            style="@style/inputtextColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="25dp"
-                            app:endIconMode="clear_text"
-                            app:errorEnabled="true"
-                            app:boxCornerRadiusBottomEnd="15dp"
-                            app:boxCornerRadiusTopStart="15dp"
-                            app:boxCornerRadiusTopEnd="15dp"
-                            app:boxCornerRadiusBottomStart="15dp"
-                            android:hint="@string/new_email">
-                            <com.google.android.material.textfield.TextInputEditText
-                                style="@style/inputtextColor"
-                                android:id="@+id/editEmail"
-                                android:layout_width="match_parent"
-                                android:drawableStart="@drawable/ic_email"
-                                android:layout_height="40dp"
-                                android:padding="8dp"
-                                android:drawablePadding="8dp"
-                                android:textSize="14sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/usernameTextInputLayout"
+                            android:background="@color/transparent_color"
+                            android:inputType="text"
+                            android:imeOptions="actionNext"
+                            android:paddingStart="48dp"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        style="?attr/textInputFilledStyle"
+                        android:id="@+id/passwordTextInputLayout"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="@string/new_password"
+                        app:startIconDrawable="@drawable/ic_account_lock"
+                        app:endIconMode="password_toggle"
+                        app:hintEnabled="true"
+                        app:errorEnabled="true">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/editPassword"
+                            style="@style/inputtextColor"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            app:endIconMode="clear_text"
-                            app:errorEnabled="true"
-                            app:boxCornerRadiusBottomEnd="15dp"
-                            app:boxCornerRadiusTopStart="15dp"
-                            app:boxCornerRadiusTopEnd="15dp"
-                            app:boxCornerRadiusBottomStart="15dp"
-                            android:hint="@string/new_username">
-                            <com.google.android.material.textfield.TextInputEditText
-                                style="@style/inputtextColor"
-                                android:id="@+id/editUsername"
-                                android:layout_width="match_parent"
-                                android:drawableStart="@drawable/ic_person_pin"
-                                android:layout_height="40dp"
-                                android:padding="8dp"
-                                android:drawablePadding="8dp"
-                                android:textSize="14sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
-                        <com.google.android.material.textfield.TextInputLayout
-                            android:id="@+id/passwordTextInputLayout"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="5dp"
-                            app:endIconMode="password_toggle"
-                            app:errorEnabled="true"
-                            app:boxCornerRadiusBottomEnd="15dp"
-                            app:boxCornerRadiusTopStart="15dp"
-                            app:boxCornerRadiusTopEnd="15dp"
-                            app:boxCornerRadiusBottomStart="15dp"
-                            android:hint="@string/new_password">
-                            <com.google.android.material.textfield.TextInputEditText
-                                style="@style/inputtextColor"
-                                android:id="@+id/editPassword"
-                                android:layout_width="match_parent"
-                                android:drawableStart="@drawable/ic_account_lock"
-                                android:layout_height="40dp"
-                                android:padding="8dp"
-                                android:drawablePadding="8dp"
-                                android:textSize="14sp" />
-                        </com.google.android.material.textfield.TextInputLayout>
+                            android:background="@color/transparent_color"
+                            android:inputType="textPassword"
+                            android:imeOptions="actionDone"
+                            android:paddingStart="48dp"
+                            android:textSize="14sp" />
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/deleteLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginHorizontal="20dp"
+                    android:layout_marginTop="40dp"
+                    app:layout_constraintEnd_toEndOf="@+id/editTextLayout"
+                    app:layout_constraintStart_toStartOf="@+id/editTextLayout"
+                    app:layout_constraintTop_toBottomOf="@+id/editTextLayout">
+                    <Button
+                        android:id="@+id/deleteButton"
+                        android:layout_width="match_parent"
+                        android:layout_height="50dp"
+                        android:layout_gravity="end"
+                        android:layout_marginTop="20dp"
+                        android:backgroundTint="#C31919"
+                        android:text="@string/delete"
+                        android:textColor="@color/toolbar_color_light"
+                        android:textSize="14sp"
+                        tools:ignore="TouchTargetSizeCheck" />
+                </LinearLayout>
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_horizontal"
+                    android:orientation="vertical"
+                    android:paddingHorizontal="20dp"
+                    android:layout_marginBottom="20dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@+id/deleteLayout"
+                    app:layout_constraintStart_toStartOf="@+id/deleteLayout">
+                    <FrameLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="20dp">
                         <Button
                             android:id="@+id/saveButton"
                             style="@style/Button_style"
                             android:layout_width="match_parent"
                             android:layout_height="60dp"
-                            android:layout_marginTop="20dp"
-                            android:text="@string/save"
+                            android:layout_gravity="center"
+                            android:text="@string/save_account"
                             android:textColor="@color/toolbar_color_light"
                             android:textSize="14sp"
                             app:cornerRadius="20dp" />
-                        <Button
-                            android:id="@+id/deleteButton"
-                            android:backgroundTint="#C31919"
+                        <androidx.cardview.widget.CardView
+                            android:id="@+id/savebuttonCardView"
                             android:layout_width="match_parent"
-                            android:layout_height="50dp"
-                            android:layout_marginTop="80dp"
-                            android:layout_gravity="end"
-                            android:text="@string/delete"
-                            android:textColor="@color/toolbar_color_light"
-                            android:textSize="14sp"
-                            tools:ignore="TouchTargetSizeCheck" />
-                    </LinearLayout>
-                </androidx.cardview.widget.CardView>
-            </LinearLayout>
+                            android:layout_height="54dp"
+                            android:layout_gravity="center"
+                            android:backgroundTint="#61515151"
+                            app:cardCornerRadius="20dp"
+                            app:cardElevation="0dp" />
+                    </FrameLayout>
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
         </RelativeLayout>
     </androidx.drawerlayout.widget.DrawerLayout>
 </FrameLayout>

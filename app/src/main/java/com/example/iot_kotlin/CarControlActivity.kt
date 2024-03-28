@@ -491,7 +491,7 @@ class CarControlActivity : AppCompatActivity()  {
     }
 
     private fun Direction_setup_Dialog() {
-        val inflate = layoutInflater.inflate(R.layout.car_direction_setup, null)
+        val inflate = layoutInflater.inflate(R.layout.dialog_car_cmd_setup, null)
         val editText_forward = inflate.findViewById<View>(R.id.editText_forward) as EditText
         val editText_back = inflate.findViewById<View>(R.id.editText_back) as EditText
         val editText_left = inflate.findViewById<View>(R.id.editText_left) as EditText

@@ -25,6 +25,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
@@ -56,8 +57,6 @@ class MainActivity : AppCompatActivity() {
         intent.removeExtra("fragmentToShow")
 
 
-
-
         bottom_navigation.setOnItemSelectedListener { item ->
             when(item.itemId) {
                 R.id.nbar_home -> {
@@ -77,17 +76,38 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-
     private fun replaceFragment(fragment: Fragment) {
-        supportFragmentManager.beginTransaction().replace(R.id.fragment_container, fragment).commit()
+        val fragmentManager = supportFragmentManager
+        val transaction = fragmentManager.beginTransaction()
+
+        // 移除堆疊中所有的 Fragment
+        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
+
+        // 替換為新的 Fragment
+        transaction.replace(R.id.fragment_container, fragment)
+        transaction.commit()
     }
     override fun onBackPressed() {
-        val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
-        val tasks = activityManager.appTasks
-        for (task in tasks) {
-            task.finishAndRemoveTask()
+        val fragmentManager = supportFragmentManager
+        if (fragmentManager.backStackEntryCount > 0) {
+            super.onBackPressed()
+        } else {
+            MaterialAlertDialogBuilder(this, R.style.CustomDialogTheme)
+                .setIcon(R.drawable.ic_leave)
+                .setTitle(resources.getString(R.string.leave_title))
+                .setMessage(resources.getString(R.string.leave))
+                .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                    val activityManager = getSystemService(ACTIVITY_SERVICE) as ActivityManager
+                    val tasks = activityManager.appTasks
+                    for (task in tasks) {
+                        task.finishAndRemoveTask()
+                    }
+                    dialog.dismiss()
+                }
+                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .show()
         }
-        super.onBackPressed()
     }
-
 }

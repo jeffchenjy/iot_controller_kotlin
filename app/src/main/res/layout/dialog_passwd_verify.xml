@@ -59,6 +59,8 @@
                 android:maxLines="1"
                 android:textSize="14sp"
                 android:paddingLeft="15dp"
+                android:inputType="text"
+                android:imeOptions="actionDone"
                 android:hint="@string/id_verify_hint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

@@ -1,7 +1,6 @@
 package com.example.iot_kotlin
 
 import android.Manifest
-import android.app.Activity
 import android.app.ActivityManager
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothDevice
@@ -89,7 +88,6 @@ class BTMainFragment: Fragment() {
         setToolbar()
         setClickListener()
         setNavigationItemSelectedListener()
-
         /** Init **/
         mDevice_list.visibility = View.INVISIBLE
         mPair_title!!.visibility = View.INVISIBLE
@@ -305,7 +303,7 @@ class BTMainFragment: Fragment() {
                     mPair_title?.visibility = View.INVISIBLE
                     mDevice_list?.visibility = View.INVISIBLE
                     if (mBluetoothAdapter?.isEnabled == true) {
-                        startBluetoothScanActivity()
+                        startBluetoothSearchFragment()
                     } else {
                         showToast("Please turn on Bluetooth to search devices")
                     }
@@ -329,7 +327,7 @@ class BTMainFragment: Fragment() {
         }
     }
 
-    private fun startBluetoothScanActivity() {
+    private fun startBluetoothSearchFragment() {
         val fragment = BTSearchFragment()
         requireActivity().supportFragmentManager.beginTransaction()
             .setCustomAnimations(

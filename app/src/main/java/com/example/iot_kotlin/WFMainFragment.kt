@@ -24,6 +24,7 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import okhttp3.OkHttpClient
 
@@ -253,7 +254,7 @@ class WFMainFragment: Fragment() {
     }
 
     private fun Url_Setup_Dialog() {
-        val inflate: View = layoutInflater.inflate(R.layout.url_setup, null)
+        val inflate: View = layoutInflater.inflate(R.layout.dialog_url_setup, null)
         val editText_url = inflate.findViewById<View>(R.id.editText_url) as EditText
         val http_text = inflate.findViewById<View>(R.id.http_text) as TextView
         val radioGroup_http = inflate.findViewById<View>(R.id.radioGroup_http) as RadioGroup
@@ -287,7 +288,7 @@ class WFMainFragment: Fragment() {
     }
 
     private fun Video_Url_Setup_Dialog() {
-        val inflate: View = layoutInflater.inflate(R.layout.url_setup, null)
+        val inflate: View = layoutInflater.inflate(R.layout.dialog_url_setup, null)
         val editText_url = inflate.findViewById<View>(R.id.editText_url) as EditText
         val http_text = inflate.findViewById<View>(R.id.http_text) as TextView
         val radioGroup_http = inflate.findViewById<View>(R.id.radioGroup_http) as RadioGroup

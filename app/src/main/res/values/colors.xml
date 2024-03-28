@@ -7,7 +7,7 @@
     <color name="start_color">#3F51B5</color>
     <color name="end_color">@color/white</color>
     <!--    Transparent   -->
-    <color name="transition_color">@android:color/transparent</color>
+    <color name="transparent_color">@android:color/transparent</color>
 
     <!--    Dark Themes color   -->
     <color name="toolbar_color">#212121</color>
@@ -33,4 +33,5 @@
     <!-- SeekBar Button -->
     <color name="seekbar_start_color">#9A85BD</color>
     <color name="seekbar_end_color">#6831CA</color>
+    <color name="edit_profile_underline">#79747E</color>
 </resources>

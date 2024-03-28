@@ -8,15 +8,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
-import androidx.fragment.app.FragmentTransaction
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
@@ -27,6 +25,9 @@ import java.util.Date
 import java.util.Locale
 
 class ProfileFragment : Fragment() {
+    /* Firebase */
+    private var currentUserUID: String? = null
+    private var currentUser: FirebaseUser? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var reference: DatabaseReference
     /* TextView */
@@ -37,6 +38,7 @@ class ProfileFragment : Fragment() {
     private lateinit var profilePassword: TextView
     /* Button */
     private lateinit var editAccountButton: Button
+    private lateinit var editProfileButton: Button
     private lateinit var signOutButton: Button
     /* String */
     private lateinit var password: String
@@ -53,9 +55,24 @@ class ProfileFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findView(view)
+        firebaseInit()
+        /** Button OnClickListener **/
+        buttonClickListener()
+    }
+    private fun findView(view: View){
+        titleNickname = view.findViewById(R.id.titleNickname)
+        profileUsername = view.findViewById(R.id.profileUsername)
+        profileEmail = view.findViewById(R.id.profileEmail)
+        profileDate = view.findViewById(R.id.profileDate)
+        profilePassword = view.findViewById(R.id.profilePassword)
+        editAccountButton = view.findViewById(R.id.editAccountButton)
+        editProfileButton = view.findViewById(R.id.editProfileButton)
+        signOutButton = view.findViewById(R.id.signOutButton)
+    }
+    private fun firebaseInit() {
         /** Get firebase data **/
         auth = FirebaseAuth.getInstance()
-        val currentUser = auth.currentUser
+        currentUser = auth.currentUser
         if (currentUser != null) {
             /** Show progress indicators **/
             val builder = AlertDialog.Builder(requireContext())
@@ -64,7 +81,7 @@ class ProfileFragment : Fragment() {
             val dialog: AlertDialog = builder.create()
             dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
             dialog.show()
-            val currentUserUID = currentUser.uid
+            currentUserUID = currentUser!!.uid
             reference = FirebaseDatabase.getInstance().getReference("users/UID/$currentUserUID")
             reference.addListenerForSingleValueEvent(object : ValueEventListener {
                 override fun onDataChange(snapshot: DataSnapshot) {
@@ -107,57 +124,77 @@ class ProfileFragment : Fragment() {
             profileDate.text = " "
             profilePassword.text = " "
         }
-        /** Button OnClickListener **/
-        editAccountButton!!.setOnClickListener{
-            if(!nouserflag!!) {
-                val fragment = EditAccountFragment()
-                requireActivity().supportFragmentManager.beginTransaction()
-                    .setCustomAnimations(
-                        R.anim.slide_in_right,  // enter
-                        R.anim.slide_out_left,  // exit
-                        R.anim.slide_in_left,   // popEnter
-                        R.anim.slide_out_right  // popExit
-                    )
-                    .replace(R.id.fragment_container, fragment)
-                    .addToBackStack(null)
-                    .commit()
-            } else {
-                showToast("Unable to modify without logging in")
+    }
+    private fun buttonClickListener() {
+        editAccountButton.setOnClickListener(buttonOnClickListener())
+        editProfileButton.setOnClickListener(buttonOnClickListener())
+        signOutButton.setOnClickListener(buttonOnClickListener())
+    }
+    private fun buttonOnClickListener() : View.OnClickListener? {
+        return View.OnClickListener {
+            val view = it as? View
+            val viewId = view?.id
+            when(viewId) {
+                R.id.editAccountButton -> {
+                    if(!nouserflag!!) {
+                        val fragment = EditAccountFragment()
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.slide_in_right,  // enter
+                                R.anim.fade_out,  // exit
+                                R.anim.fade_in,   // popEnter
+                                R.anim.slide_out_right  // popExit
+                            )
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        showToast("Unable to modify without logging in")
+                    }
+                }
+                R.id.editProfileButton -> {
+                    if(!nouserflag!!) {
+                        val fragment = EditProfileFragment()
+                        requireActivity().supportFragmentManager.beginTransaction()
+                            .setCustomAnimations(
+                                R.anim.slide_in_right,  // enter
+                                R.anim.fade_out,  // exit
+                                R.anim.fade_in,   // popEnter
+                                R.anim.slide_out_right  // popExit
+                            )
+                            .replace(R.id.fragment_container, fragment)
+                            .addToBackStack(null)
+                            .commit()
+                    } else {
+                        showToast("Unable to modify without logging in")
+                    }
+                }
+                R.id.signOutButton -> {
+                    MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
+                        .setIcon(R.drawable.ic_leave)
+                        .setTitle(resources.getString(R.string.logout))
+                        .setMessage(resources.getString(R.string.signout_message))
+                        .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
+                            // Respond to positive button press
+                            if(!nouserflag!!) {
+                                auth.signOut()
+                            }
+                            dialog.dismiss()
+                            val currentActivity = requireActivity()
+                            val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
+                            loginIntent.putExtra("fragmentShow", "LoginFragment")
+                            currentActivity.startActivity(loginIntent)
+                            currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
+                            currentActivity.finish()
+
+                        }
+                        .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
+                            dialog.dismiss()
+                        }
+                        .show()
+                }
             }
         }
-        signOutButton!!.setOnClickListener {
-            MaterialAlertDialogBuilder(requireContext(),  R.style.CustomDialogTheme)
-                .setIcon(R.drawable.ic_leave)
-                .setTitle(resources.getString(R.string.logout))
-                .setMessage(resources.getString(R.string.signout_message))
-                .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
-                    // Respond to positive button press
-                    if(!nouserflag!!) {
-                        auth.signOut()
-                    }
-                    dialog.dismiss()
-                    val currentActivity = requireActivity()
-                    val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
-                    loginIntent.putExtra("fragmentShow", "LoginFragment")
-                    currentActivity.startActivity(loginIntent)
-                    currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
-                    currentActivity.finish()
-
-                }
-                .setNegativeButton(resources.getString(R.string.cancel)) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .show()
-        }
-    }
-    private fun findView(view: View){
-        titleNickname = view.findViewById(R.id.titleNickname)
-        profileUsername = view.findViewById(R.id.profileUsername)
-        profileEmail = view.findViewById(R.id.profileEmail)
-        profileDate = view.findViewById(R.id.profileDate)
-        profilePassword = view.findViewById(R.id.profilePassword)
-        editAccountButton = view.findViewById(R.id.editAccountButton)
-        signOutButton = view.findViewById(R.id.signOutButton)
     }
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()

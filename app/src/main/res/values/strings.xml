@@ -88,11 +88,18 @@
     <!-- Signup -->
     <string name="signup">新規登録</string>
     <string name="username">ユーザー ID</string>
+    <string name="username_empty">ユーザー ID を空にすることはできません</string>
     <string name="nickname">ニックネーム</string>
+    <string name="nickname_empty">ニックネームを空にすることはできません</string>
+    <string name="nickname_error">ニックネームが間違っています</string>
     <string name="email">メールアドレス</string>
+    <string name="email_empty">メールアドレスを空にすることはできません</string>
+    <string name="invalid_email_address">メールアドレスは無効です</string>
     <string name="mail">メール</string>
     <string name="date">作成日</string>
     <string name="password">パスワード</string>
+    <string name="password_empty">パスワードを空にすることはできません</string>
+    <string name="password_error">パスワードが間違っています</string>
     <string name="signUp_btn">入力内容を確認</string>
     <string name="signUp_success">サインアップが成功しました</string>
     <string name="signUp_failed">入力されたメールアドレスは既に使用されています。</string>
@@ -100,7 +107,8 @@
     <!-- Profile -->
     <string name="edit_profile">プロフィール設定</string>
     <string name="edit_account">アカウント設定</string>
-    <string name="save">アカウント情報を更新</string>
+    <string name="save_account">アカウント情報を更新</string>
+    <string name="save_profile">プロフィール情報を更新</string>
     <string name="logout">ログアウト</string>
     <string name="id_verify">パスワード入力</string>
     <string name="id_verify_massage">パスワードを入力してください。</string>
@@ -114,7 +122,29 @@
     <string name="errorUsername_message">名前が短すぎます(3文字以上の英数字文字)</string>
     <string name="errorPassword_message">パスワードが短すぎます(8文字以上の英数字文字)</string>
     <string name="data_update_success">データが正常に更新されました</string>
+    <string name="data_update_failed">データが更新されませんでした</string>
     <string name="Password_update_message">パスワードが正常に更新されました</string>
     <string name="Password_update_failed">パスワードの更新に失敗しました</string>
+    <string name="gender">性別</string>
+    <string name="unselect">未選択</string>
+    <string name="gender_male">男性</string>
+    <string name="gender_female">女性</string>
+    <string name="country">国</string>
+    <string name="bornYear">生まれた年</string>
+    <string name="bornDate">誕生日</string>
+    <string name="close_bottomSheet">完了</string>
+    <!-- Preference Titles -->
+    <string name="messages_header">Messages</string>
+    <string name="sync_header">Sync</string>
 
+    <!-- Messages Preferences -->
+    <string name="signature_title">Your signature</string>
+    <string name="reply_title">Default reply action</string>
+
+    <!-- Sync Preferences -->
+    <string name="sync_title">Sync email periodically</string>
+    <string name="attachment_title">Download incoming attachments</string>
+    <string name="attachment_summary_on">Automatically download attachments for incoming emails
+    </string>
+    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>
