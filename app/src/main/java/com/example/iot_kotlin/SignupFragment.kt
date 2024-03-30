@@ -94,7 +94,8 @@ class SignupFragment: Fragment() {
                             reference.child("UID").child(uid).setValue(helperClass)
                                 .addOnSuccessListener {
                                     dialog.dismiss()
-                                    showToast(getString(R.string.signUp_success))
+                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.signUp_success))
+                                    //showToast(getString(R.string.signUp_success))
                                     startMainActivity()
                                     Log.d("Database entry created successfully", "Database entry created successfully")
                                 }
@@ -103,11 +104,13 @@ class SignupFragment: Fragment() {
                                 }
                         } else {
                             dialog.dismiss()
-                            showToast("No user is currently in use")
+                            CustomSnackbar.showSnackbar(getView(), requireContext(), "No user is currently in use")
+                            //showToast("No user is currently in use")
                         }
                     } else {
                         dialog.dismiss()
-                        showToast(getString(R.string.signUp_failed))
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.signUp_failed))
+                        //showToast(getString(R.string.signUp_failed))
                     }
                 }
             }

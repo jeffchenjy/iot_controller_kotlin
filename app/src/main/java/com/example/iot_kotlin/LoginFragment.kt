@@ -57,17 +57,11 @@ class LoginFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findView(view)
-        setupViews()
+        setupFirebaseInit()
         TextChangedListener()
         /** TextView Listener **/
         textViewClickListener()
         textViewTouchListener()
-        // 確認用戶是否已經登入 Firebase
-        currentUser = auth.currentUser
-        if (currentUser != null) {
-            startMainActivity()
-            return
-        }
         /** Button **/
         loginButton.setOnClickListener{
             val email = login_email.text.toString()
@@ -90,7 +84,8 @@ class LoginFragment: Fragment() {
                             } else {
                                 // 登錄失敗
                                 dialog.dismiss()
-                                showToast(getString(R.string.login_failed))
+                                CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.login_failed))
+                                //showToast(getString(R.string.login_failed))
                             }
                         }
                 } else {
@@ -112,9 +107,10 @@ class LoginFragment: Fragment() {
         free_login = view.findViewById(R.id.free_login)
         forgotPassword = view.findViewById(R.id.forgot_password)
     }
-    private fun setupViews() {
+    private fun setupFirebaseInit() {
         auth = FirebaseAuth.getInstance()
         currentActivity = requireActivity() as AppCompatActivity
+        currentUser = auth.currentUser
     }
     private fun TextChangedListener() {
         /**  Text Changed Listener **/
@@ -196,15 +192,18 @@ class LoginFragment: Fragment() {
                         if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail)
                                 .matches()
                         ) {
-                            showToast("Please enter your registered email address")
+                            CustomSnackbar.showSnackbar(getView(), requireContext(), "Please enter your registered email address")
+                            //showToast("Please enter your registered email address")
                             return@OnClickListener
                         }
                         auth.sendPasswordResetEmail(userEmail).addOnCompleteListener { task ->
                             if (task.isSuccessful) {
-                                showToast("Please check your email")
+                                CustomSnackbar.showSnackbar(getView(), requireContext(), "Please check your email")
+                                //showToast("Please check your email")
                                 dialog.dismiss()
                             } else {
-                                showToast("Unable to send, failed")
+                                CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to send, failed")
+                                //showToast("Unable to send, failed")
                             }
                         }
                     })

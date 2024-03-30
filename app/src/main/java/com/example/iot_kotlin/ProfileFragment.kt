@@ -12,6 +12,7 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -20,6 +21,7 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import de.hdodenhof.circleimageview.CircleImageView
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -40,10 +42,13 @@ class ProfileFragment : Fragment() {
     private lateinit var editAccountButton: Button
     private lateinit var editProfileButton: Button
     private lateinit var signOutButton: Button
+    /* CircleImageView */
+    private lateinit var profileImg: CircleImageView
     /* String */
     private lateinit var password: String
     /* flag */
     private var nouserflag: Boolean? = false
+
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -60,6 +65,7 @@ class ProfileFragment : Fragment() {
         buttonClickListener()
     }
     private fun findView(view: View){
+        profileImg = view.findViewById(R.id.profileImg)
         titleNickname = view.findViewById(R.id.titleNickname)
         profileUsername = view.findViewById(R.id.profileUsername)
         profileEmail = view.findViewById(R.id.profileEmail)
@@ -91,7 +97,17 @@ class ProfileFragment : Fragment() {
                         val nickname = snapshot.child("nickname").getValue(String::class.java)
                         val email = snapshot.child("email").getValue(String::class.java)
                         password = snapshot.child("password").getValue(String::class.java)!!
-                        //profilePassword.text = password
+                        if(snapshot.child("avatar").exists()) {
+                            val avatar = snapshot.child("avatar").getValue(String::class.java)
+                            /* Image Show */
+                            avatar?.let { imageUrl ->
+                                Glide.with(requireContext())
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.ic_person_circle_bg) // 設置占位符，當圖片加載時顯示
+                                    .error(R.drawable.ic_person_circle_bg) // 設置加載錯誤時顯示的圖片
+                                    .into(profileImg)
+                            }
+                        }
                         val subText = password!!.substring(0, 2)
                         val hiddenText = "*".repeat(10)
                         currentUser?.metadata?.creationTimestamp?.let { creationTimestamp ->
@@ -106,13 +122,15 @@ class ProfileFragment : Fragment() {
                         profilePassword.text = subText+hiddenText
                     } else {
                         // 處理資料不存在的情況
-                        showToast("User data not found")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "User data not found")
+                        //showToast("User data not found")
                         dialog.dismiss()
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
-                    showToast("User data load failed")
+                    CustomSnackbar.showSnackbar(getView(), requireContext(), "User data load failed")
+                    //showToast("User data load failed")
                     dialog.dismiss()
                 }
             })
@@ -149,7 +167,8 @@ class ProfileFragment : Fragment() {
                             .addToBackStack(null)
                             .commit()
                     } else {
-                        showToast("Unable to modify without logging in")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to modify without logging in")
+                        //showToast("Unable to modify without logging in")
                     }
                 }
                 R.id.editProfileButton -> {
@@ -166,7 +185,8 @@ class ProfileFragment : Fragment() {
                             .addToBackStack(null)
                             .commit()
                     } else {
-                        showToast("Unable to modify without logging in")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to modify without logging in")
+                        //showToast("Unable to modify without logging in")
                     }
                 }
                 R.id.signOutButton -> {

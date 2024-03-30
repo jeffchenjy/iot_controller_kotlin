@@ -130,12 +130,14 @@ class BTMainFragment: Fragment() {
                     if (!mBluetoothAdapter!!.isEnabled) {
                         mPair_title!!.visibility = View.INVISIBLE
                         mDevice_list!!.visibility = View.INVISIBLE
-                        showToast("Turning On Bluetooth...")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Turning on bluetooth...")
+                        //showToast("Turning on bluetooth...")
                         if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
                             mBluetoothAdapter!!.enable()
                         }
                     } else {
-                        showToast("Bluetooth is already on")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Bluetooth is already on")
+                        //showToast("Bluetooth is already on")
                     }
                 } catch (e: Exception) {
                 }
@@ -147,9 +149,11 @@ class BTMainFragment: Fragment() {
                 try {
                     if (mBluetoothAdapter!!.isEnabled) {
                         mBluetoothAdapter!!.disable()
-                        showToast("Turning Bluetooth Off")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Turning bluetooth off")
+                        //showToast("Turning bluetooth off")
                     } else {
-                        showToast("Bluetooth is already off")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Bluetooth is already off")
+                        //showToast("Bluetooth is already off")
                     }
                 } catch (e: Exception) {
 
@@ -197,7 +201,8 @@ class BTMainFragment: Fragment() {
                             activityResultLauncher.launch(discoverintent)
                         }
                     } else {
-                        showToast("Please turn on Bluetooth first")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Please turn on bluetooth first!")
+                        //showToast("Please turn on bluetooth first!")
                     }
                 }
                 R.id.paired_btn -> {    // Get Paired devices button click
@@ -217,10 +222,12 @@ class BTMainFragment: Fragment() {
                             }
                         } else {
                             //bluetooth is off so can't get paired devices
-                            showToast("Please turn on Bluetooth to get paired devices")
+                            CustomSnackbar.showSnackbar(getView(), requireContext(), "Please turn on bluetooth first!")
+                            //showToast("Please turn on bluetooth first!")
                         }
                     } catch (e: Exception) {
-                        showToast("Can't get Bluetooth paired device!")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Can't get Bluetooth paired device!")
+                        //showToast("Can't get bluetooth paired device!")
                     }
                 }
             }
@@ -275,7 +282,8 @@ class BTMainFragment: Fragment() {
         if (requestCode == Permission_REQUEST_Code && grantResults.isNotEmpty()) {
             val permissionDenied = grantResults.any { it == PackageManager.PERMISSION_DENIED }
             if (permissionDenied) {
-                showToast("BT scan is denied.")
+                CustomSnackbar.showSnackbar(getView(), requireContext(), "BT permission is denied.")
+                //showToast("BT permission is denied.")
             } else {
             }
         }
@@ -305,7 +313,8 @@ class BTMainFragment: Fragment() {
                     if (mBluetoothAdapter?.isEnabled == true) {
                         startBluetoothSearchFragment()
                     } else {
-                        showToast("Please turn on Bluetooth to search devices")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Please turn on bluetooth first!")
+                        //showToast("Please turn on bluetooth first!")
                     }
                 }
                 R.id.bt_Operation -> {

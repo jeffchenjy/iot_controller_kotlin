@@ -11,13 +11,14 @@
         android:layout_height="match_parent"
         android:background="@drawable/info_bg">
         <!---->
-        <ImageView
+        <de.hdodenhof.circleimageview.CircleImageView
             android:layout_width="100dp"
             android:layout_height="100dp"
             android:id="@+id/profileImg"
             android:layout_marginTop="50dp"
-            android:src="@drawable/ic_person_circle"
-            android:background="@drawable/iot_controller_icon_nav_use"
+            android:src="@drawable/ic_person_circle_bg"
+            app:civ_border_width="1dp"
+            app:civ_border_color="@color/transparent_color"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"/>
