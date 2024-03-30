@@ -63,7 +63,10 @@ dependencies {
     //MultiDex
     implementation ("androidx.multidex:multidex:2.0.1")
     //Rounded ImageView 頭像物件
-    implementation ("com.makeramen:roundedimageview:2.3.0")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    //implementation ("com.makeramen:roundedimageview:2.3.0")
+    // 將ImageURL設定給ImageView顯示
+    implementation ("com.github.bumptech.glide:glide:4.16.0")
     //Firebase
     implementation("com.google.firebase:firebase-firestore:24.10.3")
     // Import the Firebase BoM

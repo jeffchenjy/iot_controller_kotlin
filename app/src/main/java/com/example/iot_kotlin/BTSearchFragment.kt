@@ -87,11 +87,13 @@ class BTSearchFragment: Fragment() {
                                 method.invoke(it)
                             }
                         } else {
-                            showToast("Bluetooth MAC's length is not 17!")
+                            CustomSnackbar.showSnackbar(getView(), requireContext(), "Bluetooth MAC's length is not 17!")
+                            //showToast("Bluetooth MAC's length is not 17!")
                         }
                     } catch (e: Exception) {
                         e.printStackTrace()
-                        showToast("Error Catch!")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Error Catch!")
+                        //showToast("Error Catch!")
                     }
                     dialog.dismiss()
                 }
@@ -119,9 +121,11 @@ class BTSearchFragment: Fragment() {
                 }
             }
             requireContext().registerReceiver(broadcastReceiver, intentFilter)
-            showToast("Search BT device first.")
+            CustomSnackbar.showSnackbar(getView(), requireContext(), "Search BT device first.")
+            //showToast("Search BT device first.")
         } catch (e: Exception) {
-            showToast("Can't get bluetooth device")
+            CustomSnackbar.showSnackbar(getView(), requireContext(), "Can't get bluetooth device")
+            //showToast("Can't get bluetooth device")
         }
         /** Search Button**/
         this.mSearch_btn.setOnClickListener(View.OnClickListener {
@@ -132,10 +136,12 @@ class BTSearchFragment: Fragment() {
                     scanAdapter.clearData()
                     mScanRecyclerView.adapter = scanAdapter
                     mBluetoothAdapter!!.startDiscovery()
-                    showToast("Search BT device again.")
+                    CustomSnackbar.showSnackbar(getView(), requireContext(), "Search BT device again.")
+                    //showToast("Search BT device again.")
                 }
             } catch (e: Exception) {
-                showToast("Can't get bluetooth device")
+                CustomSnackbar.showSnackbar(getView(), requireContext(), "Can't get bluetooth device")
+                //showToast("Can't get bluetooth device")
             }
         })
     }
@@ -188,7 +194,8 @@ class BTSearchFragment: Fragment() {
             return
         }
         if (grantResults[0] == -1 && grantResults[1] == -1) {
-            showToast("BT search is denied.")
+            CustomSnackbar.showSnackbar(getView(), requireContext(), "BT search is denied.")
+            //showToast("BT search is denied.")
         }
     }
     private fun showToast(msg: String) {

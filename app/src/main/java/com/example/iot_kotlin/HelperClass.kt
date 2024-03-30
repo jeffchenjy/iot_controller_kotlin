@@ -8,7 +8,6 @@ class HelperClass {
     var gender: String? = null
     var country: String? = null
     var borndate: String? = null
-
     constructor(username: String?, nickname: String?, email: String?, password: String?) {
         this.username = username
         this.nickname = nickname

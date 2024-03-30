@@ -5,6 +5,7 @@
         <item name="android:statusBarColor">@color/toolbar_color</item>
         <item name="android:navigationBarColor">@color/toolbar_color</item>
         <item name="fontFamily">@font/rounded_mplus</item>
+        <item name="snackbarStyle">@style/SnackBarStyleName</item>
     </style>
 
     <style name="Theme.Iot_kotlin" parent="Base.Theme.Iot_kotlin" />
@@ -53,5 +54,8 @@
         <item name="android:calendarViewShown">false</item>
         <item name="android:textColor">@color/toolbar_color_light</item>
         <item name="android:background">@color/toolbar_color</item>
+    </style>
+    <style name="SnackBarStyleName" parent="Widget.Material3.Snackbar">
+        <item name="android:layout_margin">40dp</item>
     </style>
 </resources>

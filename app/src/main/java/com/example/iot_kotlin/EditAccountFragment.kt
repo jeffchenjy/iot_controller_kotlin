@@ -142,7 +142,8 @@ class EditAccountFragment : Fragment() {
                     } else {
                         // 處理資料不存在的情況
                         dialog.dismiss()
-                        showToast("User data not found")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "User data not found")
+                        //showToast("User data not found")
                         currentUserEmail = " "
                         currentUserName = " "
                         currentUserPassword = " "
@@ -151,7 +152,8 @@ class EditAccountFragment : Fragment() {
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
                     dialog.dismiss()
-                    showToast("Error: ${databaseError.message}")
+                    CustomSnackbar.showSnackbar(getView(), requireContext(), "Error: ${databaseError.message}")
+                    //showToast("Error: ${databaseError.message}")
                 }
             })
         }
@@ -278,10 +280,12 @@ class EditAccountFragment : Fragment() {
                                     )
                                     reference.updateChildren(newData)
                                         .addOnSuccessListener {
-                                            showToast(getString(R.string.data_update_success))
+                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_message))
+                                            //showToast(getString(R.string.data_update_success))
                                         }
                                         .addOnFailureListener { _ ->
-                                            showToast(getString(R.string.data_update_failed))
+                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_failed))
+                                            //showToast(getString(R.string.Password_update_failed))
                                         }
                                     currentUser?.let {
                                         if(newEmail != currentUser!!.email){
@@ -295,7 +299,8 @@ class EditAccountFragment : Fragment() {
                                                             .addOnCompleteListener { updateEmailTask ->
                                                                 if (updateEmailTask.isSuccessful) {
                                                                     // 電子郵件地址更新成功
-                                                                    showToast("Please check your email")
+                                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), "Please check your email")
+                                                                    //showToast("Please check your email")
                                                                 }
                                                             }
                                                     }
@@ -305,9 +310,11 @@ class EditAccountFragment : Fragment() {
                                         it.updatePassword(newPassword)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {    // 更新成功
-                                                    showToast(getString(R.string.Password_update_message))
+                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_message))
+                                                    //showToast(getString(R.string.Password_update_message))
                                                 } else {                    // 更新失敗，顯示錯誤消息
-                                                    showToast(getString(R.string.Password_update_failed))
+                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_failed))
+                                                    //showToast(getString(R.string.Password_update_failed))
                                                     //Log.d("updatePassword", "Error updating password: ${task.exception?.message}")
                                                 }
                                             }
@@ -317,7 +324,8 @@ class EditAccountFragment : Fragment() {
                                         }, 1500)
                                     }
                                 } else {
-                                    showToast(getString(R.string.password_error))
+                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.password_error))
+                                    //showToast(getString(R.string.password_error))
                                 }
                             })
                             dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
@@ -381,7 +389,8 @@ class EditAccountFragment : Fragment() {
                                         }
                                     }
                                 } else {
-                                    showToast(getString(R.string.password_error))
+                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.password_error))
+                                    //showToast(getString(R.string.password_error))
                                 }
                             })
                             dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }

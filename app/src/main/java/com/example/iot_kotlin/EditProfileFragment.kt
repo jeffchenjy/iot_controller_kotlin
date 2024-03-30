@@ -1,9 +1,12 @@
 package com.example.iot_kotlin
 
+import android.app.Activity
 import android.app.Dialog
-import android.content.res.ColorStateList
+import android.content.ContentResolver
+import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
+import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
@@ -14,12 +17,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.webkit.MimeTypeMap
 import android.widget.Button
 import android.widget.DatePicker
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
@@ -28,6 +34,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
@@ -36,7 +43,11 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
+import de.hdodenhof.circleimageview.CircleImageView
 import java.util.Calendar
+
 
 class EditProfileFragment: Fragment() {
     /*  About ToolBar */
@@ -63,11 +74,18 @@ class EditProfileFragment: Fragment() {
     private lateinit var currentBorndate: String
     private lateinit var currentBornYear: String
     private lateinit var currentBornDate: String
+    /* ImageView */
+    private lateinit var uploadImage: CircleImageView
+    private lateinit var uploadIcon: ImageView
     /* Firebase */
     private var currentUserUID: String? = null
     private var currentUser: FirebaseUser? = null
     private lateinit var auth: FirebaseAuth
     private lateinit var reference: DatabaseReference
+    private lateinit var storageReference: StorageReference
+    private lateinit var imgReference: StorageReference
+    private var imageUri: Uri? = null
+    private lateinit var imgURL: String
     /* List */
     private val countryList = listOf<String>(
         "未選択", "アイスランド", "アイルランド", "アメリカ", "イギリス", "イタリア",
@@ -83,13 +101,26 @@ class EditProfileFragment: Fragment() {
             genderTextView.text.toString() == currentGender &&
             countryTextView.text.toString() == currentCountry &&
             bornYearTextView.text.toString() == currentBornYear &&
-            bornDateTextView.text.toString() == currentBornDate) {
+            bornDateTextView.text.toString() == currentBornDate &&
+            imageUri == null ) {
             saveProfileButton.isEnabled = false
             saveProfileButtonCardView.visibility = View.VISIBLE
         } else {
             saveProfileButton.isEnabled = true
             saveProfileButtonCardView.visibility = View.GONE
         }
+    }
+    private val activityResultLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data: Intent? = result.data
+            imageUri = data?.data
+            uploadImage.setImageURI(imageUri)
+        } else {
+            Toast.makeText(requireContext(), "No Image Selected", Toast.LENGTH_SHORT).show()
+        }
+        handler.post(checkProfileChange)
     }
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -106,7 +137,7 @@ class EditProfileFragment: Fragment() {
         firebaseInit()
         layoutClickListener()
         buttonClickListener()
-
+        imageClickListener()
     }
     private fun findView(view: View) {
         toolbar = view.findViewById(R.id.toolbar)
@@ -118,6 +149,8 @@ class EditProfileFragment: Fragment() {
         bornDateTextView = view.findViewById(R.id.bornDateTextView)
         saveProfileButton = view.findViewById(R.id.saveProfileButton)
         saveProfileButtonCardView = view.findViewById(R.id.saveProfileButtonCardView)
+        uploadImage = view.findViewById(R.id.uploadImage)
+        uploadIcon = view.findViewById(R.id.uploadIcon)
         genderLinearLayout = view.findViewById(R.id.genderLinearLayout)
         countryLinearLayout = view.findViewById(R.id.countryLinearLayout)
         bornLinearLayout = view.findViewById(R.id.bornLinearLayout)
@@ -153,13 +186,24 @@ class EditProfileFragment: Fragment() {
                         val gender = snapshot.child("gender").getValue(String::class.java)
                         val country = snapshot.child("country").getValue(String::class.java)
                         val borndate = snapshot.child("borndate").getValue(String::class.java)
+                        if(snapshot.child("avatar").exists()) {
+                            val avatar = snapshot.child("avatar").getValue(String::class.java)
+                            /* Image Show */
+                            avatar?.let { imageUrl ->
+                                Glide.with(requireContext())
+                                    .load(imageUrl)
+                                    .placeholder(R.drawable.ic_person_circle_bg) // 設置占位符，當圖片加載時顯示
+                                    .error(R.drawable.ic_person_circle_bg) // 設置加載錯誤時顯示的圖片
+                                    .into(uploadImage)
+                            }
+                        }
                         /* Data Initial */
                         val initValue = resources.getString(R.string.unselect)
                         currentNickname = nickname!!
                         currentGender = gender!!
                         currentCountry = country!!
                         currentBorndate = borndate!!
-
+                        /** Information Show **/
                         editNickname.setText(nickname)
                         genderTextView.text = gender
                         countryTextView.text = country
@@ -178,13 +222,15 @@ class EditProfileFragment: Fragment() {
                     } else {
                         // 處理資料不存在的情況
                         dialog.dismiss()
-                        showToast("User data not found")
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "User data not found")
+                        //showToast("User data not found")
                     }
                 }
                 override fun onCancelled(databaseError: DatabaseError) {
                     // 處理讀取資料失敗的情況
                     dialog.dismiss()
-                    showToast("Error: ${databaseError.message}")
+                    CustomSnackbar.showSnackbar(getView(), requireContext(), "Error: ${databaseError.message}")
+                    //showToast("Error: ${databaseError.message}")
                 }
             })
         }
@@ -220,51 +266,111 @@ class EditProfileFragment: Fragment() {
             }
         })
     }
-    private fun buttonClickListener() {
-        saveProfileButton.setOnClickListener{
-            handler.removeCallbacksAndMessages(null)
-            if (currentUser != null) {
-                if(editNickname.text.isNotEmpty() && editNickname.text.toString().length >= 3) {
-                    /** Show progress indicators **/
-                    val builder = AlertDialog.Builder(requireContext())
-                    val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
-                    builder.setView(dialogView)
-                    val dialog: AlertDialog = builder.create()
-                    dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
-                    dialog.show()
-                    /** Prepare Data **/
-                    val newNickname = editNickname.text.toString()
-                    val newGender = genderTextView.text.toString()
-                    val newCountry = countryTextView.text.toString()
-                    val newBorndate = if(bornYearTextView.text.toString() == getString(R.string.unselect)) {
-                       bornYearTextView.text.toString()
-                    } else {
-                       bornYearTextView.text.toString()+"-"+bornDateTextView.text.toString()
-                    }
-                    val newData = mapOf<String, Any>(
-                        "nickname" to newNickname,
-                        "gender" to newGender,
-                        "country" to newCountry,
-                        "borndate" to newBorndate
-                    )
-                    /** Update User Data **/
-                    reference.updateChildren(newData)
-                        .addOnSuccessListener {
-                            showToast(getString(R.string.data_update_success))
-                        }
-                        .addOnFailureListener { _ ->
-                            showToast(getString(R.string.data_update_failed))
-                        }
-                    Handler(Looper.myLooper()!!).postDelayed({
-                        dialog.dismiss()
-                        returnProfileFragment()
-                    }, 1500)
-                } else {
-                    showToast(getString(R.string.nickname_error))
+    private fun imageClickListener() {
+        uploadImage.setOnClickListener(imageOnClick())
+        uploadIcon.setOnClickListener(imageOnClick())
+    }
+    private fun imageOnClick(): View.OnClickListener? {
+        return View.OnClickListener {
+            val view = it as? View
+            when(view?.id) {
+                R.id.uploadImage -> {
+                    imageClickAction()
+                }
+                R.id.uploadIcon -> {
+                    imageClickAction()
                 }
             }
         }
     }
+    private fun imageClickAction() {
+        val photoPicker = Intent()
+        photoPicker.action = Intent.ACTION_GET_CONTENT
+        photoPicker.type = "image/*"
+        activityResultLauncher.launch(photoPicker)
+    }
+    private fun buttonClickListener() {
+        saveProfileButton.setOnClickListener{
+            handler.removeCallbacksAndMessages(null)
+            firebaseUpdate()
+        }
+    }
+    private fun firebaseUpdate() {
+        if (currentUser != null) {
+            if(editNickname.text.isNotEmpty() && editNickname.text.toString().length >= 3) {
+                /** Show progress indicators **/
+                val builder = AlertDialog.Builder(requireContext())
+                val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
+                builder.setView(dialogView)
+                val dialog: AlertDialog = builder.create()
+                dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+                dialog.show()
+                /** Prepare Data **/
+                val newNickname = editNickname.text.toString()
+                val newGender = genderTextView.text.toString()
+                val newCountry = countryTextView.text.toString()
+                val newBorndate = if(bornYearTextView.text.toString() == getString(R.string.unselect)) {
+                    bornYearTextView.text.toString()
+                } else {
+                    bornYearTextView.text.toString()+"-"+bornDateTextView.text.toString()
+                }
+                if(imageUri != null) {
+                    firebaseUpdateImg(imageUri!!)
+                }
+                val newData = mapOf<String, Any>(
+                    "nickname" to newNickname,
+                    "gender" to newGender,
+                    "country" to newCountry,
+                    "borndate" to newBorndate
+                )
+                /** Update User Data **/
+                reference.updateChildren(newData)
+                    .addOnSuccessListener {
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.data_update_success))
+                        //showToast(getString(R.string.data_update_success))
+                    }
+                    .addOnFailureListener { _ ->
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.data_update_failed))
+                        //showToast(getString(R.string.data_update_failed))
+                    }
+                Handler(Looper.myLooper()!!).postDelayed({
+                    dialog.dismiss()
+                    returnProfileFragment()
+                }, 1500)
+            } else {
+                CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.nickname_error))
+                //showToast(getString(R.string.nickname_error))
+            }
+        }
+    }
+
+    private fun firebaseUpdateImg(uri: Uri) {
+        storageReference = FirebaseStorage.getInstance().getReference("$currentUserUID")
+        imgReference = storageReference.child("headImage.${getFileExtension(uri)}")
+        imgReference.putFile(uri)
+            .addOnSuccessListener { taskSnapshot ->
+                imgReference.downloadUrl
+                    .addOnSuccessListener { uri ->
+                        imgURL = uri.toString()
+                        val newImgData = mapOf<String, Any>("avatar" to imgURL)
+                        reference.updateChildren(newImgData)
+                            .addOnSuccessListener {
+                            }
+                            .addOnFailureListener { _ ->
+                                CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.data_update_failed))
+                            }
+                    }
+            }
+            .addOnFailureListener { e ->
+
+            }
+    }
+    private fun getFileExtension(fileUri: Uri?): String? {
+        val contentResolver = requireContext().contentResolver
+        val mime = MimeTypeMap.getSingleton()
+        return mime.getExtensionFromMimeType(contentResolver.getType(fileUri!!))
+    }
+
     /* Profile Info Select */
     private fun layoutClickListener()  {
         genderLinearLayout.setOnClickListener(linearLayoutOnClickListener())
@@ -274,8 +380,7 @@ class EditProfileFragment: Fragment() {
     private fun linearLayoutOnClickListener() : View.OnClickListener?  {
         return View.OnClickListener {
             val view = it as? View
-            val viewId = view?.id
-            when(viewId) {
+            when(view?.id) {
                 R.id.genderLinearLayout -> {
                     showBottomDialogGender()
                 }

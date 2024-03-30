@@ -26,6 +26,10 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
     /*  Tasks ArrayList  */
@@ -63,11 +67,11 @@ class HomeFragment : Fragment() {
         menuItem = navigation_view?.menu?.findItem(itemIdToFind ?: 0)
         /* use sharedPreferences change themes*/
         sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
-        changeTheme()
         /**/
         setToolbar(view)
         setNavigationItemSelectedListener()
-
+        /** Kotlin 的協程分開執行 **/
+        changeTheme()
         imageAnimation()
     }
     private fun setToolbar(view: View) {
@@ -124,27 +128,34 @@ class HomeFragment : Fragment() {
 
     }
     private fun changeTheme() {
-        isNightMode = sharedPreferences.getBoolean("nightMode", false)
-        if (menuItem != null) {
-            val title: CharSequence? = menuItem!!.title
-            val context = requireContext()
-            if (title != null) {
-                isNightMode?.let { isNightMode ->
-                    if (isNightMode) {
-                        if(title.toString() != getString(R.string.light_mode)) {
-                            menuItem!!.title = getString(R.string.light_mode)
-                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        }
-                    } else {
-                        if(title.toString() != getString(R.string.dark_mode)) {
-                            menuItem!!.title = getString(R.string.dark_mode)
-                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
-                            AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+        try {
+            animationPaused = true
+            isNightMode = sharedPreferences.getBoolean("nightMode", false)
+            if (menuItem != null) {
+                val title: CharSequence? = menuItem!!.title
+                val context = requireContext()
+                if (title != null) {
+                    isNightMode?.let { isNightMode ->
+                        if (isNightMode) {
+                            if(title.toString() != getString(R.string.light_mode)) {
+                                menuItem!!.title = getString(R.string.light_mode)
+                                menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                            }
+                        } else {
+                            if(title.toString() != getString(R.string.dark_mode)) {
+                                menuItem!!.title = getString(R.string.dark_mode)
+                                menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
+                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                            }
                         }
                     }
                 }
             }
+        } catch (e: Exception) {
+            Log.d("changeThemeError", "massage: $e")
+        } finally {
+            animationPaused = false
         }
     }
     private fun setNavigationItemSelectedListener() {
