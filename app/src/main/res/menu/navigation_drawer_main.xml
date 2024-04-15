@@ -18,8 +18,8 @@
         <menu>
             <item
                 android:id="@+id/action_change_mode"
-                android:icon="@drawable/ic_dark_mode"
-                android:title="@string/dark_mode"/>
+                android:icon="@drawable/ic_mode_change"
+                android:title="@string/mode_change"/>
         </menu>
     </item>
     <item android:title="About">

@@ -277,7 +277,7 @@ class WFMainFragment: Fragment() {
             .setIcon(R.drawable.ic_setting)
             .setTitle(resources.getString(R.string.url_setting))
             .setView(inflate)
-            .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
+            .setPositiveButton(resources.getString(R.string.ok)) { dialog, _ ->
                 // Respond to positive button press
                 val obj = editText_url.text.toString()
                 if (obj.length != 0) {

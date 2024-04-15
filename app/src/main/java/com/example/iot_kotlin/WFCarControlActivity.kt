@@ -626,15 +626,20 @@ class WFCarControlActivity : AppCompatActivity() {
     }
 
     private fun sendCMD(cmd: String) {
-        Thread {
-            val command = "$cmd_url$cmd"
-            val request: Request = Request.Builder().url(command).build()
-            try {
-                val response = client.newCall(request).execute()
-            } catch (e: IOException) {
-                e.printStackTrace()
-            }
-        }.start()
+        try {
+            Thread {
+                val command = "$cmd_url$cmd"
+                val request: Request = Request.Builder().url(command).build()
+                try {
+                    val response = client.newCall(request).execute()
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                }
+            }.start()
+        } catch (e: Exception) {
+
+        }
+
     }
     private fun showToast(msg: String) {
         Toast.makeText(applicationContext, msg, Toast.LENGTH_SHORT).show()

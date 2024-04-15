@@ -73,7 +73,7 @@ class HomeFragment : Fragment() {
         navigation_view = view.findViewById(R.id.navigation_view)
         setToolbar(view)
         setNavigationItemSelectedListener()
-        changeThemeText()
+        changeThemeInit()
         imageAnimation()
         firebaseUserCheck()
     }
@@ -130,32 +130,10 @@ class HomeFragment : Fragment() {
         }
 
     }
-    private fun changeThemeText() {
-        menu = navigation_view?.menu
-        itemIdToFind = R.id.action_change_mode
-        menuItem = navigation_view?.menu?.findItem(itemIdToFind ?: 0)
+    private fun changeThemeInit() {
         /* use sharedPreferences change themes*/
         sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
         isNightMode = sharedPreferences.getBoolean("nightMode", false)
-        if (menuItem != null) {
-            val title: CharSequence? = menuItem!!.title
-            val context = requireContext()
-            if (title != null) {
-                isNightMode?.let { isNightMode ->
-                    if (isNightMode) {
-                        if(title.toString() != getString(R.string.light_mode)) {
-                            menuItem!!.title = getString(R.string.light_mode)
-                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
-                        }
-                    } else {
-                        if(title.toString() != getString(R.string.dark_mode)) {
-                            menuItem!!.title = getString(R.string.dark_mode)
-                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
-                        }
-                    }
-                }
-            }
-        }
     }
     private fun setNavigationItemSelectedListener() {
         navigation_view?.setNavigationItemSelectedListener { item -> // 点击时收起菜单
@@ -214,29 +192,18 @@ class HomeFragment : Fragment() {
     private fun changeMode() {
         try {
             animationPaused = true
-            if (menuItem != null) {
-                val title: CharSequence? = menuItem!!.title
-                val context = requireContext()
-                if (title != null) {
-                    if (isNightMode!!) {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        edit = sharedPreferences.edit()
-                        edit.putBoolean("nightMode", false)
-                        menuItem!!.title = context.getString(R.string.dark_mode)
-                        menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
-                    } else {
-                        AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        edit = sharedPreferences.edit()
-                        edit.putBoolean("nightMode", true)
-                        menuItem!!.title = context.getString(R.string.light_mode)
-                        menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
-                    }
-                    edit.apply()
-                    navigation_view?.invalidate()
-                }
+            if (isNightMode!!) {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                edit = sharedPreferences.edit()
+                edit.putBoolean("nightMode", false)
+            } else {
+                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                edit = sharedPreferences.edit()
+                edit.putBoolean("nightMode", true)
             }
+            edit.apply()
         } catch (e: Exception) {
-            e.printStackTrace() // 打印异常信息，便于调试
+            e.printStackTrace()
         } finally {
             animationPaused = false
         }

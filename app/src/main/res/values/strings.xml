@@ -57,8 +57,7 @@
     <string name="homepage">ホームページ</string>
     <string name="operation_title">操作紹介</string>
     <string name="main_operation_title">IoT とは?</string>
-    <string name="light_mode">ライトモードに変更する</string>
-    <string name="dark_mode">ダークモードに変更する</string>
+    <string name="mode_change">モード変更</string>
     <string name="current_url">當前のURL</string>
     <string name="url_setting">URL設定</string>
     <string name="current_video_url">カメラのURL</string>
