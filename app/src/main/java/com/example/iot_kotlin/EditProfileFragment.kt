@@ -2,7 +2,6 @@ package com.example.iot_kotlin
 
 import android.app.Activity
 import android.app.Dialog
-import android.content.ContentResolver
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -32,6 +31,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
@@ -94,6 +94,9 @@ class EditProfileFragment: Fragment() {
         "日本", "ニュージーランド", "フィンランド", "南アフリカ", "ロシア",
         "其他"
     )
+    private val genderList = listOf<String>(
+        "どちらも選ばない", "男性", "女性"
+    )
     /* checkProfileChange Loop */
     private val handler = Handler(Looper.myLooper()!!)
     private val checkProfileChange = Runnable {
@@ -118,7 +121,7 @@ class EditProfileFragment: Fragment() {
             imageUri = data?.data
             uploadImage.setImageURI(imageUri)
         } else {
-            Toast.makeText(requireContext(), "No Image Selected", Toast.LENGTH_SHORT).show()
+            CustomSnackbar.showSnackbar(view, requireContext(), "No Image Selected")
         }
         handler.post(checkProfileChange)
     }
@@ -252,7 +255,12 @@ class EditProfileFragment: Fragment() {
                         nicknameTextInputLayout.error = null
                         editNickname.error = getString(R.string.nickname_empty)
                     }
+                    containsSpecialCharacter(nickname) -> {
+                        nicknameTextInputLayout.error = null
+                        nicknameTextInputLayout.error = getString(R.string.illegal_characters)
+                    }
                     charCount in 1..2 -> {
+                        nicknameTextInputLayout.error = null
                         nicknameTextInputLayout.error = getString(R.string.errorUsername_message)
                     }
                     nickname == currentNickname -> {
@@ -287,6 +295,7 @@ class EditProfileFragment: Fragment() {
         val photoPicker = Intent()
         photoPicker.action = Intent.ACTION_GET_CONTENT
         photoPicker.type = "image/*"
+        photoPicker.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         activityResultLauncher.launch(photoPicker)
     }
     private fun buttonClickListener() {
@@ -396,28 +405,23 @@ class EditProfileFragment: Fragment() {
     private fun showBottomDialogGender() {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.bottom_sheet_layout_gender)
+        dialog.setContentView(R.layout.bottom_sheet_layout_list)
         val closeTextView = dialog.findViewById<TextView>(R.id.closeTextView)
-        val unselectTextView = dialog.findViewById<TextView>(R.id.unselectTextView)
-        val maleTextView = dialog.findViewById<TextView>(R.id.maleTextView)
-        val femaleTextView = dialog.findViewById<TextView>(R.id.femaleTextView)
+        val gender_RecyclerView = dialog.findViewById<RecyclerView>(R.id.country_RecyclerView)
+        val genderList = ArrayList(genderList)
+        /* RecyclerView */
+        gender_RecyclerView.layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.VERTICAL, false)
+        val bottomRecyclerViewAdapter = BottomRecyclerViewAdapter(genderList)
+        gender_RecyclerView!!.adapter = bottomRecyclerViewAdapter
+        ItemClickSupport.addTo(gender_RecyclerView)
+        gender_RecyclerView.onItemClick{ recyclerView, position, _ ->
+            dialog.dismiss()
+            val itemString = (recyclerView.adapter as BottomRecyclerViewAdapter).getItem(position)
+            genderTextView.text = itemString
+            handler.post(checkProfileChange)
+        }
         closeTextView.setOnClickListener{
             dialog.dismiss()
-        }
-        unselectTextView.setOnClickListener{
-            dialog.dismiss()
-            genderTextView.text = unselectTextView.text
-            handler.post(checkProfileChange)
-        }
-        maleTextView.setOnClickListener{
-            dialog.dismiss()
-            genderTextView.text = maleTextView.text
-            handler.post(checkProfileChange)
-        }
-        femaleTextView.setOnClickListener{
-            dialog.dismiss()
-            genderTextView.text = femaleTextView.text
-            handler.post(checkProfileChange)
         }
         dialog.show()
         dialog.window?.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -428,7 +432,7 @@ class EditProfileFragment: Fragment() {
     private fun showBottomDialogCountry() {
         val dialog = Dialog(requireContext())
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE)
-        dialog.setContentView(R.layout.bottom_sheet_layout_country)
+        dialog.setContentView(R.layout.bottom_sheet_layout_list)
         val closeTextView = dialog.findViewById<TextView>(R.id.closeTextView)
         val country_RecyclerView = dialog.findViewById<RecyclerView>(R.id.country_RecyclerView)
         val countryList = ArrayList(countryList)
@@ -443,7 +447,6 @@ class EditProfileFragment: Fragment() {
             countryTextView.text = itemString
             handler.post(checkProfileChange)
         }
-        /////////////////////////////////////////////////////////
         closeTextView.setOnClickListener{
             dialog.dismiss()
         }
@@ -508,10 +511,14 @@ class EditProfileFragment: Fragment() {
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
     }
+    private fun containsSpecialCharacter(input: String): Boolean {
+        val regex = Regex("[^A-Za-z0-9@!?]")
+        return regex.find(input) != null
+    }
     private fun returnProfileFragment() {
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentManager.popBackStack()
+        fragmentManager.popBackStack("editFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         fragmentTransaction.commit()
     }
     override fun onDestroy() {

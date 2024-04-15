@@ -55,7 +55,7 @@
         <item name="android:textColor">@color/toolbar_color_light</item>
         <item name="android:background">@color/toolbar_color</item>
     </style>
-    <style name="SnackBarStyleName" parent="Widget.Material3.Snackbar">
+    <style name="SnackBarStyle" parent="Widget.Material3.Snackbar">
         <item name="android:layout_margin">40dp</item>
     </style>
 </resources>

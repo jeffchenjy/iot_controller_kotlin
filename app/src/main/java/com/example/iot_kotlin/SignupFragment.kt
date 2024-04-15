@@ -61,14 +61,144 @@ class SignupFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findView(view)
-        currentActivity = requireActivity() as AppCompatActivity
-        /** Firebase **/
-        auth = FirebaseAuth.getInstance()
-        database = FirebaseDatabase.getInstance();
-        reference = database.getReference("users")
+        initSetting()
         TextChangedListener()
         textViewListener()
         /** Button **/
+        buttonClickListener()
+    }
+    private fun findView(view: View) {
+        signup_username = view.findViewById(R.id.signup_username)
+        signup_nickname = view.findViewById(R.id.signup_nickname)
+        signup_email = view.findViewById(R.id.signup_email)
+        signup_password = view.findViewById(R.id.signup_password)
+        signupButton = view.findViewById(R.id.signup_button)
+        emailTextInputLayout = view.findViewById(R.id.emailTextInputLayout)
+        usernameTextInputLayout = view.findViewById(R.id.usernameTextInputLayout)
+        nicknameTextInputLayout = view.findViewById(R.id.nicknameTextInputLayout)
+        passwordTextInputLayout = view.findViewById(R.id.passwordTextInputLayout)
+        loginRedirectText = view.findViewById(R.id.loginRedirectText)
+    }
+    private fun initSetting() {
+        currentActivity = requireActivity() as AppCompatActivity
+        /** Firebase **/
+        auth = FirebaseAuth.getInstance()
+        database = FirebaseDatabase.getInstance()
+        reference = database.getReference("users")
+    }
+    private fun TextChangedListener() {
+        /**  Text Changed Listener **/
+        passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+        signup_email.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val email = s.toString()
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    emailTextInputLayout.error  = null
+                    signup_email.error = getString(R.string.email_empty)
+                } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches() && charCount > 0) {
+                    emailTextInputLayout.error = getString(R.string.errorEmail_message)
+                } else {
+                    emailTextInputLayout.error  = null
+                }
+            }
+        })
+        signup_username.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    usernameTextInputLayout.error  = null
+                    signup_username.error = getString(R.string.username_empty)
+                } else if(containsSpecialCharacter(s.toString())) {
+                    usernameTextInputLayout.error = getString(R.string.illegal_characters)
+                } else if(charCount in 1..2) {
+                    usernameTextInputLayout.error  = getString(R.string.errorUsername_message)
+                } else {
+                    usernameTextInputLayout.error  = null
+                }
+            }
+        })
+        signup_nickname.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    nicknameTextInputLayout.error  = null
+                    signup_nickname.error = getString(R.string.nickname_empty)
+                } else if(containsSpecialCharacter(s.toString())) {
+                    nicknameTextInputLayout.error = getString(R.string.illegal_characters)
+                } else if(charCount in 1..2) {
+                    nicknameTextInputLayout.error  = getString(R.string.errorUsername_message)
+                } else {
+                    nicknameTextInputLayout.error  = null
+                }
+            }
+        })
+        signup_password.addTextChangedListener(object : TextWatcher {
+            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
+                // No need to implement
+            }
+            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
+
+            }
+            override fun afterTextChanged(s: Editable?) {
+                val charCount = s?.length ?: 0
+                if (s.isNullOrEmpty()) {
+                    passwordTextInputLayout.error = null
+                    signup_password.error  = getString(R.string.password_empty)
+                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+                } else if(containsSpecialCharacter(s.toString())) {
+                    passwordTextInputLayout.error = getString(R.string.illegal_characters)
+                } else if(charCount in 1..7) {
+                    passwordTextInputLayout.error = getString(R.string.errorPassword_message)
+                } else {
+                    passwordTextInputLayout.error  = null
+                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
+                }
+            }
+        })
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewListener() {
+        loginRedirectText.setOnClickListener {
+            ReturnLoginFragment()
+        }
+        loginRedirectText.setOnTouchListener{ _, motionEvent ->
+            when (motionEvent.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    // 按下時的處理
+                    loginRedirectText.setTextColor(Color.GRAY)
+                    colorhandler.postDelayed({
+                        loginRedirectText.setTextColor(Color.WHITE)
+                    }, 800)
+                }
+                MotionEvent.ACTION_UP -> {
+                    // 放開時的處理
+                    colorhandler.removeCallbacksAndMessages(null)
+                    loginRedirectText.setTextColor(Color.WHITE) // 恢復文字原本的顏色
+                }
+            }
+            false
+        }
+    }
+    private fun buttonClickListener() {
         signupButton.setOnClickListener(View.OnClickListener {
             val username = signup_username.text.toString()
             val nickname = signup_nickname.text.toString()
@@ -116,124 +246,6 @@ class SignupFragment: Fragment() {
             }
         })
     }
-    private fun findView(view: View) {
-        signup_username = view.findViewById(R.id.signup_username)
-        signup_nickname = view.findViewById(R.id.signup_nickname)
-        signup_email = view.findViewById(R.id.signup_email)
-        signup_password = view.findViewById(R.id.signup_password)
-        signupButton = view.findViewById(R.id.signup_button)
-        emailTextInputLayout = view.findViewById(R.id.emailTextInputLayout)
-        usernameTextInputLayout = view.findViewById(R.id.usernameTextInputLayout)
-        nicknameTextInputLayout = view.findViewById(R.id.nicknameTextInputLayout)
-        passwordTextInputLayout = view.findViewById(R.id.passwordTextInputLayout)
-        loginRedirectText = view.findViewById(R.id.loginRedirectText)
-    }
-    private fun TextChangedListener() {
-        /**  Text Changed Listener **/
-        passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
-        signup_email.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No need to implement
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-            override fun afterTextChanged(s: Editable?) {
-                val email = s.toString()
-                val charCount = s?.length ?: 0
-                if (s.isNullOrEmpty()) {
-                    emailTextInputLayout.error  = null
-                    signup_email.error = getString(R.string.email_empty)
-                } else if(!Patterns.EMAIL_ADDRESS.matcher(email).matches() && charCount > 0) {
-                    emailTextInputLayout.error = getString(R.string.errorEmail_message)
-                } else {
-                    emailTextInputLayout.error  = null
-                }
-            }
-        })
-        signup_username.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No need to implement
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-            override fun afterTextChanged(s: Editable?) {
-                val charCount = s?.length ?: 0
-                if (s.isNullOrEmpty()) {
-                    usernameTextInputLayout.error  = null
-                    signup_username.error = getString(R.string.username_empty)
-                } else if(charCount in 1..2) {
-                    usernameTextInputLayout.error  = getString(R.string.errorUsername_message)
-                } else {
-                    usernameTextInputLayout.error  = null
-                }
-            }
-        })
-        signup_nickname.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No need to implement
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-            override fun afterTextChanged(s: Editable?) {
-                val charCount = s?.length ?: 0
-                if (s.isNullOrEmpty()) {
-                    nicknameTextInputLayout.error  = null
-                    signup_nickname.error = getString(R.string.nickname_empty)
-                } else if(charCount in 1..2) {
-                    nicknameTextInputLayout.error  = getString(R.string.errorUsername_message)
-                } else {
-                    nicknameTextInputLayout.error  = null
-                }
-            }
-        })
-        signup_password.addTextChangedListener(object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // No need to implement
-            }
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-
-            }
-            override fun afterTextChanged(s: Editable?) {
-                val charCount = s?.length ?: 0
-                if (s.isNullOrEmpty()) {
-                    passwordTextInputLayout.error = null
-                    signup_password.error  = getString(R.string.password_empty)
-                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
-                } else if(charCount in 1..7) {
-                    passwordTextInputLayout.error = getString(R.string.errorPassword_message)
-                } else {
-                    passwordTextInputLayout.error  = null
-                    passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_PASSWORD_TOGGLE
-                }
-            }
-        })
-    }
-    @SuppressLint("ClickableViewAccessibility")
-    private fun textViewListener() {
-        loginRedirectText.setOnClickListener {
-            ReturnLoginFragment()
-        }
-        loginRedirectText.setOnTouchListener{ _, motionEvent ->
-            when (motionEvent.action) {
-                MotionEvent.ACTION_DOWN -> {
-                    // 按下時的處理
-                    loginRedirectText.setTextColor(Color.GRAY)
-                    colorhandler.postDelayed({
-                        loginRedirectText.setTextColor(Color.WHITE)
-                    }, 800)
-                }
-                MotionEvent.ACTION_UP -> {
-                    // 放開時的處理
-                    colorhandler.removeCallbacksAndMessages(null)
-                    loginRedirectText.setTextColor(Color.WHITE) // 恢復文字原本的顏色
-                }
-            }
-            false
-        }
-    }
     private fun ReturnLoginFragment() {
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
@@ -242,9 +254,14 @@ class SignupFragment: Fragment() {
     }
     private fun startMainActivity() {
         Main_intent = Intent(currentActivity, MainActivity::class.java)
+        Main_intent.putExtra("checkUserFlag", "1")
         currentActivity.startActivity(Main_intent)
         currentActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out)
         currentActivity.finish()
+    }
+    private fun containsSpecialCharacter(input: String): Boolean {
+        val regex = Regex("[^A-Za-z0-9@!?]")
+        return regex.find(input) != null
     }
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()

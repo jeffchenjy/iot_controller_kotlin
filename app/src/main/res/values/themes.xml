@@ -60,4 +60,6 @@
     <style name="SnackBarStyleName" parent="Widget.Material3.Snackbar">
         <item name="android:layout_margin">40dp</item>
     </style>
+
+
 </resources>

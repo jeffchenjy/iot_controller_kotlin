@@ -34,6 +34,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.materialswitch.MaterialSwitch
+import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import pl.droidsonroids.gif.GifDrawable
 
@@ -84,6 +85,10 @@ class BTMainFragment: Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bottom_navigation = requireActivity().findViewById<NavigationBarView>(R.id.bottom_navigation)
+        if(!bottom_navigation.menu.findItem(R.id.nbar_bt).isChecked) {
+            bottom_navigation.menu.findItem(R.id.nbar_bt).isChecked = true
+        }
         findView(view)
         setToolbar()
         setClickListener()
@@ -345,8 +350,8 @@ class BTMainFragment: Fragment() {
                 R.anim.fade_in,   // popEnter
                 R.anim.slide_out_right  // popExit
             )
-            .replace(R.id.fragment_container, fragment)
-            .addToBackStack(null)
+            .replace(R.id.fragment_container, fragment, "btSearchFragment")
+            .addToBackStack("btSearchFragment")
             .commit()
     }
     private fun operation_Dialog() {

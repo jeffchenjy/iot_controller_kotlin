@@ -18,15 +18,21 @@ import android.widget.EditText
 import android.widget.ImageView
 import android.widget.RadioGroup
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import androidx.core.app.ActivityCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
+import com.example.iot_kotlin.Constants.REQUEST_LOCATION_PERMISSION
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
-import com.google.android.material.navigation.NavigationBarView
 import com.google.android.material.navigation.NavigationView
 import okhttp3.OkHttpClient
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
+import pub.devrel.easypermissions.PermissionRequest
+
 
 class WFMainFragment: Fragment() {
     /*  ImageView  */
@@ -53,6 +59,7 @@ class WFMainFragment: Fragment() {
     private var v_url_title = "http://"
     private var v_url: StringBuilder? = null
     private var video_url: String? = null
+    private val Permission_REQUEST_Code = 100
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -69,13 +76,14 @@ class WFMainFragment: Fragment() {
         shareData = requireContext().getSharedPreferences("URL", 0)
         /*CMD URL*/
         this.url = java.lang.StringBuilder()
-        this.url!!.append(shareData!!.getString("Url", "192.168.58.108:8000/car/"))
+        this.url!!.append(shareData!!.getString("Url", "172.20.10.8:8000/car/"))
         cmd_url = url_title + this.url
         /*VIDEO URL*/
         this.v_url = java.lang.StringBuilder()
-        this.v_url!!.append(shareData!!.getString("video_Url", "192.168.58.108:8080/?action=stream"))
+        this.v_url!!.append(shareData!!.getString("video_Url", "172.20.10.8:8080/?action=stream"))
         video_url = v_url_title + this.v_url
         /*Wifi*/
+        requestLocationPermission()
         WifiUtils.connectWifi(requireContext())
         if (WifiUtils.isWifiEnabled(requireContext())) {
             wifi_Iv!!.visibility = View.VISIBLE
@@ -337,6 +345,20 @@ class WFMainFragment: Fragment() {
                 dialog.dismiss()
             }
             .show()
+    }
+    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        // Forward results to EasyPermissions
+        EasyPermissions.onRequestPermissionsResult(requestCode, permissions, grantResults, this)
+    }
+    /* check Location Permission */
+    @AfterPermissionGranted(REQUEST_LOCATION_PERMISSION)
+    private fun requestLocationPermission() {
+        val perms = arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION)
+        if (EasyPermissions.hasPermissions(requireContext(), *perms)) {
+        } else {
+            ActivityCompat.requestPermissions(requireActivity(), arrayOf("android.permission.ACCESS_COARSE_LOCATION", "android.permission.ACCESS_FINE_LOCATION"), Permission_REQUEST_Code)
+        }
     }
     override fun onDestroy() {
         AnimHandler.removeCallbacksAndMessages(null)

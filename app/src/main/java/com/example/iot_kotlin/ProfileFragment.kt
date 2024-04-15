@@ -14,6 +14,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.google.android.material.navigation.NavigationBarView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.database.DataSnapshot
@@ -59,6 +60,10 @@ class ProfileFragment : Fragment() {
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val bottom_navigation = requireActivity().findViewById<NavigationBarView>(R.id.bottom_navigation)
+        if(!bottom_navigation.menu.findItem(R.id.nbar_info).isChecked) {
+            bottom_navigation.menu.findItem(R.id.nbar_info).isChecked = true
+        }
         findView(view)
         firebaseInit()
         /** Button OnClickListener **/
@@ -156,16 +161,7 @@ class ProfileFragment : Fragment() {
                 R.id.editAccountButton -> {
                     if(!nouserflag!!) {
                         val fragment = EditAccountFragment()
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.slide_in_right,  // enter
-                                R.anim.fade_out,  // exit
-                                R.anim.fade_in,   // popEnter
-                                R.anim.slide_out_right  // popExit
-                            )
-                            .replace(R.id.fragment_container, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        goToEditFragment(fragment)
                     } else {
                         CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to modify without logging in")
                         //showToast("Unable to modify without logging in")
@@ -174,16 +170,7 @@ class ProfileFragment : Fragment() {
                 R.id.editProfileButton -> {
                     if(!nouserflag!!) {
                         val fragment = EditProfileFragment()
-                        requireActivity().supportFragmentManager.beginTransaction()
-                            .setCustomAnimations(
-                                R.anim.slide_in_right,  // enter
-                                R.anim.fade_out,  // exit
-                                R.anim.fade_in,   // popEnter
-                                R.anim.slide_out_right  // popExit
-                            )
-                            .replace(R.id.fragment_container, fragment)
-                            .addToBackStack(null)
-                            .commit()
+                        goToEditFragment(fragment)
                     } else {
                         CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to modify without logging in")
                         //showToast("Unable to modify without logging in")
@@ -218,5 +205,17 @@ class ProfileFragment : Fragment() {
     }
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()
+    }
+    private fun goToEditFragment(fragment: Fragment) {
+        requireActivity().supportFragmentManager.beginTransaction()
+            .setCustomAnimations(
+                R.anim.slide_in_right,  // enter
+                R.anim.fade_out,  // exit
+                R.anim.fade_in,   // popEnter
+                R.anim.slide_out_right  // popExit
+            )
+            .replace(R.id.fragment_container, fragment, "editFragment")
+            .addToBackStack("editFragment")
+            .commit()
     }
 }

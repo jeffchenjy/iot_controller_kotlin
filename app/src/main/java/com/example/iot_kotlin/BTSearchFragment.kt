@@ -22,12 +22,16 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.registerReceiver
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationBarView
+import pub.devrel.easypermissions.AfterPermissionGranted
+import pub.devrel.easypermissions.EasyPermissions
 
 class BTSearchFragment: Fragment() {
+    private var viewGet: View? = null
     /*  About ToolBar */
     private lateinit var toolbar: Toolbar
     /*  Anim ImageView  */
@@ -45,7 +49,22 @@ class BTSearchFragment: Fragment() {
     private lateinit var mScanRecyclerView: RecyclerView
     private lateinit var scanAdapter: RecyclerViewAdapter // 自定義的 Adapter
     private var btScanDeviceList = ArrayList<String>() // 藍牙設備列表
-
+    /* runAnim */
+    private val runnableAnimScan: Runnable = object : Runnable {
+        override fun run() {
+            imgAnim1.animate().scaleX(4f).scaleY(4f).alpha(0f).setDuration(1000).withEndAction {
+                imgAnim1.scaleX = 1f
+                imgAnim1.scaleY = 1f
+                imgAnim1.alpha = 1f
+            }
+            imgAnim2.animate().scaleX(4f).scaleY(4f).alpha(0f).setDuration(700).withEndAction {
+                imgAnim2.scaleX = 1f
+                imgAnim2.scaleY = 1f
+                imgAnim2.alpha = 1f
+            }
+            AnimHandler.postDelayed(this, 1500)
+        }
+    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -56,6 +75,7 @@ class BTSearchFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findView(view)
+        viewGet = view
         setToolbar()
         this.runnableAnimScan.run()
         /** Bluetooth Check Permission **/
@@ -161,27 +181,10 @@ class BTSearchFragment: Fragment() {
         toolbar.setNavigationOnClickListener {
             val fragmentManager = requireActivity().supportFragmentManager
             val fragmentTransaction = fragmentManager.beginTransaction()
-            fragmentManager.popBackStack()
+            fragmentManager.popBackStack("btSearchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
             fragmentTransaction.commit()
         }
     }
-
-    private val runnableAnimScan: Runnable = object : Runnable {
-        override fun run() {
-            imgAnim1.animate().scaleX(4f).scaleY(4f).alpha(0f).setDuration(1000).withEndAction {
-                imgAnim1.scaleX = 1f
-                imgAnim1.scaleY = 1f
-                imgAnim1.alpha = 1f
-            }
-            imgAnim2.animate().scaleX(4f).scaleY(4f).alpha(0f).setDuration(700).withEndAction {
-                imgAnim2.scaleX = 1f
-                imgAnim2.scaleY = 1f
-                imgAnim2.alpha = 1f
-            }
-            AnimHandler.postDelayed(this, 1500)
-        }
-    }
-
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
