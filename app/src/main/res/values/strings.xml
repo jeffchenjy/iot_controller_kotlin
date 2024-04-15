@@ -132,7 +132,7 @@
     <string name="unchoose">どちらも選ばない</string>
     <string name="gender_male">男性</string>
     <string name="gender_female">女性</string>
-    <string name="country">国</string>
+    <string name="country">国/地域</string>
     <string name="bornYear">生まれた年</string>
     <string name="bornDate">誕生日</string>
     <string name="close_bottomSheet">完了</string>
