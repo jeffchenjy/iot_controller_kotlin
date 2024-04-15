@@ -5,7 +5,9 @@ import android.content.Context
 import android.content.Context.MODE_PRIVATE
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.graphics.Path
+import android.graphics.drawable.ColorDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.os.Handler
@@ -16,7 +18,9 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.widget.TextView
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.Toolbar
@@ -26,12 +30,17 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.fragment.app.Fragment
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.navigation.NavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class HomeFragment : Fragment() {
+    /* firebase User*/
+    private var currentUser: FirebaseUser? = null
+    private lateinit var auth: FirebaseAuth
     /*  Tasks ArrayList  */
     private var imageTasks: List<Runnable> = ArrayList()
     private var currentIndex = 0
@@ -57,22 +66,16 @@ class HomeFragment : Fragment() {
     ): View? {
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
+
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         drawerLayout = view.findViewById(R.id.drawerLayout)
         navigation_view = view.findViewById(R.id.navigation_view)
-        /** Mode Change **/
-        menu = navigation_view?.menu
-        itemIdToFind = R.id.action_change_mode
-        menuItem = navigation_view?.menu?.findItem(itemIdToFind ?: 0)
-        /* use sharedPreferences change themes*/
-        sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
-        /**/
         setToolbar(view)
         setNavigationItemSelectedListener()
-        /** Kotlin 的協程分開執行 **/
-        changeTheme()
+        changeThemeText()
         imageAnimation()
+        firebaseUserCheck()
     }
     private fun setToolbar(view: View) {
         val toolbar: Toolbar = view.findViewById(R.id.main_toolbar)
@@ -127,35 +130,31 @@ class HomeFragment : Fragment() {
         }
 
     }
-    private fun changeTheme() {
-        try {
-            animationPaused = true
-            isNightMode = sharedPreferences.getBoolean("nightMode", false)
-            if (menuItem != null) {
-                val title: CharSequence? = menuItem!!.title
-                val context = requireContext()
-                if (title != null) {
-                    isNightMode?.let { isNightMode ->
-                        if (isNightMode) {
-                            if(title.toString() != getString(R.string.light_mode)) {
-                                menuItem!!.title = getString(R.string.light_mode)
-                                menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                            }
-                        } else {
-                            if(title.toString() != getString(R.string.dark_mode)) {
-                                menuItem!!.title = getString(R.string.dark_mode)
-                                menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
-                                AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                            }
+    private fun changeThemeText() {
+        menu = navigation_view?.menu
+        itemIdToFind = R.id.action_change_mode
+        menuItem = navigation_view?.menu?.findItem(itemIdToFind ?: 0)
+        /* use sharedPreferences change themes*/
+        sharedPreferences = requireActivity().getSharedPreferences("MODE", MODE_PRIVATE)
+        isNightMode = sharedPreferences.getBoolean("nightMode", false)
+        if (menuItem != null) {
+            val title: CharSequence? = menuItem!!.title
+            val context = requireContext()
+            if (title != null) {
+                isNightMode?.let { isNightMode ->
+                    if (isNightMode) {
+                        if(title.toString() != getString(R.string.light_mode)) {
+                            menuItem!!.title = getString(R.string.light_mode)
+                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_light_mode)
+                        }
+                    } else {
+                        if(title.toString() != getString(R.string.dark_mode)) {
+                            menuItem!!.title = getString(R.string.dark_mode)
+                            menuItem!!.icon = ContextCompat.getDrawable(context, R.drawable.ic_dark_mode)
                         }
                     }
                 }
             }
-        } catch (e: Exception) {
-            Log.d("changeThemeError", "massage: $e")
-        } finally {
-            animationPaused = false
         }
     }
     private fun setNavigationItemSelectedListener() {
@@ -189,6 +188,27 @@ class HomeFragment : Fragment() {
                 }
             }
             false
+        }
+    }
+    private fun firebaseUserCheck() {
+        val getCheckUserFlag = requireActivity().intent.getStringExtra("checkUserFlag")
+        requireActivity().intent.removeExtra("checkUserFlag")
+        auth = FirebaseAuth.getInstance()
+        currentUser = auth.currentUser
+        if(currentUser != null && getCheckUserFlag != null) {
+            /** Show message **/
+            val builder = AlertDialog.Builder(requireContext())
+            val dialogView: View = layoutInflater.inflate(R.layout.dialog_message_show, null)
+            val showMessage = dialogView.findViewById<TextView>(R.id.textView_showMessage)
+            builder.setView(dialogView)
+            val dialog: AlertDialog = builder.create()
+            dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT))
+            dialog.window?.clearFlags(WindowManager.LayoutParams.FLAG_DIM_BEHIND)
+            showMessage.text = getString(R.string.loginsuccess)
+            dialog.show()
+            Handler(Looper.myLooper()!!).postDelayed({
+                dialog.dismiss()
+            }, 800)
         }
     }
     private fun changeMode() {
@@ -262,6 +282,7 @@ class HomeFragment : Fragment() {
             .setMessage(resources.getString(R.string.leave))
             .setPositiveButton(resources.getString(R.string.ok)) { dialog, which ->
                 // Respond to positive button press
+                Iv_handler.removeCallbacksAndMessages(null)
                 val activityManager = requireActivity().getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
                 val tasks = activityManager.appTasks
                 for (task in tasks) {

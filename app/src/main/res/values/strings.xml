@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">IoT Controller</string>
+    <string name="app_name">IoT Car Controller</string>
 
     <!-- 內容 -->
     <string name="main_operation">
@@ -11,7 +11,7 @@
     <string name="bt_search_dialog_start">
         このBluetoothデバイス</string>
     <string name="bt_search_dialog_end">
-        に接続しますか?</string>
+        と接続しますか?</string>
 
     <string name="about">
         ユーザーはこのアプリを通じてどのIoT機能を使用するかできます。</string>
@@ -41,8 +41,8 @@
     <string name="bluetooth_scan">Bluetooth Search</string>
     <string name="car_control_page">Car Control</string>
 
-    <string name="bluetooth_search">Bluetooth 探す</string>
-    <string name="bluetooth_connect">Bluetooth 接続</string>
+    <string name="bluetooth_search">Bluetoothに探す</string>
+    <string name="bluetooth_connect">Bluetoothに接続</string>
 
     <!-- CarActivity menu -->
     <string name="music_title">Music Selection</string>
@@ -61,8 +61,8 @@
     <string name="dark_mode">ダークモードに変更する</string>
     <string name="current_url">當前のURL</string>
     <string name="url_setting">URL設定</string>
-    <string name="current_video_url">ビデオのURL</string>
-    <string name="video_url_setting">ビデオURL設定</string>
+    <string name="current_video_url">カメラのURL</string>
+    <string name="video_url_setting">カメラURL設定</string>
     <string name="about_app">アプリ紹介</string>
     <string name="copyright_title">著作権</string>
     <string name="twitter">X (Twitter)</string>
@@ -101,9 +101,11 @@
     <string name="password_empty">パスワードを空にすることはできません</string>
     <string name="password_error">パスワードが間違っています</string>
     <string name="signUp_btn">入力内容を確認</string>
+    <string name="illegal_characters">不正な文字が含まれています</string>
     <string name="signUp_success">サインアップが成功しました</string>
     <string name="signUp_failed">入力されたメールアドレスは既に使用されています。</string>
     <string name="isMember">すでにメンバーですか? ログイン</string>
+    <string name="loginsuccess">ログイン成功</string>
     <!-- Profile -->
     <string name="edit_profile">プロフィール設定</string>
     <string name="edit_account">アカウント設定</string>
@@ -125,26 +127,15 @@
     <string name="data_update_failed">データが更新されませんでした</string>
     <string name="Password_update_message">パスワードが正常に更新されました</string>
     <string name="Password_update_failed">パスワードの更新に失敗しました</string>
+    <string name="mailCheck">メールを確認してください</string>
     <string name="gender">性別</string>
     <string name="unselect">未選択</string>
+    <string name="unchoose">どちらも選ばない</string>
     <string name="gender_male">男性</string>
     <string name="gender_female">女性</string>
     <string name="country">国</string>
     <string name="bornYear">生まれた年</string>
     <string name="bornDate">誕生日</string>
     <string name="close_bottomSheet">完了</string>
-    <!-- Preference Titles -->
-    <string name="messages_header">Messages</string>
-    <string name="sync_header">Sync</string>
 
-    <!-- Messages Preferences -->
-    <string name="signature_title">Your signature</string>
-    <string name="reply_title">Default reply action</string>
-
-    <!-- Sync Preferences -->
-    <string name="sync_title">Sync email periodically</string>
-    <string name="attachment_title">Download incoming attachments</string>
-    <string name="attachment_summary_on">Automatically download attachments for incoming emails
-    </string>
-    <string name="attachment_summary_off">Only download attachments when manually requested</string>
 </resources>

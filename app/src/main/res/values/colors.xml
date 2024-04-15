@@ -3,6 +3,7 @@
     <!--    Default   -->
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
+    <color name="gray">#FF888888</color>
     <!--    gradation.xml   -->
     <color name="start_color">#3F51B5</color>
     <color name="end_color">@color/white</color>
@@ -34,4 +35,6 @@
     <color name="seekbar_start_color">#9A85BD</color>
     <color name="seekbar_end_color">#6831CA</color>
     <color name="edit_profile_underline">#79747E</color>
+    <!--snackbarBgColor-->
+    <color name="snackbarBgColor">#CC5E5E5E</color>
 </resources>

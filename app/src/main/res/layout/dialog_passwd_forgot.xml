@@ -19,7 +19,6 @@
             android:layout_height="wrap_content"
             style="@style/ScreenBackgroundColor"
             android:id="@+id/dialogBox">
-
             <TextView
                 android:id="@+id/forgotTitle"
                 android:layout_width="match_parent"
@@ -33,7 +32,6 @@
                 android:textSize="15sp"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteX="0dp" />
-
             <TextView
                 style="@style/textColor"
                 android:layout_width="match_parent"
@@ -45,28 +43,31 @@
                 android:layout_marginTop="8dp"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/forgotTitle"
-                app:layout_constraintBottom_toTopOf="@id/emailBox"/>
-
-            <EditText
-                android:id="@+id/emailBox"
-                style="@style/textColor"
+                app:layout_constraintBottom_toTopOf="@id/emailTextInputLayout"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/emailTextInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
                 android:layout_marginHorizontal="20dp"
-                android:background="@drawable/custom_edittext"
-                android:maxLines="1"
-                android:inputType="text"
-                android:imeOptions="actionDone"
-                android:textSize="14sp"
-                android:paddingLeft="15dp"
+                app:boxCornerRadiusBottomEnd="20dp"
+                app:boxCornerRadiusTopStart="20dp"
+                app:boxCornerRadiusTopEnd="20dp"
+                app:boxCornerRadiusBottomStart="20dp"
                 android:hint="@string/forgot_password_hint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/forgotTitle"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
+                app:layout_constraintTop_toBottomOf="@id/forgotTitle">
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/textColor"
+                    android:id="@+id/emailBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:padding="8dp"
+                    android:textSize="14sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
             <Button
                 android:id="@+id/btnCancel"
                 style="@style/Button_style"
@@ -83,8 +84,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/dialogBox"
                 app:layout_constraintEnd_toStartOf="@id/btnReset"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/emailBox" />
-
+                app:layout_constraintTop_toBottomOf="@id/emailTextInputLayout" />
             <Button
                 android:id="@+id/btnReset"
                 style="@style/Button_style"

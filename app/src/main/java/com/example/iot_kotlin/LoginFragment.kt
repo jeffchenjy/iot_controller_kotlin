@@ -1,7 +1,9 @@
 package com.example.iot_kotlin
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
@@ -22,6 +24,8 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.FirebaseAuth
@@ -46,7 +50,9 @@ class LoginFragment: Fragment() {
     /* Intent Activity */
     private lateinit var currentActivity: AppCompatActivity
     private lateinit var Main_intent: Intent
-
+    /* parameter of changeTheme */
+    private lateinit var sharedPreferences: SharedPreferences
+    private var isNightMode: Boolean? = false
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -57,6 +63,7 @@ class LoginFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         findView(view)
+        changeTheme()
         setupFirebaseInit()
         TextChangedListener()
         /** TextView Listener **/
@@ -111,6 +118,10 @@ class LoginFragment: Fragment() {
         auth = FirebaseAuth.getInstance()
         currentActivity = requireActivity() as AppCompatActivity
         currentUser = auth.currentUser
+        if (currentUser != null) {
+            startMainActivity()
+            return
+        }
     }
     private fun TextChangedListener() {
         /**  Text Changed Listener **/
@@ -274,9 +285,26 @@ class LoginFragment: Fragment() {
     }
     private fun startMainActivity() {
         Main_intent = Intent(currentActivity, MainActivity::class.java)
+        Main_intent.putExtra("checkUserFlag", "1")
         currentActivity.startActivity(Main_intent)
         currentActivity.overridePendingTransition(R.anim.slide_in_right, R.anim.fade_out)
         currentActivity.finish()
+    }
+    private fun changeTheme() {
+        /* use sharedPreferences change themes*/
+        sharedPreferences = requireActivity().getSharedPreferences("MODE", Context.MODE_PRIVATE)
+        isNightMode = sharedPreferences.getBoolean("nightMode", false)
+        isNightMode?.let { isNightMode ->
+            if (isNightMode) {
+                if(AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_YES) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                }
+            } else {
+                if(AppCompatDelegate.getDefaultNightMode() != AppCompatDelegate.MODE_NIGHT_NO) {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                }
+            }
+        }
     }
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()

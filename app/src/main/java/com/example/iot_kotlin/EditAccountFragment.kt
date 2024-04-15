@@ -1,5 +1,6 @@
 package com.example.iot_kotlin
 
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -7,14 +8,17 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.Editable
+import android.text.TextUtils
 import android.text.TextWatcher
 import android.util.Log
 import android.util.Patterns
 import android.view.LayoutInflater
+import android.view.MotionEvent
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.EditText
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +26,7 @@ import androidx.appcompat.widget.Toolbar
 import androidx.cardview.widget.CardView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.textfield.TextInputLayout
 import com.google.firebase.auth.EmailAuthProvider
@@ -44,6 +49,9 @@ class EditAccountFragment : Fragment() {
     private lateinit var emailTextInputLayout : TextInputLayout
     private lateinit var usernameTextInputLayout : TextInputLayout
     private lateinit var passwordTextInputLayout : TextInputLayout
+    /* TextView */
+    private lateinit var forgotPassword: TextView
+    private var colorhandler = Handler(Looper.myLooper()!!)
     /* Button */
     private lateinit var saveButton: Button
     private lateinit var deleteButton: Button
@@ -86,6 +94,9 @@ class EditAccountFragment : Fragment() {
         setToolbar()
         textChangedListener()
         firebaseInit()
+        /**  textView Click Listener **/
+        textViewClickListener()
+        textViewTouchListener()
         /**  Button Click Listener **/
         buttonClickListener()
     }
@@ -97,6 +108,7 @@ class EditAccountFragment : Fragment() {
         emailTextInputLayout = view.findViewById(R.id.emailTextInputLayout)
         usernameTextInputLayout = view.findViewById(R.id.usernameTextInputLayout)
         passwordTextInputLayout = view.findViewById(R.id.passwordTextInputLayout)
+        forgotPassword = view.findViewById(R.id.forgot_password)
         saveButton = view.findViewById(R.id.saveButton)
         deleteButton = view.findViewById(R.id.deleteButton)
         savebuttonCardView = view.findViewById(R.id.savebuttonCardView)
@@ -197,6 +209,8 @@ class EditAccountFragment : Fragment() {
                 if (s.isNullOrEmpty()) {
                     usernameTextInputLayout.error  = null
                     editUsername.error = getString(R.string.username_empty)
+                } else if(containsSpecialCharacter(s.toString())) {
+                    usernameTextInputLayout.error = getString(R.string.illegal_characters)
                 } else if(charCount in 1..2) {
                     usernameTextInputLayout.error  = getString(R.string.errorUsername_message)
                 } else if(username == currentUserName) {
@@ -219,6 +233,8 @@ class EditAccountFragment : Fragment() {
                 if (s.isNullOrEmpty()) {
                     passwordTextInputLayout.error = null
                     passwordTextInputLayout.endIconMode = TextInputLayout.END_ICON_NONE
+                } else if(containsSpecialCharacter(s.toString())) {
+                    passwordTextInputLayout.error = getString(R.string.illegal_characters)
                 } else if(charCount in 1..7) {
                     passwordTextInputLayout.error = getString(R.string.errorPassword_message)
                 } else {
@@ -229,9 +245,9 @@ class EditAccountFragment : Fragment() {
             }
         })
     }
-    fun containsSpecialCharacter(input: String): Boolean {
-        val regex = Regex("[^A-Za-z0-9 ]") // 匹配除了字母、數字和空格之外的所有字符
-        return regex.containsMatchIn(input)
+    private fun containsSpecialCharacter(input: String): Boolean {
+        val regex = Regex("[^A-Za-z0-9@!?]")
+        return regex.find(input) != null
     }
     private fun buttonClickListener() {
         saveButton.setOnClickListener(buttonOnClickListener())
@@ -256,15 +272,15 @@ class EditAccountFragment : Fragment() {
                         }
                         if(Patterns.EMAIL_ADDRESS.matcher(newEmail).matches() && newUsername.length >= 3 && newPassword.length >= 8) {
                             /** Check Password **/
-                            val builder = AlertDialog.Builder(requireContext())
-                            val dialogView: View = layoutInflater.inflate(R.layout.dialog_passwd_verify, null)
-                            val codeBox = dialogView.findViewById<EditText>(R.id.codeBox)
-                            builder.setView(dialogView)
-                            val dialog: AlertDialog = builder.create()
-                            dialogView.findViewById<View>(R.id.btnCheck).setOnClickListener(View.OnClickListener {
+                            val builder_check = AlertDialog.Builder(requireContext())
+                            val dialogView_check: View = layoutInflater.inflate(R.layout.dialog_passwd_verify, null)
+                            val codeBox = dialogView_check.findViewById<EditText>(R.id.codeBox)
+                            builder_check.setView(dialogView_check)
+                            val dialog_check: AlertDialog = builder_check.create()
+                            dialogView_check.findViewById<View>(R.id.btnCheck).setOnClickListener(View.OnClickListener {
                                 val userCode = codeBox.text.toString()
                                 if (userCode.equals(currentUserPassword)) {
-                                    dialog.dismiss()
+                                    dialog_check.dismiss()
                                     /** Show progress indicators **/
                                     val builder = AlertDialog.Builder(requireContext())
                                     val dialogView: View = layoutInflater.inflate(R.layout.dialog_progress_indicators, null)
@@ -280,11 +296,11 @@ class EditAccountFragment : Fragment() {
                                     )
                                     reference.updateChildren(newData)
                                         .addOnSuccessListener {
-                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_message))
+                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.data_update_success))
                                             //showToast(getString(R.string.data_update_success))
                                         }
                                         .addOnFailureListener { _ ->
-                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_failed))
+                                            CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.data_update_success))
                                             //showToast(getString(R.string.Password_update_failed))
                                         }
                                     currentUser?.let {
@@ -298,8 +314,7 @@ class EditAccountFragment : Fragment() {
                                                         currentUser!!.verifyBeforeUpdateEmail(newEmail)
                                                             .addOnCompleteListener { updateEmailTask ->
                                                                 if (updateEmailTask.isSuccessful) {
-                                                                    // 電子郵件地址更新成功
-                                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), "Please check your email")
+                                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.mailCheck))
                                                                     //showToast("Please check your email")
                                                                 }
                                                             }
@@ -310,10 +325,10 @@ class EditAccountFragment : Fragment() {
                                         it.updatePassword(newPassword)
                                             .addOnCompleteListener { task ->
                                                 if (task.isSuccessful) {    // 更新成功
-                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_message))
+                                                    //CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_message))
                                                     //showToast(getString(R.string.Password_update_message))
                                                 } else {                    // 更新失敗，顯示錯誤消息
-                                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_failed))
+                                                    //CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.Password_update_failed))
                                                     //showToast(getString(R.string.Password_update_failed))
                                                     //Log.d("updatePassword", "Error updating password: ${task.exception?.message}")
                                                 }
@@ -324,15 +339,16 @@ class EditAccountFragment : Fragment() {
                                         }, 1500)
                                     }
                                 } else {
-                                    CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.password_error))
+                                    codeBox.error = getString(R.string.password_error)
+                                    //CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.password_error))
                                     //showToast(getString(R.string.password_error))
                                 }
                             })
-                            dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
-                            if (dialog.window != null) {
-                                dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+                            dialogView_check.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog_check.dismiss() }
+                            if (dialog_check.window != null) {
+                                dialog_check.window!!.setBackgroundDrawable(ColorDrawable(0))
                             }
-                            dialog.show()
+                            dialog_check.show()
                         }
                     }
                 }
@@ -408,10 +424,81 @@ class EditAccountFragment : Fragment() {
             }
         }
     }
+    private fun textViewClickListener() {
+        forgotPassword.setOnClickListener{
+            val builder = AlertDialog.Builder(requireContext())
+            val dialogView: View = layoutInflater.inflate(R.layout.dialog_passwd_forgot, null)
+            val emailBox = dialogView.findViewById<EditText>(R.id.emailBox)
+            builder.setView(dialogView)
+            val dialog: AlertDialog = builder.create()
+            dialogView.findViewById<View>(R.id.btnReset).setOnClickListener(View.OnClickListener {
+                val userEmail = emailBox.text.toString()
+                if (TextUtils.isEmpty(userEmail) && !Patterns.EMAIL_ADDRESS.matcher(userEmail)
+                        .matches()
+                ) {
+                    emailBox.error = "Please enter your registered email address"
+                    //CustomSnackbar.showSnackbar(getView(), requireContext(), "Please enter your registered email address")
+                    //showToast("Please enter your registered email address")
+                    return@OnClickListener
+                }
+                auth.sendPasswordResetEmail(userEmail).addOnCompleteListener { task ->
+                    if (task.isSuccessful) {
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Please check your email")
+                        //showToast("Please check your email")
+                        dialog.dismiss()
+                    } else {
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to send, failed")
+                        //showToast("Unable to send, failed")
+                    }
+                }
+            })
+            dialogView.findViewById<View>(R.id.btnCancel).setOnClickListener { dialog.dismiss() }
+            if (dialog.window != null) {
+                dialog.window!!.setBackgroundDrawable(ColorDrawable(0))
+            }
+            dialog.show()
+        }
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewTouchListener() {
+        forgotPassword.setOnTouchListener(textViewOnTouchListener())
+    }
+    @SuppressLint("ClickableViewAccessibility")
+    private fun textViewOnTouchListener(): View.OnTouchListener? {
+        return View.OnTouchListener { v, event ->
+            when (event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    when(v.id) {
+                        R.id.forgot_password -> {
+                            forgotPassword.setTextColor(Color.WHITE)
+                        }
+                    }
+                    // 延遲 2 秒後恢復原本的顏色
+                    colorhandler.postDelayed({
+                        when(v.id) {
+                            R.id.forgot_password -> {
+                                forgotPassword.setTextColor(Color.GRAY)
+                            }
+                        }
+                    }, 600) // 0.6 秒後執行
+                }
+                MotionEvent.ACTION_UP -> {
+                    // 取消延遲執行，防止在 2 秒內放開時顏色恢復的操作執行
+                    colorhandler.removeCallbacksAndMessages(null)
+                    when(v.id) {
+                        R.id.forgot_password -> {
+                            forgotPassword.setTextColor(Color.GRAY)
+                        }
+                    }
+                }
+            }
+            false
+        }
+    }
     private fun returnProfileFragment() {
         val fragmentManager = requireActivity().supportFragmentManager
         val fragmentTransaction = fragmentManager.beginTransaction()
-        fragmentManager.popBackStack()
+        fragmentManager.popBackStack("editFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         fragmentTransaction.commit()
     }
     private fun showToast(msg: String) {

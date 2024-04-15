@@ -24,7 +24,7 @@
         android:layout_height="wrap_content"
         android:ellipsize="end"
         android:paddingTop="4dp"
-        android:text="IoT Controller"
+        android:text="@string/app_name"
         android:fontFamily="@font/rounded_mplus"
         android:textSize="18sp"
         android:layout_marginBottom="5dp"/>

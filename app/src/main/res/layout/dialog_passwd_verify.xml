@@ -33,7 +33,6 @@
                 android:textSize="15sp"
                 app:layout_constraintTop_toTopOf="parent"
                 tools:layout_editor_absoluteX="0dp" />
-
             <TextView
                 style="@style/textColor"
                 android:layout_width="match_parent"
@@ -45,28 +44,31 @@
                 android:layout_marginTop="8dp"
                 android:textSize="14sp"
                 app:layout_constraintTop_toBottomOf="@id/forgotTitle"
-                app:layout_constraintBottom_toTopOf="@id/codeBox"/>
-
-            <EditText
-                android:id="@+id/codeBox"
-                style="@style/textColor"
+                app:layout_constraintBottom_toTopOf="@id/passwordTextInputLayout"/>
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/passwordTextInputLayout"
                 android:layout_width="match_parent"
-                android:layout_height="40dp"
-                android:layout_marginTop="10dp"
+                android:layout_height="wrap_content"
                 android:layout_marginBottom="30dp"
                 android:layout_marginHorizontal="20dp"
-                android:background="@drawable/custom_edittext"
-                android:maxLines="1"
-                android:textSize="14sp"
-                android:paddingLeft="15dp"
-                android:inputType="text"
-                android:imeOptions="actionDone"
+                app:boxCornerRadiusBottomEnd="20dp"
+                app:boxCornerRadiusTopStart="20dp"
+                app:boxCornerRadiusTopEnd="20dp"
+                app:boxCornerRadiusBottomStart="20dp"
                 android:hint="@string/id_verify_hint"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/forgotTitle"
-                tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
-
+                app:layout_constraintTop_toBottomOf="@id/forgotTitle">
+                <com.google.android.material.textfield.TextInputEditText
+                    style="@style/textColor"
+                    android:id="@+id/codeBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:inputType="text"
+                    android:imeOptions="actionDone"
+                    android:padding="8dp"
+                    android:textSize="14sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
             <Button
                 android:id="@+id/btnCancel"
                 style="@style/Button_style"
@@ -83,7 +85,7 @@
                 app:layout_constraintBottom_toBottomOf="@id/dialogBox"
                 app:layout_constraintEnd_toStartOf="@id/btnCheck"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/codeBox" />
+                app:layout_constraintTop_toBottomOf="@id/passwordTextInputLayout" />
 
             <Button
                 android:id="@+id/btnCheck"

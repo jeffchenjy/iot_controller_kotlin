@@ -63,13 +63,29 @@ class MainActivity : AppCompatActivity() {
                     replaceFragment(HomeFragment())
                 }
                 R.id.nbar_bt -> {
-                    replaceFragment(BTMainFragment())
+                    val fragmentManager = supportFragmentManager
+                    val transaction = fragmentManager.beginTransaction()
+                    val btSearchFragment = fragmentManager.findFragmentByTag("btSearchFragment")
+                    if(btSearchFragment != null) {
+                        fragmentManager.popBackStack("btSearchFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        transaction.commit()
+                    } else {
+                        replaceFragment(BTMainFragment())
+                    }
                 }
                 R.id.nbar_wifi -> {
                     replaceFragment(WFMainFragment())
                 }
                 R.id.nbar_info -> {
-                    replaceFragment(ProfileFragment())
+                    val fragmentManager = supportFragmentManager
+                    val transaction = fragmentManager.beginTransaction()
+                    val editFragment = fragmentManager.findFragmentByTag("editFragment")
+                    if(editFragment != null) {
+                        fragmentManager.popBackStack("editFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
+                        transaction.commit()
+                    } else {
+                        replaceFragment(ProfileFragment())
+                    }
                 }
             }
             true // 返回布林值表示事件是否已處理
@@ -79,10 +95,6 @@ class MainActivity : AppCompatActivity() {
     private fun replaceFragment(fragment: Fragment) {
         val fragmentManager = supportFragmentManager
         val transaction = fragmentManager.beginTransaction()
-
-        // 移除堆疊中所有的 Fragment
-        fragmentManager.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE)
-
         // 替換為新的 Fragment
         transaction.replace(R.id.fragment_container, fragment)
         transaction.commit()
