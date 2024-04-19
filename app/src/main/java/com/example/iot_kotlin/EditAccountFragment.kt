@@ -1,6 +1,8 @@
 package com.example.iot_kotlin
 
 import android.annotation.SuppressLint
+import android.app.ActivityManager
+import android.content.Context
 import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
@@ -37,6 +39,10 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import com.google.firebase.storage.FirebaseStorage
+
+
+
 
 class EditAccountFragment : Fragment() {
     /*  About ToolBar */
@@ -370,40 +376,7 @@ class EditAccountFragment : Fragment() {
                                 val userCode = codeBox.text.toString()
                                 if (userCode.equals(currentUserPassword)) {
                                     dialog.dismiss()
-                                    currentUser?.let { user ->
-                                        reference = FirebaseDatabase.getInstance().getReference("users/UID/$currentUserUID")
-                                        reference.removeValue()
-                                            .addOnSuccessListener {
-                                                // 刪除成功
-                                                Log.d("User data deleted successfully", "User data deleted successfully")
-                                            }
-                                            .addOnFailureListener { exception ->
-                                                // 刪除失敗，顯示錯誤消息
-                                                Log.d("Error deleting user data", "${exception.message}")
-                                            }
-                                        val credential = EmailAuthProvider.getCredential(currentUser!!.email!!, currentUserPassword)
-                                        user?.reauthenticate(credential)?.addOnCompleteListener { reauthTask ->
-                                            if (reauthTask.isSuccessful) {
-                                                user.delete().addOnCompleteListener { deleteTask ->
-                                                    if (deleteTask.isSuccessful) {
-                                                        if(currentUser != null){
-                                                            auth.signOut()
-                                                        }
-                                                        val currentActivity = requireActivity()
-                                                        val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
-                                                        loginIntent.putExtra("fragmentShow", "LoginFragment")
-                                                        currentActivity.startActivity(loginIntent)
-                                                        currentActivity.overridePendingTransition(R.anim.slide_in_left, R.anim.fade_out)
-                                                        currentActivity.finish()
-                                                    } else {
-                                                        Log.d("Error deleting user account:","${deleteTask.exception?.message}")
-                                                    }
-                                                }
-                                            } else {
-                                                Log.d("Error reauthenticating user:","${reauthTask.exception?.message}")
-                                            }
-                                        }
-                                    }
+                                    deleteUser()
                                 } else {
                                     CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.password_error))
                                     //showToast(getString(R.string.password_error))
@@ -424,6 +397,72 @@ class EditAccountFragment : Fragment() {
             }
         }
     }
+    private fun deleteUser() {
+        currentUser?.let { user ->
+            reference = FirebaseDatabase.getInstance().getReference("users/UID/$currentUserUID")
+            reference.removeValue()
+                .addOnSuccessListener {
+                    // 刪除成功
+                    deleteUserImg()
+                    Log.d("User data deleted successfully", "User data deleted successfully")
+                }
+                .addOnFailureListener { exception ->
+                    // 刪除失敗，顯示錯誤消息
+                    Log.d("Error deleting user data", "${exception.message}")
+                }
+            val credential =
+                EmailAuthProvider.getCredential(currentUser!!.email!!, currentUserPassword)
+            user?.reauthenticate(credential)?.addOnCompleteListener { reauthTask ->
+                if (reauthTask.isSuccessful) {
+                    user.delete().addOnCompleteListener { deleteTask ->
+                        if (deleteTask.isSuccessful) {
+                            if (currentUser != null) {
+                                auth.signOut()
+                            }
+                            returnStartLogActivity()
+                        } else {
+                            Log.d(
+                                "Error deleting user account:",
+                                "${deleteTask.exception?.message}"
+                            )
+                        }
+                    }
+                } else {
+                    Log.d("Error reauthenticating user:", "${reauthTask.exception?.message}")
+                }
+            }
+        }
+    }
+    private fun deleteUserImg() {
+        val storage = FirebaseStorage.getInstance()
+        val storageRef = storage.reference
+        val folderPath = "$currentUserUID"
+        val folderRef = storageRef.child(folderPath)
+        folderRef.listAll()
+            .addOnSuccessListener { listResult ->
+                for (item in listResult.items) {
+                    // 刪除檔案
+                    item.delete()
+                        .addOnSuccessListener {
+                            // 檔案刪除成功
+                        }
+                        .addOnFailureListener { exception ->
+                            // 檔案刪除失敗
+                        }
+                }
+                // 刪除資料夾
+                folderRef.delete()
+                    .addOnSuccessListener {
+                        // 資料夾刪除成功
+                    }
+                    .addOnFailureListener { exception ->
+                        // 資料夾刪除失敗
+                    }
+            }
+            .addOnFailureListener { exception ->
+                // 無法列出資料夾中的檔案
+            }
+    }
     private fun textViewClickListener() {
         forgotPassword.setOnClickListener{
             val builder = AlertDialog.Builder(requireContext())
@@ -443,9 +482,14 @@ class EditAccountFragment : Fragment() {
                 }
                 auth.sendPasswordResetEmail(userEmail).addOnCompleteListener { task ->
                     if (task.isSuccessful) {
-                        CustomSnackbar.showSnackbar(getView(), requireContext(), "Please check your email")
-                        //showToast("Please check your email")
                         dialog.dismiss()
+                        CustomSnackbar.showSnackbar(getView(), requireContext(), getString(R.string.resetPasswordMessage))
+                        //showToast("Please check your email")
+                        /* Handler */
+                        Handler(Looper.myLooper()!!).postDelayed({
+                            auth.signOut()
+                            returnStartLogActivity()
+                        }, 1000)
                     } else {
                         CustomSnackbar.showSnackbar(getView(), requireContext(), "Unable to send, failed")
                         //showToast("Unable to send, failed")
@@ -500,6 +544,17 @@ class EditAccountFragment : Fragment() {
         val fragmentTransaction = fragmentManager.beginTransaction()
         fragmentManager.popBackStack("editFragment", FragmentManager.POP_BACK_STACK_INCLUSIVE)
         fragmentTransaction.commit()
+    }
+    private fun returnStartLogActivity() {
+        val currentActivity = requireActivity()
+        val loginIntent = Intent(currentActivity, StartLogActivity::class.java)
+        loginIntent.putExtra("fragmentShow", "LoginFragment")
+        currentActivity.startActivity(loginIntent)
+        currentActivity.overridePendingTransition(
+            R.anim.slide_in_left,
+            R.anim.fade_out
+        )
+        currentActivity.finish()
     }
     private fun showToast(msg: String) {
         Toast.makeText(requireContext(), msg, Toast.LENGTH_SHORT).show()

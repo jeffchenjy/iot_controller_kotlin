@@ -18,6 +18,7 @@
     <string name="copyright">Copyright © 2024 Jhih-Yong, Chen</string>
     <string name="leave">このアプリを終了しますか?</string>
     <string name="signout_message">ログアウトしますか?</string>
+    <string name="resetPasswordMessage">メールを確認して、再度ログインしてください</string>
     <string name="car_control_instruction">
         ユーザーは方向ボタンを使用して車の方向を制御でき、ABXY ボタンを使用して車のモードを変更するコマンドを送信することもできます。</string>
     <string name="wf_operation">
