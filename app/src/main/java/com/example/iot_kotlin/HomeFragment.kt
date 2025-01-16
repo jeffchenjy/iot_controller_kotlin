@@ -136,7 +136,7 @@ class HomeFragment : Fragment() {
         isNightMode = sharedPreferences.getBoolean("nightMode", false)
     }
     private fun setNavigationItemSelectedListener() {
-        navigation_view?.setNavigationItemSelectedListener { item -> // 点击时收起菜单
+        navigation_view?.setNavigationItemSelectedListener { item ->
             drawerLayout?.closeDrawer(GravityCompat.START)
             when (item.itemId) {
                 R.id.action_twitter -> {

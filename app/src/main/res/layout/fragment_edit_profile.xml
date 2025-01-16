@@ -118,6 +118,7 @@
                             android:orientation="horizontal"
                             android:paddingHorizontal="14dp"
                             android:paddingVertical="13dp">
+
                             <TextView
                                 android:id="@+id/gender"
                                 style="@style/inputtextColor"
@@ -125,11 +126,12 @@
                                 android:layout_height="wrap_content"
                                 android:layout_weight="1"
                                 android:drawableLeft="@drawable/ic_gender"
-                                android:gravity="center_vertical"
                                 android:drawablePadding="13dp"
+                                android:gravity="center_vertical"
                                 android:text="@string/gender"
                                 android:textSize="14sp"
                                 android:textStyle="bold" />
+
                             <TextView
                                 android:id="@+id/genderTextView"
                                 style="@style/textColor"
